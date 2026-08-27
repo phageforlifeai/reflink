@@ -1,0 +1,26 @@
+{
+  "name": "reflink",
+  "version": "1.0.0",
+  "description": "Re-link plain-text manuscript citations back to live, editable Zotero field codes in Microsoft Word.",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "serve": "python3 -m http.server 8080"
+  },
+  "keywords": [
+    "zotero",
+    "citation",
+    "docx",
+    "reference-manager",
+    "word",
+    "csl",
+    "crossref",
+    "openalex"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/reflink.git"
+  }
+}
