@@ -72,6 +72,21 @@ You can host this utility on GitHub Pages so you and your colleagues can access 
 
 ---
 
+## 🆕 What's New in v1.1
+
+- **Detects duplicated headings.** Some manuscripts mangle the reference heading into a doubled string (e.g. `ReferencesReferences`). The heading detector now un-doubles text before matching, so those documents parse normally.
+- **Smarter year detection.** Years written with a letter suffix (`2019a`, `2017b`) are recognised in reference strings, not just bare four-digit years.
+- **Better in-text citation capture.** Longer parenthetical groups are now matched (up to 160 characters), and disambiguation suffixes such as `(Vaswani et al., 2017a, 2017b)` are carried into the citation key instead of being dropped.
+- **Rewritten citation → reference auto-mapping.** Mapping now scores every reference instead of taking the first fuzzy hit:
+  - matches on the **first token of the reference's author block** (exact → high score, present anywhere → good score), falling back to structured author surnames after Crossref/Zotero resolution;
+  - uses the **last** year in a citation, so corporate authors that contain a year (`GBD 2021 Diseases … 2024`) resolve correctly;
+  - ignores filler words (`and`, `et`, `al`, `the`) when reading author names;
+  - supports `a,b`-style suffixes by mapping to the top *n* matching references;
+  - rewards year agreement and ranks candidates before choosing, which removes most wrong "first match" mappings.
+- **Cleaner CSL payloads written into Word.** The `itemData` embedded in each field is normalised so the date is always emitted as `issued["date-parts"]`, which is what Zotero expects when it reads the field back.
+
+---
+
 ## 📁 Repository Structure
 
 ```

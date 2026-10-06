@@ -392,17 +392,24 @@ globalThis.RefLinkLib = (() => {
     "data availability", "supplementary", "figure legends", "table captions", "notes", "endnotes"];
   const DOI_RE = /10\.\d{4,9}\/[-._;()\/:A-Z0-9]+/i;
 
+  function undouble(t){
+    const s = (t||"").trim(), n = s.length;
+    if(n >= 4 && n % 2 === 0 && s.slice(0, n/2) === s.slice(n/2)) return s.slice(0, n/2);
+    return s;
+  }
   function isRefHead(t){
+    t = undouble(t);
     const k = t.trim().toLowerCase().replace(/[\s:.\-]+/g, " ").replace(/[0-9]+$/, "").trim();
     return REF_HEADS.has(k);
   }
   function isStopHead(t){
+    t = undouble(t);
     const k = t.trim().toLowerCase().replace(/[^a-z ]/g, "");
     return STOP_HEADS.some(s => k.startsWith(s));
   }
 
   function refYear(t){
-    const m = (t||"").match(/\b(19[5-9]\d|20[0-4]\d)\b/);
+    const m = (t||"").match(/\b(19[5-9]\d|20[0-4]\d)[a-z]?\b/);
     return m ? +m[1] : null;
   }
 
@@ -478,7 +485,7 @@ globalThis.RefLinkLib = (() => {
 
   /* ---------------- citation extraction ---------------- */
   const NUM_RE = /\[(\d{1,3}(?:\s*[-,]\s*\d{1,3})*)\]/g;
-  const PAREN_RE = /\(([^()]{2,120}?)[\s,]+(\d{4})([a-z])?\)/g;
+  const PAREN_RE = /\(([^()]{2,160}?)[\s,]+(\d{4})([a-z](?:\s*[,\u2013-]\s*[a-z])*)?\)/g;
   const NARR_RE = /([A-ZÀ-Þ][A-Za-zÀ-ÿ'\-]*(?:\s*,\s*[A-ZÀ-Þ][A-Za-zÀ-ÿ'\-]*)*(?:\s*,\s*(?:and|&)\s+[A-ZÀ-Þ][A-Za-zÀ-ÿ'\-]*)?(?:\s+(?:and|&)\s+[A-ZÀ-Þ][A-Za-zÀ-ÿ'\-]*)?(?:\s+et\s+al\.?)?)\s+\((\d{4})([a-z])?\)/g;
 
   function extractCitations(xml){
@@ -495,7 +502,7 @@ globalThis.RefLinkLib = (() => {
       NUM_RE.lastIndex = 0;
       while((m = NUM_RE.exec(t))) occs.push({ kind: "numbered", key: m[1], para: pi, start: m.index, end: m.index + m[0].length });
       PAREN_RE.lastIndex = 0;
-      while((m = PAREN_RE.exec(t))) occs.push({ kind: "paren", key: m[1] + " " + m[2], para: pi, start: m.index, end: m.index + m[0].length });
+      while((m = PAREN_RE.exec(t))) occs.push({ kind: "paren", key: m[1] + " " + m[2] + (m[3] || ""), para: pi, start: m.index, end: m.index + m[0].length });
       NARR_RE.lastIndex = 0;
       while((m = NARR_RE.exec(t))) occs.push({ kind: "narrative", key: m[1] + " " + m[2], para: pi, start: m.index, end: m.index + m[0].length });
     });
@@ -919,32 +926,48 @@ globalThis.RefLinkLib = (() => {
         else { rids = nums.map(n => "ref" + n); note = "auto"; }
       } else {
         const parts = kind === "paren" ? key.split(/;\s*/).filter(Boolean) : [key];
+        const STOPW = new Set(["and","et","al","the"]);
         for(let part of parts){
-          const ym = part.match(/(\d{4})/); const year = ym ? +ym[1] : null;
+          /* take the LAST year (corporate authors like "GBD 2021 ..." contain years), plus optional a,b suffix */
+          const ym = part.match(/(\d{4})([a-z](?:\s*[,\u2013-]\s*[a-z])*)?\s*$/);
+          const year = ym ? +ym[1] : null;
+          const nWant = ym && ym[2] ? Math.max(1, (ym[2].match(/[a-z]/g) || []).length) : 1;
           const namePart = ym ? part.slice(0, ym.index).replace(/[\s,&;]+$/, "") : part;
-          const surnames = (namePart.match(/[A-Za-zÀ-ÿ'\-]+(?:\s+et\s+al\.?)?/gi) || [])
-            .map(s => s.replace(/et\s*al\.?$/i, "").trim()).filter(Boolean).map(normText);
-          let best = null, bestS = 0;
+          const surnames = (namePart.match(/[A-Za-zÀ-ÿ'\-]+/g) || [])
+            .map(normText).filter(w => w && !STOPW.has(w));
+          if(!surnames.length){ if(!note) note = "could not read author names in '" + part + "'"; continue; }
+          const s0 = surnames[0], s1 = surnames[1] || "";
+          const scored = [];
           for(const [rid, csl] of Object.entries(byRid)){
-            const fams = (csl.author || []).map(a => normText(a.family || a.literal || ""));
-            const entText = entries ? normText((entries.find(e => e.rid === rid) || {}).text || "") : "";
-            for(const s of surnames){
-              if(!s) continue;
-              for(const f of fams){
-                const sim = similarity(s, f);
-                if(sim > bestS){ bestS = sim; best = rid; }
-              }
-              if(entText && entText.includes(s) && bestS < 0.85){
-                bestS = 0.85; best = rid;
-              }
+            const ent = (entries || []).find(e => e.rid === rid);
+            const etext = ent ? ent.text : "";
+            const ymE = etext.match(/\((\d{4})[a-z]?\)/);
+            const authStr = normText(ymE ? etext.slice(0, ymE.index) : etext.slice(0, 120));
+            const toks = authStr.split(" ");
+            let base = 0;
+            if(toks[0] === s0) base = 1.0;
+            else if(toks.includes(s0)) base = 0.8;
+            else {
+              /* structured CSL authors (after Crossref/Zotero resolution) */
+              const fams = (csl.author || []).map(a => normText(a.family || a.literal || ""));
+              for(const f of fams){ const sim = similarity(s0, f); if(sim > base) base = Math.min(sim, 0.9); }
             }
+            if(base < 0.65) continue;
+            if(s1 && toks.includes(s1)) base += 0.05;
+            const ry = ymE ? +ymE[1] : (cslYear(csl) ? +cslYear(csl) : null);
+            let bonus = 0;
+            if(ry && year){ const d = Math.abs(ry - year); bonus = d === 0 ? 0.3 : (d === 1 ? 0.1 : 0); }
+            scored.push({ rid, score: base + bonus, ry, base });
           }
-          if(!best || bestS < 0.65){ if(!note) note = "no reference matched '" + namePart + "' — set manually"; continue; }
-          const ry = cslYear(byRid[best]); let dy = 99;
-          if(ry && year) dy = Math.abs(+ry - year);
-          if(dy > 1 && !note) note = "year mismatch (citation " + year + " vs found " + ry + ") — verify";
-          else if(dy <= 1 && !note) note = "auto";
-          if(!rids.includes(best)) rids.push(best);
+          scored.sort((x, y) => y.score - x.score);
+          if(!scored.length){ if(!note) note = "no reference matched '" + namePart + "' — set manually"; continue; }
+          const picks = scored.slice(0, nWant);
+          for(const pk of picks){
+            const dy = (pk.ry && year) ? Math.abs(pk.ry - year) : 99;
+            if(dy > 1){ if(!note) note = "year mismatch (citation " + year + " vs found " + pk.ry + ") — verify"; }
+            else if(!note) note = "auto";
+            if(!rids.includes(pk.rid)) rids.push(pk.rid);
+          }
         }
         if(!rids.length && !note) note = "no match";
         mode = kind === "narrative" ? "narrative" : "parenthetical";
@@ -1265,7 +1288,11 @@ globalThis.RefLinkLib = (() => {
             id: zt.id,
             uris: zt.uris,
             uri: zt.uris,
-            itemData: cslByRid[r] || {}
+            itemData: (function(){
+              const d = Object.assign({}, cslByRid[r] || {});
+              if(d.issued && d.issued.dateParts && !d.issued["date-parts"]) d.issued = { "date-parts": d.issued.dateParts };
+              return d;
+            })()
           };
           if(mode === "narrative") ci["suppress-author"] = true;
           return ci;
