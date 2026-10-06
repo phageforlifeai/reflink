@@ -1,6 +1,6 @@
 {
   "name": "reflink",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Re-link plain-text manuscript citations back to live, editable Zotero field codes in Microsoft Word.",
   "main": "index.html",
   "scripts": {
