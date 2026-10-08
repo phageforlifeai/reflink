@@ -1,0 +1,7 @@
+lifestyle,n_genomes,signature,percent
+temperate,77,AMR,6.5
+temperate,77,Toxin,92.2
+temperate,77,Stress,1.3
+virulent,75,AMR,97.3
+virulent,75,Toxin,2.7
+virulent,75,Stress,0.0

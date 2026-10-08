@@ -1,0 +1,4 @@
+source_classifier,source_lifestyle,target_classifier,target_lifestyle,n_genomes
+PhaTYP,temperate,PhaStyle,temperate,77
+PhaTYP,virulent,PhaStyle,virulent,72
+PhaTYP,virulent,PhaStyle,temperate,3
