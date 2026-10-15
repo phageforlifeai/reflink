@@ -22,9 +22,10 @@
   - Parenthetical citations: `(Vaswani et al., 2017)`
   - Grouped citations: `(Vaswani et al., 2017; He et al., 2016)`
   - Narrative citations: `Vaswani et al. (2017)`
-  - Numbered citations: `[1]`, `[1-3]`, `[1, 4]`
+  - Numbered citations: `[1]`, `[1–3, 5]`, `[1; 4]`, `(1, 3)` and superscripts (`¹,²` or superscript-formatted text in Word). Ranges are expanded and deduplicated in citation order.
 - **Native Word Field Generation:** Produces valid `ADDIN ZOTERO_ITEM CSL_CITATION` and `ADDIN ZOTERO_BIBL` Word fields with embedded CSL `itemData` that Microsoft Word and Zotero understand natively.
-- **Fallback Metadata Handling:** Unmatched or custom references receive structured fallback metadata so that 100% of your citations are preserved and editable.
+- **Number-aware reference parsing:** Typed bibliography labels such as `[12]`, `12.` or `12)` map by their printed number, even if the list is out of order. Word's automatic numbered lists (which have no printed number in `document.xml`) map by bibliography order. Missing, duplicate and malformed numbers are flagged for manual review rather than linked to the wrong reference.
+- **Fallback Metadata Handling:** Unmatched or custom references receive structured fallback metadata. Citations with no valid mapping remain unchanged for manual review instead of being linked to an incorrect item.
 
 ---
 
@@ -44,7 +45,7 @@
 3. Your references are now saved in your Zotero library!
 
 ### Step 4: Generate Linked Document
-1. In RefLink, review the auto-mapped citation table in **Step 4**. (You can adjust any citation mapping with the multi-select dropdowns).
+1. In RefLink, review the auto-mapped citation table in **Step 4**. Confirm numeric ranges and any citations marked **set manually**; use Ctrl-click (Cmd-click on Mac) in the multi-select dropdown to correct them. Bare, unformatted numbers are intentionally not treated as citations to avoid mistaking dates and measurements for references.
 2. Click **"Generate linked .docx"**.
 3. A new file named `[your-file]_zotero-linked.docx` will be downloaded.
 
@@ -77,6 +78,7 @@ You can host this utility on GitHub Pages so you and your colleagues can access 
 ```
 ├── index.html            # Main single-file web application (ready for GitHub Pages)
 ├── RefLink_utility.html  # Standalone copy for offline desktop use
+├── tests/                # Offline parser, mapping and .docx round-trip tests
 ├── README.md             # Documentation and usage guide
 ├── LICENSE               # MIT Open-Source License
 ├── package.json          # Optional Node.js scripts for local development
@@ -87,7 +89,7 @@ You can host this utility on GitHub Pages so you and your colleagues can access 
 
 ## 💻 Local Development / Testing
 
-Because RefLink is a self-contained single-page application with all dependencies (including JSZip) inlined, you can run it directly:
+Because RefLink is a self-contained single-page application with all dependencies (including JSZip) inlined, you can run it directly. To run the offline citation/parser and `.docx` round-trip tests, use `npm test` (Node.js 18+).
 
 - **Option 1 (Direct):** Double-click `index.html` to open it in any web browser.
 - **Option 2 (Local Server):**

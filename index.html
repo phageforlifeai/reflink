@@ -343,7 +343,15 @@ globalThis.RefLinkLib = (() => {
   }
 
   function escXml(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-  function decodeXml(s){ return String(s||"").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#39;/g,"'"); }
+  function decodeXml(s){
+    return String(s || "").replace(/&(amp|lt|gt|quot|apos|#(?:x[0-9a-f]+|\d+));/gi, (match, entity) => {
+      const named = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
+      if(named[entity.toLowerCase()]) return named[entity.toLowerCase()];
+      const code = entity[1].toLowerCase() === "x" ? parseInt(entity.slice(2), 16) : parseInt(entity.slice(1), 10);
+      return code > 0 && code <= 0x10ffff && !(code >= 0xd800 && code <= 0xdfff)
+        ? String.fromCodePoint(code) : match;
+    });
+  }
   function slug(s, maxLen){
     return (s||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0, maxLen||50);
   }
@@ -392,41 +400,66 @@ globalThis.RefLinkLib = (() => {
     "data availability", "supplementary", "figure legends", "table captions", "notes", "endnotes"];
   const DOI_RE = /10\.\d{4,9}\/[-._;()\/:A-Z0-9]+/i;
 
+  function undouble(t){
+    const s = (t||"").trim(), n = s.length;
+    if(n >= 4 && n % 2 === 0 && s.slice(0, n/2) === s.slice(n/2)) return s.slice(0, n/2);
+    return s;
+  }
   function isRefHead(t){
+    t = undouble(t);
     const k = t.trim().toLowerCase().replace(/[\s:.\-]+/g, " ").replace(/[0-9]+$/, "").trim();
     return REF_HEADS.has(k);
   }
   function isStopHead(t){
+    t = undouble(t);
     const k = t.trim().toLowerCase().replace(/[^a-z ]/g, "");
     return STOP_HEADS.some(s => k.startsWith(s));
   }
 
   function refYear(t){
-    const m = (t||"").match(/\b(19[5-9]\d|20[0-4]\d)\b/);
+    const m = (t||"").match(/\b(19[5-9]\d|20[0-4]\d)[a-z]?\b/);
     return m ? +m[1] : null;
   }
 
   const VENUE_MARKERS = [" in ", " journal ", " proceedings ", " ieee ", " acm ", " arxiv ", " nature ", " science ", " trans ", " conf "];
 
   function splitAuthorsTitle(text){
-    const clean = (text||"").replace(/^\s*(?:\[?\d{1,3}\]?[.)]?)\s+/, "").trim();
+    const clean = (text || "").replace(/^\s*(?:\[\s*\d{1,3}\s*\]|\d{1,3}[.)])\s*/, "").trim();
     const mYear = clean.match(/\b(19[5-9]\d|20[0-4]\d)[a-z]?\b/);
-    let authorChunk = "", titleChunk = "";
-    if(mYear && mYear.index < 70 && mYear.index > 2){
-      authorChunk = clean.slice(0, mYear.index).replace(/[\s,.(]+$/, "").trim();
-      titleChunk = clean.slice(mYear.index + mYear[0].length).replace(/^[\s,.)\-:]+/, "").trim();
-    } else {
-      const parts = clean.split(/\.\s+/);
-      if(parts.length >= 2){
-        authorChunk = parts[0];
-        titleChunk = parts.slice(1).join(". ");
-      } else {
-        authorChunk = "";
-        titleChunk = clean;
+    const inParens = clean.match(/\(\s*(?:19[5-9]\d|20[0-4]\d)[a-z]?\s*\)/);
+    let boundary = null, m;
+    const sentence = /\.\s+(?=\S)/g;
+    while((m = sentence.exec(clean))){
+      const before = clean.slice(0, m.index), after = clean.slice(sentence.lastIndex);
+      // Initials (J. K.) and a second Vancouver author (Smith J. Doe K.)
+      // are still part of the author list, not the start of a title.
+      if(/\b[A-Z]$/.test(before) &&
+         (/^[A-Z]\./.test(after) || /^[A-ZÀ-ÿ][A-Za-zÀ-ÿ'-]+\s+[A-Z]\./.test(after))) continue;
+      boundary = { start: m.index, end: sentence.lastIndex };
+      break;
+    }
+    let authorChunk = "", titleChunk = clean;
+    if(inParens && inParens.index < 120 && (!boundary || boundary.end >= inParens.index - 1)){
+      authorChunk = clean.slice(0, inParens.index);
+      titleChunk = clean.slice(inParens.index + inParens[0].length).replace(/^[\s.)\-:,]+/, "");
+    } else if(boundary){
+      authorChunk = clean.slice(0, boundary.start);
+      titleChunk = clean.slice(boundary.end).replace(/^(?:19[5-9]\d|20[0-4]\d)[a-z]?[.,\s:-]+/, "");
+    } else if(mYear && mYear.index < 70 && mYear.index > 2){
+      authorChunk = clean.slice(0, mYear.index);
+      titleChunk = clean.slice(mYear.index + mYear[0].length).replace(/^[\s,.)\-:]+/, "");
+    }
+    authorChunk = authorChunk.replace(/[\s,.(]+$/, "").trim();
+    const authors = [];
+    for(const group of authorChunk.split(/\s*(?:;|\band\b|&)\s*/i)){
+      const names = group.split(/\s*,\s*/).filter(Boolean);
+      for(let i=0; i<names.length; i++){
+        if(i + 1 < names.length && /^(?:[A-Z]\.?(?:\s*[A-Z]\.?)*)$/.test(names[i + 1]))
+          authors.push(names[i].trim() + " " + names[++i].trim());
+        else authors.push(names[i].trim());
       }
     }
-    const authors = authorChunk ? authorChunk.split(/(?:,|;|\band\b|&)+/i).map(s => s.trim()).filter(s => s.length >= 2) : [];
-    return [authors, titleChunk];
+    return [authors.filter(s => s.length >= 2 && !/^et al\.?$/i.test(s)), titleChunk.trim()];
   }
 
   function guessAuthors(text){ return splitAuthorsTitle(text)[0]; }
@@ -445,9 +478,34 @@ globalThis.RefLinkLib = (() => {
     return (t || text || "").slice(0, 200);
   }
 
+  // A typed label is different from a Word auto-numbered list: Word stores the
+  // latter in numbering.xml, not in the paragraph text. Unlabelled lists use
+  // bibliography order; explicitly labelled lists use the actual printed number.
+  function referenceLabel(t){
+    const m = t.match(/^\s*(?:\[\s*(\d{1,3})\s*\]|(\d{1,3})[.)]|(\d{1,3})(?=\s+[A-Za-zÀ-ÿ]))\s*/);
+    if(!m || !t.slice(m[0].length).trim()) return null;
+    return { number: +(m[1] || m[2] || m[3]), text: t.slice(m[0].length).trim() };
+  }
+
+  function parseReferenceEntries(lines){
+    const merged = [];
+    for(const line of lines){
+      const t = line.trim();
+      if(!t) continue;
+      const labelled = referenceLabel(t);
+      if(labelled) merged.push(labelled);
+      else if(merged.length && !/^[A-ZÀ-Þ0-9]/.test(t)) merged[merged.length - 1].text += " " + t;
+      else merged.push({ number: null, text: t });
+    }
+    return merged.map((e, n) => {
+      const dm = e.text.match(DOI_RE);
+      return { rid: "ref" + (n + 1), number: e.number, text: e.text,
+        doi: dm ? dm[0].replace(/[.,;)\]}]+$/, "") : null, fullText: e.text };
+    });
+  }
+
   function extractReferences(xml){
-    const scan = scanParagraphs(xml);
-    const body = scan.paras.filter(p => p.body);
+    const body = scanParagraphs(xml).paras.filter(p => p.body);
     let headingIdx = -1;
     for(let i=0; i<body.length; i++){
       if(isRefHead(body[i].text)){ headingIdx = i; break; }
@@ -461,53 +519,145 @@ globalThis.RefLinkLib = (() => {
         raw.push(t);
       }
     }
-    const merged = [];
-    for(const t of raw){
-      const starts = /^[A-ZÀ-Þ]|^\[?\d/.test(t);
-      if(merged.length && !starts) merged[merged.length - 1] += " " + t;
-      else merged.push(t);
+    const entries = parseReferenceEntries(raw);
+    const warnings = headingIdx < 0 ? ["No 'References' heading found — check the document or paste the list."] : [];
+    const labelled = entries.filter(e => e.number !== null);
+    const seen = new Set(), repeats = new Set();
+    for(const e of labelled){
+      if(seen.has(e.number)) repeats.add(e.number);
+      seen.add(e.number);
     }
-    const entries = [];
-    merged.forEach((t, n) => {
-      t = t.replace(/^\s*(?:\[?\d{1,3}\]?[.)]?)\s+/, "");
-      const dm = t.match(DOI_RE);
-      entries.push({ rid: "ref" + (n + 1), text: t, doi: dm ? dm[0].replace(/[.,;)\]}]+$/, "") : null, fullText: t });
-    });
-    return { headingIdx, entries, warnings: headingIdx < 0 ? ["No 'References' heading found — check the document or paste the list."] : [] };
+    if(repeats.size) warnings.push("Repeated reference numbers " + [...repeats].join(", ") + " need manual mapping.");
+    if(labelled.length && labelled.length !== entries.length)
+      warnings.push("Some references have typed numbers and others do not — check numbered citation mappings.");
+    return { headingIdx, entries, warnings };
   }
 
   /* ---------------- citation extraction ---------------- */
-  const NUM_RE = /\[(\d{1,3}(?:\s*[-,]\s*\d{1,3})*)\]/g;
-  const PAREN_RE = /\(([^()]{2,120}?)[\s,]+(\d{4})([a-z])?\)/g;
+  // Only delimited numbers or actual superscript text count as numeric citations:
+  // matching every bare digit would turn years, measurements and equations into fields.
+  const NUM_PART = "\\d{1,3}(?:\\s*[-‐‑‒–—―−]\\s*\\d{1,3})?";
+  const NUM_LIST = NUM_PART + "(?:\\s*[,;]\\s*" + NUM_PART + ")*";
+  const BRACKET_NUM_RE = new RegExp("\\[\\s*(" + NUM_LIST + ")\\s*\\]", "g");
+  const ROUND_NUM_RE = new RegExp("\\(\\s*(" + NUM_LIST + ")\\s*\\)", "g");
+  const SUP_NUM_RE = new RegExp(NUM_LIST, "g");
+  const SUP_DIGITS = { "⁰":"0", "¹":"1", "²":"2", "³":"3", "⁴":"4",
+    "⁵":"5", "⁶":"6", "⁷":"7", "⁸":"8", "⁹":"9" };
+  const PAREN_RE = /\(([^()]{2,160}?)[\s,]+(\d{4})([a-z](?:\s*[,\u2013-]\s*[a-z])*)?\)/g;
   const NARR_RE = /([A-ZÀ-Þ][A-Za-zÀ-ÿ'\-]*(?:\s*,\s*[A-ZÀ-Þ][A-Za-zÀ-ÿ'\-]*)*(?:\s*,\s*(?:and|&)\s+[A-ZÀ-Þ][A-Za-zÀ-ÿ'\-]*)?(?:\s+(?:and|&)\s+[A-ZÀ-Þ][A-Za-zÀ-ÿ'\-]*)?(?:\s+et\s+al\.?)?)\s+\((\d{4})([a-z])?\)/g;
 
+  function parseNumberList(raw){
+    const normalized = raw.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, c => SUP_DIGITS[c])
+      .replace(/[‐‑‒–—―−]/g, "-");
+    const nums = [], seen = new Set();
+    for(const part of normalized.split(/[,;]/)){
+      const m = part.trim().match(/^(\d{1,3})(?:\s*-\s*(\d{1,3}))?$/);
+      if(!m) return null;
+      const first = +m[1], last = m[2] === undefined ? first : +m[2];
+      if(last < first) return null; // do not silently reverse a mistyped range
+      for(let n = first; n <= last; n++){
+        if(!seen.has(n)){ seen.add(n); nums.push(n); }
+      }
+    }
+    return nums;
+  }
+
+  function knownReferenceNumbers(entries){
+    const explicit = entries.some(e => e.number !== null && e.number !== undefined);
+    return new Set(entries.map((e, i) => explicit ? e.number : i + 1).filter(n => n != null));
+  }
+
+  // The text offsets here must use the same decoded <w:t> text as scanParagraphs.
+  // w:vertAlign is the usual Word superscript; some manuscripts use Unicode ¹²³.
+  function superscriptMask(pXml, text){
+    const isSup = new Array(text.length).fill(false);
+    const re = /<w:r\b[^>]*>[\s\S]*?<\/w:r>/g;
+    let m, offset = 0;
+    while((m = re.exec(pXml))){
+      const runText = paraText(m[0]);
+      const pr = (m[0].match(/<w:rPr\b[^>]*>[\s\S]*?<\/w:rPr>/) || [""])[0];
+      if(/<w:vertAlign\b[^>]*\bw:val=(['"])superscript\1/i.test(pr) ||
+         /<w:rStyle\b[^>]*\bw:val=(['"])superscript\1/i.test(pr)){
+        for(let i = offset; i < offset + runText.length; i++) isSup[i] = true;
+      }
+      offset += runText.length;
+    }
+    let masked = "";
+    for(let i = 0; i < text.length; i++){
+      const ch = text[i];
+      masked += SUP_DIGITS[ch] || (/\d/.test(ch) && !(offset === text.length && isSup[i]) ? "_" : ch);
+    }
+    return masked;
+  }
+
+  function looksLikeNumberedLabel(before){
+    const clause = before.slice(Math.max(before.lastIndexOf("."), before.lastIndexOf(";"),
+      before.lastIndexOf("!"), before.lastIndexOf("?")) + 1);
+    return /[=<>]/.test(clause) ||
+      /\b(?:fig(?:ure)?|table|eq(?:uation)?|sec(?:tion)?|chapter|appendix)\.?\s*(?:\d+[a-z]?)?\s*$/i.test(before);
+  }
+
   function extractCitations(xml){
-    const scan = scanParagraphs(xml);
-    const body = scan.paras.filter(p => p.body);
+    const body = scanParagraphs(xml).paras.filter(p => p.body);
     const refsInfo = extractReferences(xml);
     const limit = refsInfo.headingIdx >= 0 ? refsInfo.headingIdx : body.length;
+    const known = knownReferenceNumbers(refsInfo.entries);
     const occs = [];
     body.forEach((p, pi) => {
-      if(pi >= limit) return;
+      if(pi >= limit || !p.text.trim()) return;
       const t = p.text;
-      if(!t.trim()) return;
       let m;
-      NUM_RE.lastIndex = 0;
-      while((m = NUM_RE.exec(t))) occs.push({ kind: "numbered", key: m[1], para: pi, start: m.index, end: m.index + m[0].length });
+      BRACKET_NUM_RE.lastIndex = 0;
+      while((m = BRACKET_NUM_RE.exec(t)))
+        occs.push({ kind: "numbered", style: "bracket", key: m[1], numbers: parseNumberList(m[1]),
+          text: m[0], para: pi, start: m.index, end: m.index + m[0].length });
+
+      ROUND_NUM_RE.lastIndex = 0;
+      while((m = ROUND_NUM_RE.exec(t))){
+        const nums = parseNumberList(m[1]), before = t.slice(0, m.index);
+        // Round numbers also label equations, sections and lists; be conservative.
+        if(!nums || !nums.some(n => known.has(n)) || !before.trim() || looksLikeNumberedLabel(before)) continue;
+        occs.push({ kind: "numbered", style: "round", key: m[1], numbers: nums,
+          text: m[0], para: pi, start: m.index, end: m.index + m[0].length });
+      }
+
+      if(known.size){
+        const masked = superscriptMask(p.xml, t);
+        SUP_NUM_RE.lastIndex = 0;
+        while((m = SUP_NUM_RE.exec(masked))){
+          const before = t.slice(0, m.index), nums = parseNumberList(m[0]);
+          if(!nums || !nums.some(n => known.has(n)) || !before.trim() || /\d\s*$/.test(before) ||
+             looksLikeNumberedLabel(before) || /\b[A-Za-zÀ-ÿ]{1,2}\s*$/.test(before)) continue;
+          occs.push({ kind: "numbered", style: "superscript", key: m[0], numbers: nums,
+            text: t.slice(m.index, m.index + m[0].length), para: pi, start: m.index, end: m.index + m[0].length });
+        }
+      }
+
       PAREN_RE.lastIndex = 0;
-      while((m = PAREN_RE.exec(t))) occs.push({ kind: "paren", key: m[1] + " " + m[2], para: pi, start: m.index, end: m.index + m[0].length });
+      while((m = PAREN_RE.exec(t))) occs.push({ kind: "paren", key: m[1] + " " + m[2] + (m[3] || ""),
+        text: m[0], para: pi, start: m.index, end: m.index + m[0].length });
       NARR_RE.lastIndex = 0;
-      while((m = NARR_RE.exec(t))) occs.push({ kind: "narrative", key: m[1] + " " + m[2], para: pi, start: m.index, end: m.index + m[0].length });
+      while((m = NARR_RE.exec(t))) occs.push({ kind: "narrative", key: m[1] + " " + m[2] + (m[3] || ""),
+        text: m[0], para: pi, start: m.index, end: m.index + m[0].length });
     });
 
-    /* drop narrative occurrences overlapping a paren occurrence in the SAME paragraph */
-    const parenSpans = occs.filter(o => o.kind === "paren").map(o => ({ para: o.para, start: o.start, end: o.end }));
-    const occs2 = occs.filter(o => o.kind !== "narrative" || !parenSpans.some(s => s.para === o.para && o.start < s.end && o.end > s.start));
+    // A superscript can occur inside [1] or (1), and a narrative citation may
+    // overlap a parenthetical one. Link each source-text span at most once.
+    const priority = o => o.kind === "numbered" ?
+      ({ bracket: 0, round: 3, superscript: 4 }[o.style]) : (o.kind === "paren" ? 1 : 2);
+    const chosen = [];
+    for(const o of occs.sort((a, b) => priority(a) - priority(b))){
+      if(!chosen.some(s => s.para === o.para && o.start < s.end && o.end > s.start)) chosen.push(o);
+    }
+    chosen.sort((a, b) => a.para - b.para || a.start - b.start);
     const groups = new Map();
-    for(const o of occs2){
-      const keyText = o.kind + ":" + o.key.replace(/\s+/g, " ").trim();
-      if(!groups.has(keyText)) groups.set(keyText, { cid: "cite" + keyText.replace(/\W+/g, "_"), kind: o.kind, keyText, occurrences: [] });
-      groups.get(keyText).occurrences.push({ para: o.para, start: o.start, end: o.end });
+    for(const o of chosen){
+      const keyText = o.kind === "numbered"
+        ? "numbered:" + o.style + ":" + (o.numbers ? o.numbers.join(",") : o.key)
+        : o.kind + ":" + o.key.replace(/\s+/g, " ").trim();
+      if(!groups.has(keyText)) groups.set(keyText, { cid: "cite" + (groups.size + 1), kind: o.kind,
+        keyText, display: o.text, numbers: o.numbers, occurrences: [] });
+      groups.get(keyText).occurrences.push({ para: o.para, start: o.start, end: o.end, text: o.text, style: o.style });
     }
     return { citations: [...groups.values()], bodyCount: body.length };
   }
@@ -603,7 +753,7 @@ globalThis.RefLinkLib = (() => {
       "container-title": (m["container-title"] && m["container-title"][0]) || ""
     };
     const y = yearOf(m);
-    if(y) csl.issued = { dateParts: [[y]] };
+    if(y) csl.issued = { "date-parts": [[y]] };
     if(m.DOI) csl.DOI = m.DOI;
     if(m.URL) csl.URL = m.URL;
     for(const [s, d] of [["container-title", "container-title"], ["volume", "volume"], ["issue", "issue"], ["page", "page"], ["publisher", "publisher"], ["edition", "edition"], ["ISBN", "ISBN"], ["ISSN", "ISSN"], ["language", "language"]])
@@ -643,7 +793,7 @@ globalThis.RefLinkLib = (() => {
       title: w.title || (w.display_name && w.display_name.replace(/^[0-9]+[.)]\s*/, "")) || "",
       author: peopleOf((w.authorships || []).map(a => a.author || {})),
       "container-title": (w.primary_location && w.primary_location.source && w.primary_location.source.display_name) || (w.host_venue && w.host_venue.display_name) || "",
-      issued: { dateParts: [[w.publication_year]] },
+      issued: { "date-parts": [[w.publication_year]] },
       DOI: w.doi ? w.doi.replace(/^https?:\/\/doi\.org\//i, "") : undefined
     };
     if(w.biblio){
@@ -684,7 +834,7 @@ globalThis.RefLinkLib = (() => {
       title: p.title || "",
       author: peopleOf(p.authors || []),
       "container-title": (p.venue && (typeof p.venue === "string" ? p.venue : p.venue.name)) || (p.journal && p.journal.name) || "",
-      issued: { dateParts: [[p.year]] },
+      issued: { "date-parts": [[p.year]] },
       DOI: (p.externalIds && p.externalIds.DOI) || undefined
     };
     if(p.journal && p.journal.volume) csl.volume = String(p.journal.volume);
@@ -717,7 +867,7 @@ globalThis.RefLinkLib = (() => {
         title: (a.titles && a.titles[0] && a.titles[0].title) || "",
         author: peopleOf((a.creators || []).map(c => ({ family: c.familyName || c.name, given: c.givenName, literal: c.name }))),
         "container-title": a.container && a.container.title ? a.container.title : a.publisher || "",
-        issued: { dateParts: [[a.publicationYear]] },
+        issued: { "date-parts": [[a.publicationYear]] },
         DOI: a.doi
       };
       return { source: "datacite-doi", csl, title: csl.title, doi: a.doi, year: a.publicationYear };
@@ -772,7 +922,9 @@ globalThis.RefLinkLib = (() => {
     const rawAuthors = guessAuthors(text) || [];
     const yr = refYear(text);
     const title = guessTitle(text);
-    const authors = rawAuthors.map(name => {
+    const authors = rawAuthors.filter(n => !/^\s*et al\.?\s*$/i.test(n)).map(name => {
+      const mi = name.trim().match(/^(.+?)\s+((?:[A-Z]\.?\s?){1,5})$/);   /* "Surname I. J." */
+      if(mi) return { family: mi[1].trim(), given: mi[2].trim(), literal: name };
       const parts = name.trim().split(/\s+/);
       const fam = parts[parts.length - 1] || name;
       const giv = parts.slice(0, -1).join(" ");
@@ -908,43 +1060,72 @@ globalThis.RefLinkLib = (() => {
     });
 
     const map = {};
-    const nRefs = (entries || []).length;
+    const refs = entries || [];
+    const explicitlyNumbered = refs.some(e => e.number !== null && e.number !== undefined);
+    const byNumber = new Map();
+    refs.forEach((e, i) => {
+      const number = explicitlyNumbered ? e.number : i + 1;
+      if(number !== null && number !== undefined)
+        byNumber.set(number, byNumber.has(number) ? null : e.rid); // duplicated labels are ambiguous
+    });
     for(const c of (citations || [])){
       const kind = c.kind, key = c.keyText.split(":")[1] || "";
       let note = "", mode = "parenthetical", rids = [];
       if(kind === "numbered"){
-        const nums = (key.match(/\d+/g) || []).map(Number);
-        const bad = nums.filter(n => n < 1 || n > nRefs);
-        if(bad.length) note = "number " + bad.join(",") + " out of range (bibliography has " + nRefs + " entries)";
-        else { rids = nums.map(n => "ref" + n); note = "auto"; }
+        mode = "numbered";
+        const nums = c.numbers || parseNumberList(c.keyText.split(":").pop());
+        if(!nums || !nums.length) note = "invalid numbered citation / range — set manually";
+        else {
+          const missing = nums.filter(n => n < 1 || !byNumber.has(n));
+          const repeated = nums.filter(n => byNumber.has(n) && !byNumber.get(n));
+          if(missing.length) note = "number " + missing.join(", ") + " not in bibliography (" + refs.length + " references) — set manually";
+          else if(repeated.length) note = "number " + repeated.join(", ") + " is repeated in bibliography — set manually";
+          else { rids = nums.map(n => byNumber.get(n)); note = "auto"; }
+        }
       } else {
         const parts = kind === "paren" ? key.split(/;\s*/).filter(Boolean) : [key];
+        const STOPW = new Set(["and","et","al","the"]);
         for(let part of parts){
-          const ym = part.match(/(\d{4})/); const year = ym ? +ym[1] : null;
+          /* take the LAST year (corporate authors like "GBD 2021 ..." contain years), plus optional a,b suffix */
+          const ym = part.match(/(\d{4})([a-z](?:\s*[,\u2013-]\s*[a-z])*)?\s*$/);
+          const year = ym ? +ym[1] : null;
+          const nWant = ym && ym[2] ? Math.max(1, (ym[2].match(/[a-z]/g) || []).length) : 1;
           const namePart = ym ? part.slice(0, ym.index).replace(/[\s,&;]+$/, "") : part;
-          const surnames = (namePart.match(/[A-Za-zÀ-ÿ'\-]+(?:\s+et\s+al\.?)?/gi) || [])
-            .map(s => s.replace(/et\s*al\.?$/i, "").trim()).filter(Boolean).map(normText);
-          let best = null, bestS = 0;
+          const surnames = (namePart.match(/[A-Za-zÀ-ÿ'\-]+/g) || [])
+            .map(normText).filter(w => w && !STOPW.has(w));
+          if(!surnames.length){ if(!note) note = "could not read author names in '" + part + "'"; continue; }
+          const s0 = surnames[0], s1 = surnames[1] || "";
+          const scored = [];
           for(const [rid, csl] of Object.entries(byRid)){
-            const fams = (csl.author || []).map(a => normText(a.family || a.literal || ""));
-            const entText = entries ? normText((entries.find(e => e.rid === rid) || {}).text || "") : "";
-            for(const s of surnames){
-              if(!s) continue;
-              for(const f of fams){
-                const sim = similarity(s, f);
-                if(sim > bestS){ bestS = sim; best = rid; }
-              }
-              if(entText && entText.includes(s) && bestS < 0.85){
-                bestS = 0.85; best = rid;
-              }
+            const ent = (entries || []).find(e => e.rid === rid);
+            const etext = ent ? ent.text : "";
+            const ymE = etext.match(/\((\d{4})[a-z]?\)/);
+            const authStr = normText(ymE ? etext.slice(0, ymE.index) : etext.slice(0, 120));
+            const toks = authStr.split(" ");
+            let base = 0;
+            if(toks[0] === s0) base = 1.0;
+            else if(toks.includes(s0)) base = 0.8;
+            else {
+              /* structured CSL authors (after Crossref/Zotero resolution) */
+              const fams = (csl.author || []).map(a => normText(a.family || a.literal || ""));
+              for(const f of fams){ const sim = similarity(s0, f); if(sim > base) base = Math.min(sim, 0.9); }
             }
+            if(base < 0.65) continue;
+            if(s1 && toks.includes(s1)) base += 0.05;
+            const ry = ymE ? +ymE[1] : (cslYear(csl) ? +cslYear(csl) : null);
+            let bonus = 0;
+            if(ry && year){ const d = Math.abs(ry - year); bonus = d === 0 ? 0.3 : (d === 1 ? 0.1 : 0); }
+            scored.push({ rid, score: base + bonus, ry, base });
           }
-          if(!best || bestS < 0.65){ if(!note) note = "no reference matched '" + namePart + "' — set manually"; continue; }
-          const ry = cslYear(byRid[best]); let dy = 99;
-          if(ry && year) dy = Math.abs(+ry - year);
-          if(dy > 1 && !note) note = "year mismatch (citation " + year + " vs found " + ry + ") — verify";
-          else if(dy <= 1 && !note) note = "auto";
-          if(!rids.includes(best)) rids.push(best);
+          scored.sort((x, y) => y.score - x.score);
+          if(!scored.length){ if(!note) note = "no reference matched '" + namePart + "' — set manually"; continue; }
+          const picks = scored.slice(0, nWant);
+          for(const pk of picks){
+            const dy = (pk.ry && year) ? Math.abs(pk.ry - year) : 99;
+            if(dy > 1){ if(!note) note = "year mismatch (citation " + year + " vs found " + pk.ry + ") — verify"; }
+            else if(!note) note = "auto";
+            if(!rids.includes(pk.rid)) rids.push(pk.rid);
+          }
         }
         if(!rids.length && !note) note = "no match";
         mode = kind === "narrative" ? "narrative" : "parenthetical";
@@ -1190,18 +1371,91 @@ globalThis.RefLinkLib = (() => {
   }
 
   /* ---------------- Word field & document linking ---------------- */
-  function fieldXml(prefix, payload, rendered){
+  function fieldXml(prefix, payload, rendered, resultProperties){
     const instr = payload ? " " + prefix + " " + JSON.stringify(payload) + " " : " " + prefix + " ";
     return '<w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r>' +
       '<w:r><w:instrText xml:space="preserve">' + escXml(instr) + '</w:instrText></w:r>' +
       '<w:r><w:fldChar w:fldCharType="separate"/></w:r>' +
-      '<w:r><w:t xml:space="preserve">' + escXml(rendered || "") + '</w:t></w:r>' +
+      '<w:r>' + (resultProperties || "") + '<w:t xml:space="preserve">' + escXml(rendered || "") + '</w:t></w:r>' +
       '<w:r><w:fldChar w:fldCharType="end"/></w:r>';
   }
 
   function textRunsXml(text){
     if(!text) return "";
     return '<w:r><w:t xml:space="preserve">' + escXml(text) + '</w:t></w:r>';
+  }
+
+  function simpleTextRun(run){
+    const inner = run.slice(openTag(run).length, -6);
+    return !inner.replace(/<w:rPr\b[^>]*>[\s\S]*?<\/w:rPr>|<w:rPr\b[^>]*\/>|<w:t\b[^>]*>[\s\S]*?<\/w:t>/g, "").trim();
+  }
+
+  function sliceTextRun(run, from, to){
+    if(from >= to) return "";
+    const pr = (run.match(/<w:rPr\b[^>]*>[\s\S]*?<\/w:rPr>|<w:rPr\b[^>]*\/>/) || [""])[0];
+    const chunks = [];
+    const re = /<w:t\b[^>]*>([\s\S]*?)<\/w:t>/g;
+    let m, offset = 0;
+    while((m = re.exec(run))){
+      const t = decodeXml(m[1]);
+      const part = t.slice(Math.max(0, from - offset), Math.min(t.length, to - offset));
+      if(part) chunks.push('<w:t xml:space="preserve">' + escXml(part) + '</w:t>');
+      offset += t.length;
+    }
+    return chunks.length ? openTag(run) + pr + chunks.join("") + "</w:r>" : "";
+  }
+
+  function insideWordContainer(xml, at){
+    // Fields inserted inside tracked changes or hyperlinks may not be editable.
+    const re = /<\/?w:(?:hyperlink|ins|del|fldSimple|sdt|smartTag)\b[^>]*>/g;
+    let m, depth = 0;
+    while((m = re.exec(xml)) && m.index < at){
+      if(m[0].startsWith("</")) depth--;
+      else if(!m[0].endsWith("/>")) depth++;
+    }
+    return depth > 0;
+  }
+
+  function replaceCitationsInParagraph(p, edits){
+    const runs = [], re = /<w:r\b[^>]*>[\s\S]*?<\/w:r>/g;
+    let m, offset = 0;
+    while((m = re.exec(p.xml))){
+      const length = paraText(m[0]).length;
+      runs.push({ xml: m[0], start: m.index, end: m.index + m[0].length,
+        textStart: offset, textEnd: offset + length });
+      offset += length;
+    }
+    if(offset !== p.text.length) return { xml: p.xml, count: 0, skipped: edits.length };
+
+    const accepted = [];
+    let lastEnd = 0;
+    for(const e of edits.slice().sort((a, b) => a.start - b.start)){
+      const touched = runs.filter(r => r.textStart < e.end && r.textEnd > e.start);
+      if(e.start < lastEnd || e.start < 0 || e.end > offset || e.start >= e.end ||
+         !touched.length || touched.some(r => !simpleTextRun(r.xml) || insideWordContainer(p.xml, r.start)))
+        continue;
+      accepted.push(e);
+      lastEnd = e.end;
+    }
+    if(!accepted.length) return { xml: p.xml, count: 0, skipped: edits.length };
+
+    let out = "", xmlPos = 0;
+    for(const r of runs){
+      out += p.xml.slice(xmlPos, r.start);
+      const overlapping = accepted.filter(e => e.start < r.textEnd && e.end > r.textStart);
+      if(!overlapping.length) out += r.xml;
+      else {
+        let left = r.textStart;
+        for(const e of overlapping){
+          if(e.start > left) out += sliceTextRun(r.xml, left - r.textStart, Math.min(e.start, r.textEnd) - r.textStart);
+          if(e.start >= r.textStart && e.start < r.textEnd) out += e.xml;
+          left = Math.max(left, Math.min(e.end, r.textEnd));
+        }
+        if(left < r.textEnd) out += sliceTextRun(r.xml, left - r.textStart, r.textEnd - r.textStart);
+      }
+      xmlPos = r.end;
+    }
+    return { xml: out + p.xml.slice(xmlPos), count: accepted.length, skipped: edits.length - accepted.length };
   }
 
   function linkXml(xml, results, keysMap, cites, citationMap){
@@ -1228,12 +1482,13 @@ globalThis.RefLinkLib = (() => {
         const uri = v.uri || ("http://zotero.org/users/" + lib + "/items/" + key);
         return { id: key, uri: uri, uris: [uri] };
       }
-      // Offline / .bib mode fallback: clean consistent uppercase key & URI
+      // Offline / .bib fallback IDs must remain distinct even when several
+      // references share the same first author and year (8-character key).
       const csl = cslByRid[rid] || {};
       const fam = (csl.author && csl.author[0] && (csl.author[0].family || csl.author[0].literal)) || "REF";
-      const yr = cslYear(csl) || "";
-      const baseKey = (fam.slice(0, 4) + yr + rid.replace(/\D/g, "")).toUpperCase().replace(/[^A-Z0-9]/g, "");
-      const key = (baseKey + "ABCD1234").slice(0, 8);
+      const yr = cslYear(csl) || "00";
+      const stem = fam.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 3).padEnd(3, "X");
+      const key = stem + yr.slice(-2).padStart(2, "0") + rid.replace(/\D/g, "").padStart(3, "0").slice(-3);
       const uri = "http://zotero.org/users/local/items/" + key;
       return { id: key, uri: uri, uris: [uri] };
     }
@@ -1248,11 +1503,12 @@ globalThis.RefLinkLib = (() => {
       if(!cm || !cm.refs || !cm.refs.length) continue;
 
       for(const occ of c.occurrences){
-        const mode = cm.mode || "parenthetical";
+        const mode = cm.mode || (c.kind === "numbered" ? "numbered" : "parenthetical");
         let rendered = "";
         if(mode === "numbered"){
-          const fams = cm.refs.map(r => { const cs = cslByRid[r] || {}; return renderShortAuthors(cs) + (cslYear(cs) ? ", " + cslYear(cs) : ""); });
-          rendered = "[" + fams.join("; ") + "]";
+          // Keep the manuscript's original marker until Zotero refreshes it in
+          // the chosen numeric style. Do not show author/year in place of [1].
+          rendered = occ.text || c.display || "[" + (c.numbers || []).join(", ") + "]";
         } else if(cm.refs.length > 1){
           rendered = "(" + cm.refs.map(r => renderedCitation(cslByRid[r] || {}, "paren").replace(/^\(|\)$/g, "")).join("; ") + ")";
         } else {
@@ -1264,8 +1520,12 @@ globalThis.RefLinkLib = (() => {
           const ci = {
             id: zt.id,
             uris: zt.uris,
-            uri: zt.uris,
-            itemData: cslByRid[r] || {}
+            uri: zt.uri,
+            itemData: (function(){
+              const d = Object.assign({}, cslByRid[r] || {});
+              if(d.issued && d.issued.dateParts && !d.issued["date-parts"]) d.issued = { "date-parts": d.issued.dateParts };
+              return d;
+            })()
           };
           if(mode === "narrative") ci["suppress-author"] = true;
           return ci;
@@ -1285,33 +1545,24 @@ globalThis.RefLinkLib = (() => {
         (editsByPara[occ.para] = editsByPara[occ.para] || []).push({
           start: occ.start,
           end: occ.end,
-          xml: fieldXml("ADDIN ZOTERO_ITEM CSL_CITATION", payload, rendered)
+          xml: fieldXml("ADDIN ZOTERO_ITEM CSL_CITATION", payload, rendered,
+            mode === "numbered" && occ.style === "superscript" && /[0-9]/.test(occ.text || "")
+              ? '<w:rPr><w:vertAlign w:val="superscript"/></w:rPr>' : "")
         });
-        linkedCitationsCount++;
       }
     }
 
-    /* ------- rebuild paragraph XML ------- */
-    const newParas = [];
-    const edited = new Set(Object.keys(editsByPara).map(Number));
-    let pi = 0;
-    for(const p of body){
-      const idx = pi++;
-      if(!edited.has(idx)){ newParas.push(p.xml); continue; }
-      const edits = (editsByPara[idx] || []).slice().sort((a, b) => b.start - a.start);
-      const text = p.text;
-      let parts = [], cur = text.length;
-      for(const e of edits){
-        if(e.end > cur) continue;
-        if(e.end < cur) parts.push({ t: text.slice(e.end, cur) });
-        parts.push({ f: e.xml });
-        cur = e.start;
-      }
-      if(cur > 0) parts.push({ t: text.slice(0, cur) });
-      parts.reverse();
-      const inner = parts.map(x => x.f ? x.f : textRunsXml(x.t)).join("");
-      newParas.push(openTag(p.xml) + paraProps(p.xml) + inner + "</w:p>");
-    }
+    /* ------- replace only cited text, preserving all other Word runs ------- */
+    const newParas = [], edited = new Set();
+    body.forEach((p, idx) => {
+      const edits = editsByPara[idx] || [];
+      const change = edits.length ? replaceCitationsInParagraph(p, edits) : { xml: p.xml, count: 0, skipped: 0 };
+      newParas.push(change.xml);
+      if(change.count) edited.add(idx);
+      linkedCitationsCount += change.count;
+      if(change.skipped) warnings.push("Skipped " + change.skipped + " citation(s) in paragraph " + (idx + 1) +
+        " with complex Word markup; review these manually.");
+    });
 
     /* ------- bibliography field ------- */
     let biblXml = "";
@@ -1349,16 +1600,17 @@ globalThis.RefLinkLib = (() => {
 
     /* ------- _GoBack bookmark in first paragraph ------- */
     if(!out2.includes("_GoBack") && body.length){
+      // Offsets from the original document are invalid after a field is inserted
+      // in the first paragraph; locate it again in the finished XML.
+      const first = scanParagraphs(out2).paras.find(p => p.body);
       const id = Math.floor(Math.random() * 10000) + 10;
       const bs = '<w:bookmarkStart w:id="' + id + '" w:name="_GoBack"/><w:bookmarkEnd w:id="' + id + '"/>';
-      const first = body[0];
       const open = openTag(first.xml);
       const inner = first.xml.slice(open.length, -6);
       const ppr = paraProps(first.xml);
-      const newFirst2 = ppr ? open + ppr + bs + inner.replace(ppr, "") + "</w:p>"
+      const newFirst = ppr ? open + ppr + bs + inner.replace(ppr, "") + "</w:p>"
         : open + bs + inner + "</w:p>";
-      const s = first.start, e = first.end;
-      out2 = out2.slice(0, s) + newFirst2 + out2.slice(e);
+      out2 = out2.slice(0, first.start) + newFirst + out2.slice(first.end);
     }
     return { xml: out2, warnings, linkedCount: linkedCitationsCount, biblCount };
   }
@@ -1514,8 +1766,8 @@ globalThis.RefLinkLib = (() => {
   }
 
   return {
-    API, normText, similarity, escXml, decodeXml, scanParagraphs, extractReferences,
-    extractCitations, resolveOne, resolveAll, autoMap, cslToZotero, cslFromCrossref,
+    API, normText, similarity, escXml, decodeXml, scanParagraphs, extractReferences, parseReferenceEntries,
+    extractCitations, parseNumberList, resolveOne, resolveAll, autoMap, cslToZotero, cslFromCrossref,
     crossrefByDoi, crossrefSearch, crossrefTitleSearch, openalexSearch, openalexFiltered,
     s2Search, s2ByDoi, dataciteByDoi, zoteroMe, zoteroCollections, zoteroFindByDoi, zoteroFindByTitle,
     zoteroCreateItems, renderShortAuthors, cslYear, renderedCitation, renderedBibliography,
@@ -1712,12 +1964,17 @@ $("demoBtn").addEventListener("click", async () => {
 $("pasteBtn").addEventListener("click", () => {
   const txt = $("paste").value.trim(); if(!txt){ log("Paste something first."); return; }
   state.fileName = "pasted-list.docx";
-  const blocks = txt.split(/\n\s*\n/).map(b => b.replace(/\s+/g, " ").trim()).filter(Boolean);
-  const entries = [];
-  blocks.forEach((t, n) => {
-    const dm = t.match(/10\.\d{4,9}\/[-._;()\/:A-Z0-9]+/i);
-    entries.push({ rid: "ref" + (n + 1), text: t, doi: dm ? dm[0].replace(/[.,;)\]}]+$/, "") : null, fullText: t });
-  });
+  const blocks = txt.replace(/\r\n?/g, "\n").split(/\n\s*\n/).filter(b => b.trim());
+  const lines = [];
+  for(const block of blocks){
+    const parts = block.split("\n").map(s => s.trim()).filter(Boolean);
+    // Blank lines can delimit multi-line unnumbered references. Without
+    // blank lines, or with numbered entries, each new line can start a ref.
+    if(blocks.length > 1 && !parts.slice(1).some(s => /^\s*(?:\[\d{1,3}\]|\d{1,3}[.)])/.test(s)))
+      lines.push(parts.join(" "));
+    else lines.push(...parts);
+  }
+  const entries = Lib.parseReferenceEntries(lines);
   state.refs = { headingIdx: -1, entries, warnings: [] };
   state.cites = { citations: [] };
   state.bytes = demoDocxBytes(); // Use demo template so docx can be built
@@ -1746,7 +2003,7 @@ function afterParse(fromPaste){
       (state.refs.warnings && state.refs.warnings.length ? '<br><span style="color:#a16207">⚠ ' + state.refs.warnings.join(" ") + '</span>' : "") + '</div>';
 
     $("refList").innerHTML = state.refs.entries.map(e =>
-      '<div><span class="mono muted">' + e.rid + '</span>  ' + escHtml(e.text) +
+      '<div><span class="mono muted">' + (e.number == null ? e.rid : '[' + e.number + ']') + '</span>  ' + escHtml(e.text) +
       (e.doi ? ' <span class="badge b-none mono">DOI ' + escHtml(e.doi) + '</span>' : "") + '</div>').join("");
 
     chip("chip1", "parsed ✓", true);
@@ -2048,14 +2305,15 @@ function renderMap(){
   const entries = state.refs ? state.refs.entries : [];
   const rows = citations.map(c => {
     const m = state.citationMap[c.cid] || { refs: [], note: "unmapped" };
-    const sel = entries.map(e => '<option value="' + e.rid + '"' + (m.refs.includes(e.rid) ? " selected" : "") + '>' + e.rid + ' (' + escHtml(e.text.slice(0, 45)) + '…)</option>').join("");
-    return '<tr class="cite-row"><td style="max-width:260px"><b>' + escHtml(c.keyText) + '</b></td>' +
+    const sel = entries.map(e => '<option value="' + e.rid + '"' + (m.refs.includes(e.rid) ? " selected" : "") + '>' +
+      (e.number == null ? e.rid : '[' + e.number + ']') + ' (' + escHtml(e.text.slice(0, 45)) + '…)</option>').join("");
+    return '<tr class="cite-row"><td style="max-width:260px"><b>' + escHtml(c.display || c.keyText) + '</b></td>' +
       '<td><select multiple size="3" id="cm-' + c.cid + '" style="width:100%;height:auto;font-size:12px">' + sel + '</select></td>' +
       '<td class="small muted">' + c.occurrences.length + '×</td>' +
-      '<td class="small" style="' + (m.note === "auto" ? "color:var(--green);font-weight:600" : "color:#a16207;font-weight:600") + '">' + escHtml(m.note || "") + '</td></tr>';
+      '<td class="small map-note" style="' + (m.note === "auto" ? "color:var(--green);font-weight:600" : "color:#a16207;font-weight:600") + '">' + escHtml(m.note || "") + '</td></tr>';
   }).join("");
 
-  $("citeMapWrap").innerHTML = '<div class="small muted" style="margin:6px 0">Each in-text citation is mapped to the corresponding reference below (Ctrl-click to select multiple for combined citations like “Doe 2019; Smith 2020”).</div>' +
+  $("citeMapWrap").innerHTML = '<div class="small muted" style="margin:6px 0">Review the detected markers and their reference numbers. For ranges and grouped citations, Ctrl-click (Cmd-click on Mac) to adjust multiple references.</div>' +
     '<table><thead><tr><th>In-text citation</th><th>→ Mapped Reference(s)</th><th>Count</th><th>Status</th></tr></thead><tbody>' + rows + '</tbody></table>';
 
   // Listen to select changes to keep state updated
@@ -2064,9 +2322,16 @@ function renderMap(){
     if(el){
       el.addEventListener("change", () => {
         const selected = [...el.selectedOptions].map(o => o.value);
-        if(!state.citationMap[c.cid]) state.citationMap[c.cid] = { mode: c.kind === "narrative" ? "narrative" : "parenthetical" };
+        if(!state.citationMap[c.cid]) state.citationMap[c.cid] = {
+          mode: c.kind === "numbered" ? "numbered" : (c.kind === "narrative" ? "narrative" : "parenthetical")
+        };
         state.citationMap[c.cid].refs = selected;
         state.citationMap[c.cid].note = selected.length ? "manual" : "unmapped";
+        const noteCell = el.closest("tr").querySelector(".map-note");
+        noteCell.textContent = state.citationMap[c.cid].note;
+        noteCell.style.color = selected.length ? "var(--green)" : "#a16207";
+        const bad = Object.values(state.citationMap).filter(m => m.note !== "auto" && m.note !== "manual").length;
+        $("mapStatus").textContent = bad ? bad + " citation(s) need manual check" : "all " + citations.length + " citations mapped ✓";
       });
     }
   });
