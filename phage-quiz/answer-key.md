@@ -18,7 +18,8 @@
 - ☕ **Break** — 5 min
 - **Round 11 — RAPID FIRE**: 32 questions, +5 / 0, 60 s
 - **Round 12 — TIE-BREAKER ROUND**: 8 questions, +20 / -10, 60 s, passed +5
-- **Round 13 — LYTIC LAUGHS**: 8 questions, +10 / 0, 30 s
+- **Round 13 — EMOJI REBUS & PHAGE PERSONALS**: 10 questions, +10 / 0, 30 s  🆕 *FUN ROUND*
+- **Round 14 — LYTIC LAUGHS**: 8 questions, +10 / 0, 30 s
 
 Teams: **Lytic Legends** (Dr. Ruma, Ms. Priya, Mr. Karan) · **Biofilm Breakers** (Dr. Rupali, Dr. Prachi, Mr. Prajasattak) · **Phage Pharmers** (Team member 1, Team member 2, Team member 3) · **Virion Architects** (Team member 1, Team member 2, Team member 3)
 
@@ -27,68 +28,68 @@ Teams: **Lytic Legends** (Dr. Ruma, Ms. Priya, Mr. Karan) · **Biofilm Breakers*
 ## Round 1 — GENERAL QUESTIONS
 *+10 correct / 0 wrong · 30 s*
 
-**1.** Bacteriophages are best described as
+**1.** Phage genomes are unusually compact, with overlapping genes and non-canonical start codons. The best explanation is
 
-    - A. Viruses that specifically infect and replicate within bacteria ✅
-    - B. Toxic proteins secreted by bacteria
-    - C. Bacteria that prey on other bacteria
-    - D. Viruses that infect human cells
+    - A. Selection for genome compaction under capsid packaging constraints ✅
+    - B. A high mutation rate that erases intergenic regions
+    - C. Limitation of host ribosomes during infection
+    - D. An artifact of automated annotation pipelines
 
-**2.** The estimated number of phage particles on Earth is approximately
+**2.** The ~50–60 atm internal pressure that drives genome ejection from tailed phage capsids is generated mainly by
 
-    - A. 10^15 (a quadrillion)
-    - B. 10^21 (a sextillion)
-    - C. 10^31 (ten nonillion) ✅
-    - D. 10^45
+    - A. The host proton-motive force pulling DNA inward
+    - B. Dense inverse-spool DNA packing with electrostatic self-repulsion ✅
+    - C. ATP hydrolysis by the portal motor during ejection
+    - D. Osmotic water influx upon receptor binding
 
-**3.** Which structure is NOT part of a typical tailed phage virion?
+**3.** At an MOI of exactly 1, the fraction of host cells receiving at least one phage (Poisson distribution) is approximately
 
-    - A. Tail fibers
-    - B. Baseplate
-    - C. Ribosomes ✅
-    - D. Icosahedral capsid
+    - A. 37%
+    - B. 50%
+    - C. 63% ✅
+    - D. 90%
 
-**4.** The phage component that primarily determines host specificity is the
+**4.** In the lambda lysis cassette (S, R, Rz, Rz1), the spanins Rz/Rz1 act by
 
-    - A. Genome terminus
-    - B. Portal vertex
-    - C. Capsid interior
-    - D. Receptor-binding protein / tail fiber ✅
+    - A. Degrading peptidoglycan from the periplasm
+    - B. Timing holin insertion into the inner membrane
+    - C. Recycling murein for the next infection cycle
+    - D. Fusing inner and outer membranes after endolysin action ✅
 
-**5.** A phage that can ONLY replicate through the lytic cycle is termed
+**5.** Optimality models of lysis timing predict that the evolutionarily stable latent period balances
 
-    - A. Virulent ✅
-    - B. Temperate
-    - C. Defective
-    - D. Filamentous
+    - A. Burst size against the number of lysis cycles completed per unit time ✅
+    - B. Adsorption rate against the eclipse period
+    - C. Genome size against capsid interior volume
+    - D. Latent period against the multiplicity of infection
 
-**6.** A clear zone formed on a confluent bacterial lawn is called a
+**6.** Botstein's “modular theory” of phage evolution proposes that
 
-    - A. Plaque ✅
-    - B. Biofilm patch
-    - C. Colony
-    - D. Halo
+    - A. Phage genes evolve strictly vertically with their hosts
+    - B. Functional modules (head, tail, lysis, lysogeny) recombine across phage lineages ✅
+    - C. All tailed phages preserve a single ancestral gene order
+    - D. Phage genomes change only by point mutation
 
-**7.** The typical diameter of a tailed phage capsid falls in the range
+**7.** Jumbo phages such as ΦKZ protect their replicating DNA inside a compartment whose shell is built from
 
-    - A. 500–900 nm
-    - B. 1–5 µm
-    - C. 5–10 µm
-    - D. 20–200 nm (up to ~300 nm for jumbos) ✅
+    - A. Host-derived lipid bilayer
+    - B. Condensed RNA and polyamines
+    - C. The protein chimallin (a proteinaceous phage nucleus) ✅
+    - D. Crystallized terminase
 
-**8.** Which statement about phages is TRUE?
+**8.** The kinetics of phage adsorption to susceptible hosts are best described as
 
-    - A. They can grow on cell-free agar
-    - B. They are obligate intracellular parasites of bacteria ✅
-    - C. They always kill their host
-    - D. They carry their own ribosomes for translation
+    - A. Zero-order until receptors saturate
+    - B. First-order in phage only, independent of host density
+    - C. Logistic, limited by burst size
+    - D. Second-order overall: first-order in both phage and host concentration ✅
 
 **9.** Which is generally SMALLER? *(AUDIENCE)*
 
-    - A. A red blood cell
-    - B. A bacteriophage ✅
+    - A. A bacteriophage ✅
+    - B. A bacterium
     - C. A yeast cell
-    - D. A bacterium
+    - D. A red blood cell
 
 **10.** Phage contamination of starter cultures is a classic industrial problem in which fermentation? *(AUDIENCE)*
 
@@ -102,68 +103,68 @@ Teams: **Lytic Legends** (Dr. Ruma, Ms. Priya, Mr. Karan) · **Biofilm Breakers*
 ## Round 2 — HISTORY OF BACTERIOPHAGES
 *+10 correct / 0 wrong · 30 s*
 
-**1.** In which year did Félix d'Hérelle coin the term “bacteriophage”?
+**1.** In the Hershey–Chase experiment, what physically separated “phage ghosts” from infected bacteria?
 
-    - A. 1926
-    - B. 1896
-    - C. 1917 ✅
-    - D. 1915
+    - A. Shearing in a Waring blendor ✅
+    - B. Differential centrifugation of isotopes
+    - C. Freeze–thaw lysis of the cells
+    - D. Ethanol precipitation of free phage
 
-**2.** Ernest Hankin (1896) observed antibacterial activity against Vibrio cholerae in the waters of which rivers?
+**2.** Benzer's rII recombination mapping was only possible because rII mutants fail to plaque on
 
-    - A. The Ganges and the Yamuna ✅
-    - B. The Nile and the Euphrates
-    - C. The Thames and the Seine
-    - D. The Amazon and the Orinoco
+    - A. Escherichia coli B
+    - B. Salmonella Typhimurium LT2
+    - C. Escherichia coli K12(λ) ✅
+    - D. Pseudomonas aeruginosa PAO1
 
-**3.** The 1943 fluctuation test, demonstrating that mutations arise spontaneously, used resistance to phage and was performed by
+**3.** Crick, Brenner and colleagues (1961) proved the triplet nature of the code using proflavin-induced frameshifts in
 
-    - A. Ellis and Delbrück
-    - B. Luria and Delbrück ✅
-    - C. Hershey and Chase
-    - D. Zinder and Lederberg
+    - A. The T4 rII gene ✅
+    - B. Lambda cI
+    - C. MS2 coat protein
+    - D. T7 gene 10
 
-**4.** The Hershey–Chase experiment (1952) labelled phage components with which isotopes?
+**4.** Weigle reactivation (1960) showed that UV-damaged lambda is rescued by
 
-    - A. 14C and 3H
-    - B. 32P and 35S ✅
-    - C. 35S and 14C for DNA
-    - D. 15N and 13C
+    - A. Recombination with co-infecting intact phage
+    - B. SOS-induced host repair functions ✅
+    - C. Photoreactivation of phage RNA
+    - D. Mitomycin C induction of the prophage
 
-**5.** The first complete genome ever sequenced (Sanger, 1977) belonged to which phage?
+**5.** “Host-controlled variation” of lambda grown on E. coli K-12 versus B directly led to the discovery of
 
-    - A. Phage lambda
-    - B. Phage T4
-    - C. Phage ΦX174 ✅
-    - D. Phage M13
+    - A. CRISPR-Cas immunity
+    - B. Abortive infection systems
+    - C. Restriction–modification systems ✅
+    - D. Superinfection exclusion
 
-**6.** The Eliava Institute, a historic centre of phage therapy, is located in
+**6.** The Luria–Delbrück fluctuation test established that phage-resistance mutations
 
-    - A. Tbilisi, Georgia ✅
-    - B. Lyon, France
-    - C. Moscow, Russia
-    - D. Warsaw, Poland
+    - A. Are instructed by phage exposure
+    - B. Spread by transduction
+    - C. Require SOS induction
+    - D. Arise spontaneously before phage exposure ✅
 
-**7.** Generalized transduction was discovered by Zinder and Lederberg (1952) using which phage–host system?
+**7.** Frederick Twort's 1915 filterable agent was first observed lysing cultures of
 
-    - A. Phage P22 in Salmonella ✅
-    - B. Phage lambda in E. coli
-    - C. Phage T2 in E. coli
-    - D. Phage P1 in E. coli
+    - A. Shigella dysenteriae
+    - B. Vibrio cholerae
+    - C. Bacillus anthracis
+    - D. Staphylococcus ✅
 
-**8.** Western interest in phage therapy collapsed after the 1940s mainly because of
+**8.** Which 1930s assessment most accelerated the decline of commercial phage therapy in the United States?
 
-    - A. Loss of phage stocks in WWII
-    - B. A ban on virus research
-    - C. Patent disputes
-    - D. The discovery of antibiotics ✅
+    - A. The Flexner Report
+    - B. The Eaton & Bayne-Jones review of phage preparations ✅
+    - C. The Nuremberg Code
+    - D. A Lister Institute ban
 
 **9.** The 2017 compassionate-use case that brought phage therapy to global headlines treated a patient with *(AUDIENCE)*
 
-    - A. Candida auris sepsis
-    - B. XDR tuberculosis
-    - C. MRSA endocarditis
-    - D. Disseminated Acinetobacter baumannii infection ✅
+    - A. Disseminated Acinetobacter baumannii infection ✅
+    - B. MRSA endocarditis
+    - C. XDR tuberculosis
+    - D. Candida auris sepsis
 
 **10.** The 1969 Nobel Prize (Delbrück, Hershey, Luria) honoured work on the replication and genetic structure of *(AUDIENCE)*
 
@@ -177,279 +178,279 @@ Teams: **Lytic Legends** (Dr. Ruma, Ms. Priya, Mr. Karan) · **Biofilm Breakers*
 ## Round 3 — PHAGE RELATED PROTOCOLS
 *+10 correct / 0 wrong · 30 s*
 
-**1.** The double agar overlay method is primarily used for
+**1.** Top-agar concentrations above ~0.7% shrink plaque sizes mainly because they
 
-    - A. Plaque assay and phage enumeration ✅
-    - B. Antibiotic susceptibility testing
-    - C. Genome assembly
-    - D. Protein purification
+    - A. Melt at lower temperatures
+    - B. Select for resistant mutants
+    - C. Chelate Ca2+ and Mg2+
+    - D. Restrict phage diffusion through the matrix ✅
 
-**2.** The soft (top) agar used in plaque assays typically has an agar concentration of
+**2.** The particle-to-PFU ratio of a lysate is obtained by combining
 
-    - A. 3–4%
-    - B. 1.5–2.0%
-    - C. 0.3–0.7% ✅
-    - D. 8–10%
+    - A. qPCR with PFGE
+    - B. CsCl gradients with SYBR Gold
+    - C. Flow cytometry (particle counts) with plaque assay ✅
+    - D. LAL with TEM
 
-**3.** Ca2+ and Mg2+ are added to phage assay media mainly because
+**3.** During phage DNA extraction, contaminating free bacterial DNA is removed selectively by
 
-    - A. Many phages need divalent cations for efficient adsorption ✅
-    - B. They raise the agar melting point
-    - C. They prevent fungal contamination
-    - D. They stain the plaques
+    - A. DNase I treatment before capsid lysis (capsid DNA is protected) ✅
+    - B. Proteinase K before lysis
+    - C. Ethanol precipitation alone
+    - D. RNase A after lysis
 
-**4.** Which method counts ONLY infectious phage particles?
+**4.** In a CsCl isopycnic gradient, phage bands at ~1.5 g/cm³. A lighter band at ~1.3 g/cm³ is most likely
 
-    - A. Flow cytometry with SYBR Gold
-    - B. qPCR of phage DNA
-    - C. TEM particle counts
-    - D. Plaque assay ✅
+    - A. Protein and membrane vesicles ✅
+    - B. Host chromosomal DNA
+    - C. Intact ribosomes
+    - D. Free exopolysaccharide
 
-**5.** To enrich phages from an environmental sample, the first step is usually to
+**5.** Chloroform clarification of a lysate must NOT be used for
 
-    - A. Autoclave the sample
-    - B. Co-culture it with a log-phase host bacterium ✅
-    - C. Freeze it at −80 °C for a week
-    - D. Add chloroform immediately
+    - A. Microviruses
+    - B. Enveloped phages such as Φ6 ✅
+    - C. Filamentous inoviruses
+    - D. Tailed dsDNA phages
 
-**6.** Chloroform is added to a phage lysate to
+**6.** In the Ellis–Delbrück one-step growth experiment, unadsorbed phage is neutralized by
 
-    - A. Precipitate the phages
-    - B. Stain phage DNA
-    - C. Kill residual bacteria and prevent bacterial growth ✅
-    - D. Lower the pH
+    - A. Using stationary-phase hosts
+    - B. Anti-phage serum (or extreme dilution) ✅
+    - C. Chilling to 4 °C
+    - D. Adding chloroform at time zero
 
-**7.** Which of the following is NOT a phage concentration method?
+**7.** A spot test giving confluent lysis that disappears on dilution, without plaques, indicates
 
-    - A. PEG precipitation
-    - B. Southern blotting ✅
-    - C. Tangential flow filtration
-    - D. CsCl density-gradient ultracentrifugation
+    - A. Lysis from without at high phage input ✅
+    - B. A fully permissive host
+    - C. Lysogenic conversion
+    - D. Capsular blocking of adsorption
 
-**8.** Efficiency of plating (EOP) compares plaque production on a test strain relative to
+**8.** For phage stocks kept at 4 °C, which additive limits titer loss by adsorption to tube walls?
 
-    - A. The adsorption rate
-    - B. The primary host strain ✅
-    - C. The burst size
-    - D. The qPCR genome count
+    - A. 100 mM EDTA
+    - B. 50% glycerol
+    - C. Sodium azide
+    - D. Gelatin (or BSA) ✅
 
 **9.** In a spot test, a clear zone where phage suspension was dropped on a bacterial lawn indicates *(AUDIENCE)*
 
-    - A. The strain is sensitive (lysis) ✅
-    - B. A mutation arose
-    - C. Medium contamination
-    - D. The strain is resistant
+    - A. Medium contamination
+    - B. The strain is sensitive (lysis) ✅
+    - C. The strain is resistant
+    - D. A mutation arose
 
 **10.** In a plaque assay, each plaque originates from *(AUDIENCE)*
 
-    - A. A single bacterial cell
-    - B. A free DNA fragment
-    - C. An antibiotic disc
-    - D. A single infectious phage particle ✅
+    - A. A free DNA fragment
+    - B. An antibiotic disc
+    - C. A single infectious phage particle ✅
+    - D. A single bacterial cell
 
 ---
 
 ## Round 4 — PHAGE INFORMATICS
 *+10 correct / 0 wrong · 30 s*
 
-**1.** Which tool is dedicated to predicting prophage regions inside bacterial genomes?
+**1.** Under MIMAG standards, a high-quality draft viral genome requires
 
-    - A. PHASTER ✅
-    - B. tRNAscan-SE
-    - C. Clustal Omega
-    - D. SignalP
+    - A. ≥90% completeness, <5% contamination, plus tRNAs and identified termini ✅
+    - B. Any contig >10 kb carrying a capsid gene
+    - C. 100× coverage regardless of completeness
+    - D. Presence of an integrase gene
 
-**2.** CheckV is used to
+**2.** In read-mapping to a phage reference, terminal redundancy of the genome appears as
 
-    - A. Detect AMR genes in bacteria
-    - B. Design PCR primers
-    - C. Count plaques automatically
-    - D. Estimate completeness and quality of viral metagenome-assembled genomes ✅
+    - A. A coverage gap at the cos site
+    - B. Elevated coverage across both genome ends ✅
+    - C. Uniform coverage with spikes at tRNA genes
+    - D. Coverage falling to zero at the ends
 
-**3.** VIRIDIC calculates intergenomic similarity to demarcate viral
+**3.** Anti-CRISPR (acr) genes in prophages are typically found next to
 
-    - A. Promoters
-    - B. tRNAs
-    - C. Codon usage
-    - D. Species and genera ✅
+    - A. Host CRISPR arrays
+    - B. tRNA clusters
+    - C. aca genes encoding HTH-type transcriptional regulators ✅
+    - D. Direct terminal repeats
 
-**4.** vConTACT2 clusters viral genomes using
+**4.** “Viral tagging” (fluorescently labelled phage + flow sorting of single cells) is used to
 
-    - A. Gene-sharing networks ✅
-    - B. k-mer GC content
-    - C. 16S rRNA alignment
-    - D. CRISPR spacers only
+    - A. Measure buoyant density
+    - B. Cluster genomes by tetranucleotide frequency
+    - C. Sequence CRISPR spacers
+    - D. Link phages to their hosts at single-cell resolution ✅
 
-**5.** PHROGs are
+**5.** VIRIDIC demarcates viral species and genera using
 
-    - A. Phage orthologous groups used for functional annotation ✅
-    - B. Plaque morphology classes
-    - C. Phage restriction enzymes
-    - D. A phage growth medium
+    - A. Intergenomic nucleotide similarity ✅
+    - B. Shared tRNA counts
+    - C. Codon-usage distance
+    - D. Capsid morphology vectors
 
-**6.** crAssphage was originally discovered in 2014 by
+**6.** CheckV evaluates viral metagenome-assembled genomes for
 
-    - A. Plaque assay on E. coli
-    - B. Sequencing of seawater viromes
-    - C. Computational re-analysis of human gut metagenomes ✅
-    - D. TEM of sewage
+    - A. Host range prediction
+    - B. Completeness, contamination and provirus boundaries ✅
+    - C. Plaque morphology class
+    - D. AMR gene content
 
-**7.** Which approach can predict the host of a novel phage from sequence data?
+**7.** PhageTerm determines
 
-    - A. MALDI-TOF of the capsid
-    - B. CRISPR spacer and prophage homology matching ✅
-    - C. Gram staining of the virome
-    - D. PFGE
+    - A. Lysis timing from growth curves
+    - B. Taxonomic family from marker genes
+    - C. Genome termini and the packaging mechanism (cos, pac, headful) ✅
+    - D. Optimal cocktail composition
 
-**8.** PhageTerm is used to identify
+**8.** Comparing phage codon adaptation to candidate hosts helps predict
 
-    - A. Optimal cocktail composition
-    - B. Genome termini and the packaging mechanism (cos, pac, headful) ✅
-    - C. Latent period
-    - D. Phage titer
+    - A. Burst size
+    - B. Capsid diameter
+    - C. Genome termini type
+    - D. The likely host / recent host adaptation ✅
 
 **9.** The complete collection of viruses in a sample is called the *(AUDIENCE)*
 
-    - A. Plasmidome
-    - B. Proteome
-    - C. Virome ✅
-    - D. Microbiome
+    - A. Microbiome
+    - B. Virome ✅
+    - C. Proteome
+    - D. Plasmidome
 
 **10.** A prophage region whose GC content differs strongly from the rest of the bacterial chromosome suggests *(AUDIENCE)*
 
-    - A. A smaller capsid
-    - B. Recently acquired foreign DNA ✅
-    - C. An RNA genome
-    - D. A better plaque morphology
+    - A. Recently acquired foreign DNA ✅
+    - B. A better plaque morphology
+    - C. A smaller capsid
+    - D. An RNA genome
 
 ---
 
 ## Round 5 — PHAGE IDENTIFICATION
 *+10 correct / 0 wrong · 30 s*
 
-**1.** A phage with an icosahedral head and a long CONTRACTILE tail shows which morphotype?
+**1.** Under current ICTV taxonomy, phage T7 (formerly Podoviridae) is placed in the family
 
-    - A. Siphovirus
-    - B. Inovirus
-    - C. Podovirus
-    - D. Myovirus ✅
+    - A. Autographiviridae ✅
+    - B. Ackermannviridae
+    - C. Drexlerviridae
+    - D. Herelleviridae
 
-**2.** Filamentous phages such as M13, which are secreted without lysing the host, belong to which group?
+**2.** The lipid envelope of cystovirus Φ6 is
 
-    - A. Tectiviruses
-    - B. Corticoviruses
-    - C. Myoviruses
-    - D. Inoviruses (filamentous) ✅
+    - A. Assembled from host-derived membrane lipids ✅
+    - B. Acquired from outer-membrane vesicles of other species
+    - C. A protein-only pseudo-envelope
+    - D. Synthesized de novo with phage-made sterols
 
-**3.** Which phage is an ENVELOPED virus with a double-stranded RNA genome?
+**3.** In levivirus MS2, the single-copy maturation (A) protein
 
-    - A. Phage lambda
-    - B. Phage Φ6 ✅
-    - C. Phage T4
-    - D. Phage MS2
+    - A. Triggers lysis
+    - B. Forms the icosahedral capsid
+    - C. Binds the F-pilus and escorts the RNA into the cell ✅
+    - D. Acts as the replicase subunit
 
-**4.** The genome of the levivirus MS2 is
+**4.** The portal vertex of tailed phages is typically a ring of
 
-    - A. ssRNA(+) ✅
-    - B. ssDNA
-    - C. dsRNA
-    - D. dsDNA
+    - A. 5 subunits
+    - B. ~12–13 portal subunits ✅
+    - C. 60 subunits matching T=1 symmetry
+    - D. 1 subunit
 
-**5.** In siphoviruses, reversible host recognition is mediated mainly by
+**5.** Transcription of jumbo phage ΦKZ is independent of the host RNA polymerase because the phage
 
-    - A. Collar whiskers
-    - B. Distal tail fibers / tail-tip proteins ✅
-    - C. The portal vertex
-    - D. The internal core
+    - A. Transcribes via a ribozyme
+    - B. Hijacks host Pol II
+    - C. Uses a phage-encoded sigma factor with host RNAP
+    - D. Encodes its own multisubunit RNA polymerase ✅
 
-**6.** “Jumbo” phages are defined by
+**6.** Filamentous inoviruses leave the host without lysis by
 
-    - A. Tails longer than 500 nm
-    - B. Genomes larger than ~200 kb ✅
-    - C. RNA genomes
-    - D. Titers above 10^12 PFU/mL
+    - A. Low-frequency holin–endolysin lysis
+    - B. Spanin-mediated membrane fusion
+    - C. Budding with a lipid envelope
+    - D. Extrusion through the envelope (e.g., via the pIV secretin) ✅
 
-**7.** Which phage-encoded tubulin homolog positions the capsids of jumbo phage ΦKZ inside the host?
+**7.** T4 whiskers (wac/fib3) function to
 
-    - A. MreB
-    - B. FtsZ
-    - C. PhuZ ✅
-    - D. ParM
+    - A. Anchor the baseplate to the capsid
+    - B. Hold long tail fibers folded against the tail before adsorption ✅
+    - C. Contract and pierce the outer membrane
+    - D. Package DNA into the procapsid
 
-**8.** During T4 infection, the structure that CONTRACTS to drive the tail tube across the envelope is the
+**8.** The collar of phage T4 forms
 
-    - A. Tail sheath ✅
-    - B. Whiskers
-    - C. Portal
-    - D. Collar
+    - A. The portal–terminase bridge
+    - B. The head–tail junction ✅
+    - C. The sheath–tube interface
+    - D. The fiber–baseplate contact
 
 **9.** Under TEM, a tailed phage with a small head and a very SHORT non-contractile tail is a *(AUDIENCE)*
 
-    - A. Podovirus ✅
-    - B. Myovirus
-    - C. Siphovirus
-    - D. Filamentous phage
+    - A. Siphovirus
+    - B. Filamentous phage
+    - C. Podovirus ✅
+    - D. Myovirus
 
 **10.** Turbid (cloudy) plaques usually suggest *(AUDIENCE)*
 
-    - A. An RNA phage
-    - B. Medium contamination
-    - C. A temperate phage forming lysogens ✅
-    - D. A strictly lytic phage
+    - A. A temperate phage forming lysogens ✅
+    - B. A strictly lytic phage
+    - C. An RNA phage
+    - D. Medium contamination
 
 ---
 
 ## Round 6 — IDENTIFY THE FIGURE
 *+10 correct / -5 wrong · 30 s*
 
-**1.** In this one-step growth curve, the arrowed flat phase BEFORE the rise represents the *(see figure on slide)*
+**1.** In the arrowed interval of this one-step growth curve, no intracellular infectious virions can be recovered. This portion is the *(see figure on slide)*
 
-    - A. Burst phase
-    - B. Latent (eclipse) period ✅
-    - C. Lysis from without
-    - D. Adsorption phase
+    - A. Eclipse period ✅
+    - B. Rise period
+    - C. Burst phase
+    - D. Adsorption plateau
 
 **2.** The clear HALO extending beyond the plaque edge in this plate is most likely due to *(see figure on slide)*
 
-    - A. Phage-resistant mutants
-    - B. Lysis from without
-    - C. Extracellular depolymerase degrading the capsule/EPS ✅
-    - D. An antibiotic in the medium
+    - A. An antibiotic in the medium
+    - B. Extracellular depolymerase degrading the capsule/EPS ✅
+    - C. Lysis from without
+    - D. Phage-resistant mutants
 
-**3.** The arrowed structure of this virion, responsible for reversible host recognition, is the *(see figure on slide)*
+**3.** The arrowed long tail fibers bind reversibly. Irreversible adsorption of T4 is then mediated by *(see figure on slide)*
 
-    - A. Contractile sheath
-    - B. Long tail fiber ✅
-    - C. Collar
-    - D. Baseplate
+    - A. Short tail fibers engaging the inner LPS core after baseplate triggering ✅
+    - B. A second long-fiber receptor
+    - C. Teichoic acid bridging
+    - D. Pilus retraction
 
-**4.** The infection state depicted in this diagram is *(see figure on slide)*
+**4.** The integrated state depicted here is maintained by *(see figure on slide)*
 
-    - A. Lysogeny (prophage integrated in the chromosome) ✅
-    - B. Lysis from without
-    - C. Chronic filamentous infection
-    - D. Pseudolysogeny
+    - A. Cro
+    - B. The cI repressor ✅
+    - C. CII
+    - D. N antitermination
 
-**5.** The technique depicted here is the *(see figure on slide)*
+**5.** Top agar is cooled to ~45 °C before mixing because this *(see figure on slide)*
 
-    - A. Spread-plate CFU count
-    - B. Streak-plate isolation
-    - C. Disc diffusion assay
-    - D. Double agar overlay plaque assay ✅
+    - A. Increases plaque turbidity
+    - B. Speeds up lawn growth
+    - C. Prevents Ca2+ precipitation
+    - D. Keeps agar liquid while sparing phage and host from heat ✅
 
-**6.** After ultracentrifugation, the visible band in the middle of this CsCl tube contains *(see figure on slide)*
+**6.** The arrowed band at ~1.5 g/cm³ holds phage. A fainter band at ~1.3 g/cm³ in the same tube would be *(see figure on slide)*
 
-    - A. Purified phage particles at their buoyant density ✅
-    - B. Lipopolysaccharide
-    - C. Host chromosomal DNA
-    - D. Ribosomal proteins
+    - A. Protein and membrane vesicles ✅
+    - B. Host rRNA
+    - C. Intact progeny virions
+    - D. DNA–protein concatemers
 
-**7.** The MIDDLE virion of this trio (long, flexible, non-contractile tail) is a *(see figure on slide)*
+**7.** Unlike virion 1, the MIDDLE virion injects its DNA by *(see figure on slide)*
 
-    - A. Siphovirus morphotype ✅
-    - B. Myovirus morphotype
-    - C. Podovirus morphotype
-    - D. Filamentous inovirus
+    - A. Contracting its tail more slowly
+    - B. Injecting RNA instead of DNA
+    - C. Receptor-triggered conformational change without sheath contraction ✅
+    - D. Consuming host ATP for contraction
 
 **8.** To penetrate the matrix shown in this biofilm diagram, the most useful phage-encoded enzymes are *(see figure on slide)*
 
@@ -458,19 +459,19 @@ Teams: **Lytic Legends** (Dr. Ruma, Ms. Priya, Mr. Karan) · **Biofilm Breakers*
     - C. RNA polymerases
     - D. Depolymerases ✅
 
-**9.** The assay shown on this plate, used for quick host-range screening, is the *(see figure on slide)*
+**9.** On this spot-assay plate, a drop giving confluent clearing but no plaques on dilution indicates *(see figure on slide)*
 
-    - A. Coagulase test
-    - B. Disk diffusion test
-    - C. Spot test (spot assay) ✅
-    - D. CAMP test
+    - A. A fully permissive host
+    - B. Lysogenic conversion
+    - C. Lysis from without / killing without productive infection ✅
+    - D. Depolymerase secretion
 
-**10.** Plate A shows clear plaques, plate B turbid plaques. Which plate most likely contains a TEMPERATE phage? *(see figure on slide)*
+**10.** Plate A shows clear plaques, plate B turbid plaques. The turbidity in plate B is caused by *(see figure on slide)*
 
-    - A. Both plates
-    - B. Plate B ✅
-    - C. Neither plate
-    - D. Plate A
+    - A. Incomplete top-agar setting
+    - B. Growth of immune lysogens within the plaque ✅
+    - C. Contaminating fungi
+    - D. A very small burst size
 
 ---
 
@@ -552,75 +553,75 @@ Teams: **Lytic Legends** (Dr. Ruma, Ms. Priya, Mr. Karan) · **Biofilm Breakers*
 ## Round 8 — PHAGE ACRONYMS
 *+10 correct / -5 wrong · 30 s*
 
-**1.** In phage work, EOP stands for
+**1.** In phage anti-CRISPR biology, Aca proteins are
 
-    - A. Endotoxin elimination process
-    - B. Efficiency of plating ✅
-    - C. Effective optical power
-    - D. Enzyme oligomerization protocol
+    - A. Acr-associated HTH transcriptional regulators of acr operons ✅
+    - B. Accessory capsid antigens
+    - C. Acid-stable coat adapters
+    - D. attC-associated recombinases
 
-**2.** In phage genomics, AMGs are
+**2.** In phage genomics, DTRs and ITRs refer to
+
+    - A. Degenerate tandem recombinases
+    - B. Direct and inverted terminal repeats ✅
+    - C. Density-transfer ratios
+    - D. Double-stranded transcriptional regions
+
+**3.** In the name vB_EcoM-VPAE1, the “vB” prefix denotes
+
+    - A. Virus of Bacteria (followed by host genus and morphotype) ✅
+    - B. Verified bacteriophage
+    - C. Viral barcode
+    - D. Vector backbone
+
+**4.** MIMAG stands for
+
+    - A. Metagenome Integration Map
+    - B. Minimum Information about Microbial Archaeal Genomes
+    - C. Minimum Information about a Metagenome-Assembled Genome ✅
+    - D. Microbial Image Magnification
+
+**5.** In phage genomics, AMGs are
 
     - A. Auxiliary metabolic genes ✅
-    - B. Adaptive mutation groups
-    - C. Amplified mobile genes
-    - D. Ancestral marker genes
+    - B. Amplified mobile genes
+    - C. Ancestral marker genes
+    - D. Adaptive mutation groups
 
-**3.** Acr proteins, encoded by many phages, are
+**6.** PHROGs are
 
-    - A. Acidic capsid repeats
-    - B. Active replication complexes
-    - C. Anti-CRISPR proteins ✅
-    - D. Adsorption cofactor receptors
+    - A. Prophage host-range groups
+    - B. Phage restriction operon groups
+    - C. Plaque heterogeneity ratings
+    - D. Phage orthologous groups for functional annotation ✅
 
-**4.** In phage biology, RBPs are
+**7.** In phage–mucus research, the BAM model stands for
 
-    - A. Receptor-binding proteins ✅
-    - B. Repeat-binding polymers
-    - C. Restriction barrier proteins
-    - D. Ribosome-binding pockets
-
-**5.** In phage–mucus research, the BAM model stands for
-
-    - A. Bacteriophage adherence to mucus ✅
-    - B. Bacterial adhesion matrix
+    - A. Bacterial adhesion matrix
+    - B. Bacteriophage adherence to mucus ✅
     - C. Biofilm-associated microcolony
     - D. Buffered agar medium
 
-**6.** ICTV, the body that ratifies virus taxonomy, stands for
+**8.** The LAL assay reagent used in phage formulation is derived from
 
-    - A. International Council for Therapeutic Viruses
-    - B. Integrated Catalogue of Tested Viruses
-    - C. Institute of Clinical Trials in Virology
-    - D. International Committee on Taxonomy of Viruses ✅
-
-**7.** In phage formulation, LAL assay reagent is derived from
-
-    - A. Lysed adenovirus libraries
-    - B. Limulus (horseshoe crab) amebocyte lysate ✅
-    - C. Lactic acid bacteria
-    - D. Lipid antigen liposomes
-
-**8.** The phage cytoskeletal protein PhuZ belongs to which protein family?
-
-    - A. Keratin
-    - B. Myosin
-    - C. Actin
-    - D. Tubulin ✅
+    - A. Lactic acid bacteria
+    - B. Lysed adenovirus libraries
+    - C. Lipid antigen liposomes
+    - D. Limulus (horseshoe crab) amebocyte lysate ✅
 
 **9.** In One-Health discussions, AMR stands for *(AUDIENCE)*
 
-    - A. Adaptive mutation rate
-    - B. Antibiotic modifier region
+    - A. Acquired mobile resistance
+    - B. Adaptive mutation rate
     - C. Antimicrobial resistance ✅
-    - D. Acquired mobile resistance
+    - D. Antibiotic modifier region
 
 **10.** In the phage morphology lab, TEM stands for *(AUDIENCE)*
 
-    - A. Tunneling electron mapping
+    - A. Thermal emission microscopy
     - B. Transmission electron microscopy ✅
     - C. Total evanescent measurement
-    - D. Thermal emission microscopy
+    - D. Tunneling electron mapping
 
 ---
 
@@ -815,7 +816,7 @@ Teams: **Lytic Legends** (Dr. Ruma, Ms. Priya, Mr. Karan) · **Biofilm Breakers*
 ### Virion Architects
 
 1. Tubulin-like phage protein that forms the spindle of jumbo phages  →  **PhuZ**
-2. Protein that builds the shell of the ΦKZ “phage nucleus”  →  **Chimallin (ChmA)**
+2. Structural term for the elongated (non-spherical) head of T4  →  **Prolate icosahedral head**
 3. Capsid vertex through which DNA enters during assembly  →  **Portal vertex (portal protein)**
 4. ATP-driven enzyme that packs DNA into the procapsid  →  **Terminase (large subunit)**
 5. Morphotype with a long, non-contractile tail  →  **Siphovirus**
@@ -884,7 +885,82 @@ Teams: **Lytic Legends** (Dr. Ruma, Ms. Priya, Mr. Karan) · **Biofilm Breakers*
 
 ---
 
-## Round 13 — LYTIC LAUGHS
+## Round 13 — EMOJI REBUS & PHAGE PERSONALS  (FUN ROUND)
+*+10 correct / 0 wrong · 30 s*
+
+**1.** 🦠️🧬📖  — decode the rebus
+
+    - A. Restriction–modification
+    - B. CRISPR-Cas adaptive immunity ✅
+    - C. Abortive infection
+    - D. Generalized transduction
+
+**2.** 😴☀️⚡🦠  — decode the rebus
+
+    - A. Prophage induction ✅
+    - B. Lysogeny establishment
+    - C. Superinfection exclusion
+    - D. Pseudolysogeny
+
+**3.** 🧨🏙️🦠  — decode the rebus
+
+    - A. Endolysin
+    - B. Spanin
+    - C. Depolymerase ✅
+    - D. Integrase
+
+**4.** 📦🎈  — decode the rebus
+
+    - A. cos-site packaging
+    - B. Protein-primed replication
+    - C. Rolling-circle replication
+    - D. Headful (pac) packaging ✅
+
+**5.** 🕵️🦀  — decode the rebus
+
+    - A. Plaque assay
+    - B. LAL endotoxin assay ✅
+    - C. PFGE
+    - D. ELISA
+
+**6.** ❄️🦠  — decode the rebus
+
+    - A. Cryo-EM ✅
+    - B. Negative-stain TEM
+    - C. Atomic force microscopy
+    - D. Phase-contrast light microscopy
+
+**7.** 🎭️🧬  — decode the rebus
+
+    - A. Phage typing
+    - B. Viromics
+    - C. Phage display ✅
+    - D. Reassortment
+
+**8.** Phage personal ad: “Seeking F-pilus-positive partner; ssDNA exchange welcome; no lysis required — I prefer a long, chronic togetherness.” Who wrote it?
+
+    - A. Phage T4
+    - B. Phage lambda
+    - C. Phage Φ6
+    - D. Phage M13 ✅
+
+**9.** Which emoji set best describes a TEMPERATE phage? *(AUDIENCE)*
+
+    - A. 🛌🧬🤝 ✅
+    - B. 💥🦠☠️
+    - C. 🧨🔥💀
+    - D. 🏃🦠⏱️
+
+**10.** Personal ad: “High-pressure type (~50 atm). I contract on first contact and deliver my DNA fast. No commitment issues — strictly lytic.” Identify the advertiser. *(AUDIENCE)*
+
+    - A. M13
+    - B. T4 ✅
+    - C. ΦX174
+    - D. MS2
+
+---
+
+## Round 14 — LYTIC LAUGHS
 *+10 correct / 0 wrong · 30 s*
 
 **1.** Why did the phage break up with the pilus?

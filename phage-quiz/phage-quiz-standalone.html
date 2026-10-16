@@ -65,8 +65,8 @@
   /* list slides (rounds overview) */
   .rlist{display:grid;grid-template-columns:1fr 1fr;gap:10px 34px;font-size:clamp(15px,1.5vw,19px);font-weight:700}
   .rlist span i{color:var(--accent);font-style:normal;margin-right:10px}
-  .rlist .new::after{content:"NEW";margin-left:10px;background:linear-gradient(90deg,var(--g1),var(--g2));
-      border-radius:10px;padding:2px 8px;font-size:11px;vertical-align:middle}
+  .rlist .nbt{margin-left:10px;background:linear-gradient(90deg,var(--g1),var(--g2));
+      border-radius:10px;padding:2px 8px;font-size:11px;vertical-align:middle;font-style:normal}
   /* timer */
   #timer{position:fixed;top:18px;right:26px;width:74px;height:74px;border-radius:50%;
          border:3px solid #3a4356;display:flex;align-items:center;justify-content:center;
@@ -209,95 +209,95 @@ window.QUIZ = /*QUIZ_JSON_START*/{
       },
       "questions": [
         {
-          "q": "Bacteriophages are best described as",
+          "q": "Phage genomes are unusually compact, with overlapping genes and non-canonical start codons. The best explanation is",
           "options": [
-            "Viruses that specifically infect and replicate within bacteria",
-            "Toxic proteins secreted by bacteria",
-            "Bacteria that prey on other bacteria",
-            "Viruses that infect human cells"
+            "Selection for genome compaction under capsid packaging constraints",
+            "A high mutation rate that erases intergenic regions",
+            "Limitation of host ribosomes during infection",
+            "An artifact of automated annotation pipelines"
           ],
           "answer": 0
         },
         {
-          "q": "The estimated number of phage particles on Earth is approximately",
+          "q": "The ~50–60 atm internal pressure that drives genome ejection from tailed phage capsids is generated mainly by",
           "options": [
-            "10^15 (a quadrillion)",
-            "10^21 (a sextillion)",
-            "10^31 (ten nonillion)",
-            "10^45"
-          ],
-          "answer": 2
-        },
-        {
-          "q": "Which structure is NOT part of a typical tailed phage virion?",
-          "options": [
-            "Tail fibers",
-            "Baseplate",
-            "Ribosomes",
-            "Icosahedral capsid"
-          ],
-          "answer": 2
-        },
-        {
-          "q": "The phage component that primarily determines host specificity is the",
-          "options": [
-            "Genome terminus",
-            "Portal vertex",
-            "Capsid interior",
-            "Receptor-binding protein / tail fiber"
-          ],
-          "answer": 3
-        },
-        {
-          "q": "A phage that can ONLY replicate through the lytic cycle is termed",
-          "options": [
-            "Virulent",
-            "Temperate",
-            "Defective",
-            "Filamentous"
-          ],
-          "answer": 0
-        },
-        {
-          "q": "A clear zone formed on a confluent bacterial lawn is called a",
-          "options": [
-            "Plaque",
-            "Biofilm patch",
-            "Colony",
-            "Halo"
-          ],
-          "answer": 0
-        },
-        {
-          "q": "The typical diameter of a tailed phage capsid falls in the range",
-          "options": [
-            "500–900 nm",
-            "1–5 µm",
-            "5–10 µm",
-            "20–200 nm (up to ~300 nm for jumbos)"
-          ],
-          "answer": 3
-        },
-        {
-          "q": "Which statement about phages is TRUE?",
-          "options": [
-            "They can grow on cell-free agar",
-            "They are obligate intracellular parasites of bacteria",
-            "They always kill their host",
-            "They carry their own ribosomes for translation"
+            "The host proton-motive force pulling DNA inward",
+            "Dense inverse-spool DNA packing with electrostatic self-repulsion",
+            "ATP hydrolysis by the portal motor during ejection",
+            "Osmotic water influx upon receptor binding"
           ],
           "answer": 1
+        },
+        {
+          "q": "At an MOI of exactly 1, the fraction of host cells receiving at least one phage (Poisson distribution) is approximately",
+          "options": [
+            "37%",
+            "50%",
+            "63%",
+            "90%"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "In the lambda lysis cassette (S, R, Rz, Rz1), the spanins Rz/Rz1 act by",
+          "options": [
+            "Degrading peptidoglycan from the periplasm",
+            "Timing holin insertion into the inner membrane",
+            "Recycling murein for the next infection cycle",
+            "Fusing inner and outer membranes after endolysin action"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Optimality models of lysis timing predict that the evolutionarily stable latent period balances",
+          "options": [
+            "Burst size against the number of lysis cycles completed per unit time",
+            "Adsorption rate against the eclipse period",
+            "Genome size against capsid interior volume",
+            "Latent period against the multiplicity of infection"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Botstein's “modular theory” of phage evolution proposes that",
+          "options": [
+            "Phage genes evolve strictly vertically with their hosts",
+            "Functional modules (head, tail, lysis, lysogeny) recombine across phage lineages",
+            "All tailed phages preserve a single ancestral gene order",
+            "Phage genomes change only by point mutation"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Jumbo phages such as ΦKZ protect their replicating DNA inside a compartment whose shell is built from",
+          "options": [
+            "Host-derived lipid bilayer",
+            "Condensed RNA and polyamines",
+            "The protein chimallin (a proteinaceous phage nucleus)",
+            "Crystallized terminase"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "The kinetics of phage adsorption to susceptible hosts are best described as",
+          "options": [
+            "Zero-order until receptors saturate",
+            "First-order in phage only, independent of host density",
+            "Logistic, limited by burst size",
+            "Second-order overall: first-order in both phage and host concentration"
+          ],
+          "answer": 3
         },
         {
           "q": "Which is generally SMALLER?",
           "audience": true,
           "options": [
-            "A red blood cell",
             "A bacteriophage",
+            "A bacterium",
             "A yeast cell",
-            "A bacterium"
+            "A red blood cell"
           ],
-          "answer": 1
+          "answer": 0
         },
         {
           "q": "Phage contamination of starter cultures is a classic industrial problem in which fermentation?",
@@ -323,95 +323,95 @@ window.QUIZ = /*QUIZ_JSON_START*/{
       },
       "questions": [
         {
-          "q": "In which year did Félix d'Hérelle coin the term “bacteriophage”?",
+          "q": "In the Hershey–Chase experiment, what physically separated “phage ghosts” from infected bacteria?",
           "options": [
-            "1926",
-            "1896",
-            "1917",
-            "1915"
+            "Shearing in a Waring blendor",
+            "Differential centrifugation of isotopes",
+            "Freeze–thaw lysis of the cells",
+            "Ethanol precipitation of free phage"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Benzer's rII recombination mapping was only possible because rII mutants fail to plaque on",
+          "options": [
+            "Escherichia coli B",
+            "Salmonella Typhimurium LT2",
+            "Escherichia coli K12(λ)",
+            "Pseudomonas aeruginosa PAO1"
           ],
           "answer": 2
         },
         {
-          "q": "Ernest Hankin (1896) observed antibacterial activity against Vibrio cholerae in the waters of which rivers?",
+          "q": "Crick, Brenner and colleagues (1961) proved the triplet nature of the code using proflavin-induced frameshifts in",
           "options": [
-            "The Ganges and the Yamuna",
-            "The Nile and the Euphrates",
-            "The Thames and the Seine",
-            "The Amazon and the Orinoco"
+            "The T4 rII gene",
+            "Lambda cI",
+            "MS2 coat protein",
+            "T7 gene 10"
           ],
           "answer": 0
         },
         {
-          "q": "The 1943 fluctuation test, demonstrating that mutations arise spontaneously, used resistance to phage and was performed by",
+          "q": "Weigle reactivation (1960) showed that UV-damaged lambda is rescued by",
           "options": [
-            "Ellis and Delbrück",
-            "Luria and Delbrück",
-            "Hershey and Chase",
-            "Zinder and Lederberg"
+            "Recombination with co-infecting intact phage",
+            "SOS-induced host repair functions",
+            "Photoreactivation of phage RNA",
+            "Mitomycin C induction of the prophage"
           ],
           "answer": 1
         },
         {
-          "q": "The Hershey–Chase experiment (1952) labelled phage components with which isotopes?",
+          "q": "“Host-controlled variation” of lambda grown on E. coli K-12 versus B directly led to the discovery of",
           "options": [
-            "14C and 3H",
-            "32P and 35S",
-            "35S and 14C for DNA",
-            "15N and 13C"
-          ],
-          "answer": 1
-        },
-        {
-          "q": "The first complete genome ever sequenced (Sanger, 1977) belonged to which phage?",
-          "options": [
-            "Phage lambda",
-            "Phage T4",
-            "Phage ΦX174",
-            "Phage M13"
+            "CRISPR-Cas immunity",
+            "Abortive infection systems",
+            "Restriction–modification systems",
+            "Superinfection exclusion"
           ],
           "answer": 2
         },
         {
-          "q": "The Eliava Institute, a historic centre of phage therapy, is located in",
+          "q": "The Luria–Delbrück fluctuation test established that phage-resistance mutations",
           "options": [
-            "Tbilisi, Georgia",
-            "Lyon, France",
-            "Moscow, Russia",
-            "Warsaw, Poland"
-          ],
-          "answer": 0
-        },
-        {
-          "q": "Generalized transduction was discovered by Zinder and Lederberg (1952) using which phage–host system?",
-          "options": [
-            "Phage P22 in Salmonella",
-            "Phage lambda in E. coli",
-            "Phage T2 in E. coli",
-            "Phage P1 in E. coli"
-          ],
-          "answer": 0
-        },
-        {
-          "q": "Western interest in phage therapy collapsed after the 1940s mainly because of",
-          "options": [
-            "Loss of phage stocks in WWII",
-            "A ban on virus research",
-            "Patent disputes",
-            "The discovery of antibiotics"
+            "Are instructed by phage exposure",
+            "Spread by transduction",
+            "Require SOS induction",
+            "Arise spontaneously before phage exposure"
           ],
           "answer": 3
+        },
+        {
+          "q": "Frederick Twort's 1915 filterable agent was first observed lysing cultures of",
+          "options": [
+            "Shigella dysenteriae",
+            "Vibrio cholerae",
+            "Bacillus anthracis",
+            "Staphylococcus"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Which 1930s assessment most accelerated the decline of commercial phage therapy in the United States?",
+          "options": [
+            "The Flexner Report",
+            "The Eaton & Bayne-Jones review of phage preparations",
+            "The Nuremberg Code",
+            "A Lister Institute ban"
+          ],
+          "answer": 1
         },
         {
           "q": "The 2017 compassionate-use case that brought phage therapy to global headlines treated a patient with",
           "audience": true,
           "options": [
-            "Candida auris sepsis",
-            "XDR tuberculosis",
+            "Disseminated Acinetobacter baumannii infection",
             "MRSA endocarditis",
-            "Disseminated Acinetobacter baumannii infection"
+            "XDR tuberculosis",
+            "Candida auris sepsis"
           ],
-          "answer": 3
+          "answer": 0
         },
         {
           "q": "The 1969 Nobel Prize (Delbrück, Hershey, Luria) honoured work on the replication and genetic structure of",
@@ -437,106 +437,106 @@ window.QUIZ = /*QUIZ_JSON_START*/{
       },
       "questions": [
         {
-          "q": "The double agar overlay method is primarily used for",
+          "q": "Top-agar concentrations above ~0.7% shrink plaque sizes mainly because they",
           "options": [
-            "Plaque assay and phage enumeration",
-            "Antibiotic susceptibility testing",
-            "Genome assembly",
-            "Protein purification"
-          ],
-          "answer": 0
-        },
-        {
-          "q": "The soft (top) agar used in plaque assays typically has an agar concentration of",
-          "options": [
-            "3–4%",
-            "1.5–2.0%",
-            "0.3–0.7%",
-            "8–10%"
-          ],
-          "answer": 2
-        },
-        {
-          "q": "Ca2+ and Mg2+ are added to phage assay media mainly because",
-          "options": [
-            "Many phages need divalent cations for efficient adsorption",
-            "They raise the agar melting point",
-            "They prevent fungal contamination",
-            "They stain the plaques"
-          ],
-          "answer": 0
-        },
-        {
-          "q": "Which method counts ONLY infectious phage particles?",
-          "options": [
-            "Flow cytometry with SYBR Gold",
-            "qPCR of phage DNA",
-            "TEM particle counts",
-            "Plaque assay"
+            "Melt at lower temperatures",
+            "Select for resistant mutants",
+            "Chelate Ca2+ and Mg2+",
+            "Restrict phage diffusion through the matrix"
           ],
           "answer": 3
         },
         {
-          "q": "To enrich phages from an environmental sample, the first step is usually to",
+          "q": "The particle-to-PFU ratio of a lysate is obtained by combining",
           "options": [
-            "Autoclave the sample",
-            "Co-culture it with a log-phase host bacterium",
-            "Freeze it at −80 °C for a week",
-            "Add chloroform immediately"
-          ],
-          "answer": 1
-        },
-        {
-          "q": "Chloroform is added to a phage lysate to",
-          "options": [
-            "Precipitate the phages",
-            "Stain phage DNA",
-            "Kill residual bacteria and prevent bacterial growth",
-            "Lower the pH"
+            "qPCR with PFGE",
+            "CsCl gradients with SYBR Gold",
+            "Flow cytometry (particle counts) with plaque assay",
+            "LAL with TEM"
           ],
           "answer": 2
         },
         {
-          "q": "Which of the following is NOT a phage concentration method?",
+          "q": "During phage DNA extraction, contaminating free bacterial DNA is removed selectively by",
           "options": [
-            "PEG precipitation",
-            "Southern blotting",
-            "Tangential flow filtration",
-            "CsCl density-gradient ultracentrifugation"
+            "DNase I treatment before capsid lysis (capsid DNA is protected)",
+            "Proteinase K before lysis",
+            "Ethanol precipitation alone",
+            "RNase A after lysis"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "In a CsCl isopycnic gradient, phage bands at ~1.5 g/cm³. A lighter band at ~1.3 g/cm³ is most likely",
+          "options": [
+            "Protein and membrane vesicles",
+            "Host chromosomal DNA",
+            "Intact ribosomes",
+            "Free exopolysaccharide"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Chloroform clarification of a lysate must NOT be used for",
+          "options": [
+            "Microviruses",
+            "Enveloped phages such as Φ6",
+            "Filamentous inoviruses",
+            "Tailed dsDNA phages"
           ],
           "answer": 1
         },
         {
-          "q": "Efficiency of plating (EOP) compares plaque production on a test strain relative to",
+          "q": "In the Ellis–Delbrück one-step growth experiment, unadsorbed phage is neutralized by",
           "options": [
-            "The adsorption rate",
-            "The primary host strain",
-            "The burst size",
-            "The qPCR genome count"
+            "Using stationary-phase hosts",
+            "Anti-phage serum (or extreme dilution)",
+            "Chilling to 4 °C",
+            "Adding chloroform at time zero"
           ],
           "answer": 1
+        },
+        {
+          "q": "A spot test giving confluent lysis that disappears on dilution, without plaques, indicates",
+          "options": [
+            "Lysis from without at high phage input",
+            "A fully permissive host",
+            "Lysogenic conversion",
+            "Capsular blocking of adsorption"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "For phage stocks kept at 4 °C, which additive limits titer loss by adsorption to tube walls?",
+          "options": [
+            "100 mM EDTA",
+            "50% glycerol",
+            "Sodium azide",
+            "Gelatin (or BSA)"
+          ],
+          "answer": 3
         },
         {
           "q": "In a spot test, a clear zone where phage suspension was dropped on a bacterial lawn indicates",
           "audience": true,
           "options": [
-            "The strain is sensitive (lysis)",
-            "A mutation arose",
             "Medium contamination",
-            "The strain is resistant"
+            "The strain is sensitive (lysis)",
+            "The strain is resistant",
+            "A mutation arose"
           ],
-          "answer": 0
+          "answer": 1
         },
         {
           "q": "In a plaque assay, each plaque originates from",
           "audience": true,
           "options": [
-            "A single bacterial cell",
             "A free DNA fragment",
             "An antibiotic disc",
-            "A single infectious phage particle"
+            "A single infectious phage particle",
+            "A single bacterial cell"
           ],
-          "answer": 3
+          "answer": 2
         }
       ]
     },
@@ -551,106 +551,106 @@ window.QUIZ = /*QUIZ_JSON_START*/{
       },
       "questions": [
         {
-          "q": "Which tool is dedicated to predicting prophage regions inside bacterial genomes?",
+          "q": "Under MIMAG standards, a high-quality draft viral genome requires",
           "options": [
-            "PHASTER",
-            "tRNAscan-SE",
-            "Clustal Omega",
-            "SignalP"
+            "≥90% completeness, <5% contamination, plus tRNAs and identified termini",
+            "Any contig >10 kb carrying a capsid gene",
+            "100× coverage regardless of completeness",
+            "Presence of an integrase gene"
           ],
           "answer": 0
         },
         {
-          "q": "CheckV is used to",
+          "q": "In read-mapping to a phage reference, terminal redundancy of the genome appears as",
           "options": [
-            "Detect AMR genes in bacteria",
-            "Design PCR primers",
-            "Count plaques automatically",
-            "Estimate completeness and quality of viral metagenome-assembled genomes"
+            "A coverage gap at the cos site",
+            "Elevated coverage across both genome ends",
+            "Uniform coverage with spikes at tRNA genes",
+            "Coverage falling to zero at the ends"
           ],
-          "answer": 3
+          "answer": 1
         },
         {
-          "q": "VIRIDIC calculates intergenomic similarity to demarcate viral",
+          "q": "Anti-CRISPR (acr) genes in prophages are typically found next to",
           "options": [
-            "Promoters",
-            "tRNAs",
-            "Codon usage",
-            "Species and genera"
-          ],
-          "answer": 3
-        },
-        {
-          "q": "vConTACT2 clusters viral genomes using",
-          "options": [
-            "Gene-sharing networks",
-            "k-mer GC content",
-            "16S rRNA alignment",
-            "CRISPR spacers only"
-          ],
-          "answer": 0
-        },
-        {
-          "q": "PHROGs are",
-          "options": [
-            "Phage orthologous groups used for functional annotation",
-            "Plaque morphology classes",
-            "Phage restriction enzymes",
-            "A phage growth medium"
-          ],
-          "answer": 0
-        },
-        {
-          "q": "crAssphage was originally discovered in 2014 by",
-          "options": [
-            "Plaque assay on E. coli",
-            "Sequencing of seawater viromes",
-            "Computational re-analysis of human gut metagenomes",
-            "TEM of sewage"
+            "Host CRISPR arrays",
+            "tRNA clusters",
+            "aca genes encoding HTH-type transcriptional regulators",
+            "Direct terminal repeats"
           ],
           "answer": 2
         },
         {
-          "q": "Which approach can predict the host of a novel phage from sequence data?",
+          "q": "“Viral tagging” (fluorescently labelled phage + flow sorting of single cells) is used to",
           "options": [
-            "MALDI-TOF of the capsid",
-            "CRISPR spacer and prophage homology matching",
-            "Gram staining of the virome",
-            "PFGE"
+            "Measure buoyant density",
+            "Cluster genomes by tetranucleotide frequency",
+            "Sequence CRISPR spacers",
+            "Link phages to their hosts at single-cell resolution"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "VIRIDIC demarcates viral species and genera using",
+          "options": [
+            "Intergenomic nucleotide similarity",
+            "Shared tRNA counts",
+            "Codon-usage distance",
+            "Capsid morphology vectors"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "CheckV evaluates viral metagenome-assembled genomes for",
+          "options": [
+            "Host range prediction",
+            "Completeness, contamination and provirus boundaries",
+            "Plaque morphology class",
+            "AMR gene content"
           ],
           "answer": 1
         },
         {
-          "q": "PhageTerm is used to identify",
+          "q": "PhageTerm determines",
           "options": [
-            "Optimal cocktail composition",
+            "Lysis timing from growth curves",
+            "Taxonomic family from marker genes",
             "Genome termini and the packaging mechanism (cos, pac, headful)",
-            "Latent period",
-            "Phage titer"
+            "Optimal cocktail composition"
           ],
-          "answer": 1
+          "answer": 2
+        },
+        {
+          "q": "Comparing phage codon adaptation to candidate hosts helps predict",
+          "options": [
+            "Burst size",
+            "Capsid diameter",
+            "Genome termini type",
+            "The likely host / recent host adaptation"
+          ],
+          "answer": 3
         },
         {
           "q": "The complete collection of viruses in a sample is called the",
           "audience": true,
           "options": [
-            "Plasmidome",
-            "Proteome",
+            "Microbiome",
             "Virome",
-            "Microbiome"
+            "Proteome",
+            "Plasmidome"
           ],
-          "answer": 2
+          "answer": 1
         },
         {
           "q": "A prophage region whose GC content differs strongly from the rest of the bacterial chromosome suggests",
           "audience": true,
           "options": [
-            "A smaller capsid",
             "Recently acquired foreign DNA",
-            "An RNA genome",
-            "A better plaque morphology"
+            "A better plaque morphology",
+            "A smaller capsid",
+            "An RNA genome"
           ],
-          "answer": 1
+          "answer": 0
         }
       ]
     },
@@ -665,106 +665,106 @@ window.QUIZ = /*QUIZ_JSON_START*/{
       },
       "questions": [
         {
-          "q": "A phage with an icosahedral head and a long CONTRACTILE tail shows which morphotype?",
+          "q": "Under current ICTV taxonomy, phage T7 (formerly Podoviridae) is placed in the family",
           "options": [
-            "Siphovirus",
-            "Inovirus",
-            "Podovirus",
-            "Myovirus"
-          ],
-          "answer": 3
-        },
-        {
-          "q": "Filamentous phages such as M13, which are secreted without lysing the host, belong to which group?",
-          "options": [
-            "Tectiviruses",
-            "Corticoviruses",
-            "Myoviruses",
-            "Inoviruses (filamentous)"
-          ],
-          "answer": 3
-        },
-        {
-          "q": "Which phage is an ENVELOPED virus with a double-stranded RNA genome?",
-          "options": [
-            "Phage lambda",
-            "Phage Φ6",
-            "Phage T4",
-            "Phage MS2"
-          ],
-          "answer": 1
-        },
-        {
-          "q": "The genome of the levivirus MS2 is",
-          "options": [
-            "ssRNA(+)",
-            "ssDNA",
-            "dsRNA",
-            "dsDNA"
+            "Autographiviridae",
+            "Ackermannviridae",
+            "Drexlerviridae",
+            "Herelleviridae"
           ],
           "answer": 0
         },
         {
-          "q": "In siphoviruses, reversible host recognition is mediated mainly by",
+          "q": "The lipid envelope of cystovirus Φ6 is",
           "options": [
-            "Collar whiskers",
-            "Distal tail fibers / tail-tip proteins",
-            "The portal vertex",
-            "The internal core"
+            "Assembled from host-derived membrane lipids",
+            "Acquired from outer-membrane vesicles of other species",
+            "A protein-only pseudo-envelope",
+            "Synthesized de novo with phage-made sterols"
           ],
-          "answer": 1
+          "answer": 0
         },
         {
-          "q": "“Jumbo” phages are defined by",
+          "q": "In levivirus MS2, the single-copy maturation (A) protein",
           "options": [
-            "Tails longer than 500 nm",
-            "Genomes larger than ~200 kb",
-            "RNA genomes",
-            "Titers above 10^12 PFU/mL"
-          ],
-          "answer": 1
-        },
-        {
-          "q": "Which phage-encoded tubulin homolog positions the capsids of jumbo phage ΦKZ inside the host?",
-          "options": [
-            "MreB",
-            "FtsZ",
-            "PhuZ",
-            "ParM"
+            "Triggers lysis",
+            "Forms the icosahedral capsid",
+            "Binds the F-pilus and escorts the RNA into the cell",
+            "Acts as the replicase subunit"
           ],
           "answer": 2
         },
         {
-          "q": "During T4 infection, the structure that CONTRACTS to drive the tail tube across the envelope is the",
+          "q": "The portal vertex of tailed phages is typically a ring of",
           "options": [
-            "Tail sheath",
-            "Whiskers",
-            "Portal",
-            "Collar"
+            "5 subunits",
+            "~12–13 portal subunits",
+            "60 subunits matching T=1 symmetry",
+            "1 subunit"
           ],
-          "answer": 0
+          "answer": 1
+        },
+        {
+          "q": "Transcription of jumbo phage ΦKZ is independent of the host RNA polymerase because the phage",
+          "options": [
+            "Transcribes via a ribozyme",
+            "Hijacks host Pol II",
+            "Uses a phage-encoded sigma factor with host RNAP",
+            "Encodes its own multisubunit RNA polymerase"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Filamentous inoviruses leave the host without lysis by",
+          "options": [
+            "Low-frequency holin–endolysin lysis",
+            "Spanin-mediated membrane fusion",
+            "Budding with a lipid envelope",
+            "Extrusion through the envelope (e.g., via the pIV secretin)"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "T4 whiskers (wac/fib3) function to",
+          "options": [
+            "Anchor the baseplate to the capsid",
+            "Hold long tail fibers folded against the tail before adsorption",
+            "Contract and pierce the outer membrane",
+            "Package DNA into the procapsid"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "The collar of phage T4 forms",
+          "options": [
+            "The portal–terminase bridge",
+            "The head–tail junction",
+            "The sheath–tube interface",
+            "The fiber–baseplate contact"
+          ],
+          "answer": 1
         },
         {
           "q": "Under TEM, a tailed phage with a small head and a very SHORT non-contractile tail is a",
           "audience": true,
           "options": [
-            "Podovirus",
-            "Myovirus",
             "Siphovirus",
-            "Filamentous phage"
+            "Filamentous phage",
+            "Podovirus",
+            "Myovirus"
           ],
-          "answer": 0
+          "answer": 2
         },
         {
           "q": "Turbid (cloudy) plaques usually suggest",
           "audience": true,
           "options": [
-            "An RNA phage",
-            "Medium contamination",
             "A temperate phage forming lysogens",
-            "A strictly lytic phage"
+            "A strictly lytic phage",
+            "An RNA phage",
+            "Medium contamination"
           ],
-          "answer": 2
+          "answer": 0
         }
       ]
     },
@@ -779,81 +779,81 @@ window.QUIZ = /*QUIZ_JSON_START*/{
       },
       "questions": [
         {
-          "q": "In this one-step growth curve, the arrowed flat phase BEFORE the rise represents the",
+          "q": "In the arrowed interval of this one-step growth curve, no intracellular infectious virions can be recovered. This portion is the",
           "figure": "growth_curve",
           "options": [
+            "Eclipse period",
+            "Rise period",
             "Burst phase",
-            "Latent (eclipse) period",
-            "Lysis from without",
-            "Adsorption phase"
+            "Adsorption plateau"
           ],
-          "answer": 1
+          "answer": 0
         },
         {
           "q": "The clear HALO extending beyond the plaque edge in this plate is most likely due to",
           "figure": "plaque_halo",
           "options": [
-            "Phage-resistant mutants",
-            "Lysis from without",
+            "An antibiotic in the medium",
             "Extracellular depolymerase degrading the capsule/EPS",
-            "An antibiotic in the medium"
-          ],
-          "answer": 2
-        },
-        {
-          "q": "The arrowed structure of this virion, responsible for reversible host recognition, is the",
-          "figure": "t4_diagram",
-          "options": [
-            "Contractile sheath",
-            "Long tail fiber",
-            "Collar",
-            "Baseplate"
+            "Lysis from without",
+            "Phage-resistant mutants"
           ],
           "answer": 1
         },
         {
-          "q": "The infection state depicted in this diagram is",
-          "figure": "lysogeny",
+          "q": "The arrowed long tail fibers bind reversibly. Irreversible adsorption of T4 is then mediated by",
+          "figure": "t4_diagram",
           "options": [
-            "Lysogeny (prophage integrated in the chromosome)",
-            "Lysis from without",
-            "Chronic filamentous infection",
-            "Pseudolysogeny"
+            "Short tail fibers engaging the inner LPS core after baseplate triggering",
+            "A second long-fiber receptor",
+            "Teichoic acid bridging",
+            "Pilus retraction"
           ],
           "answer": 0
         },
         {
-          "q": "The technique depicted here is the",
+          "q": "The integrated state depicted here is maintained by",
+          "figure": "lysogeny",
+          "options": [
+            "Cro",
+            "The cI repressor",
+            "CII",
+            "N antitermination"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Top agar is cooled to ~45 °C before mixing because this",
           "figure": "overlay",
           "options": [
-            "Spread-plate CFU count",
-            "Streak-plate isolation",
-            "Disc diffusion assay",
-            "Double agar overlay plaque assay"
+            "Increases plaque turbidity",
+            "Speeds up lawn growth",
+            "Prevents Ca2+ precipitation",
+            "Keeps agar liquid while sparing phage and host from heat"
           ],
           "answer": 3
         },
         {
-          "q": "After ultracentrifugation, the visible band in the middle of this CsCl tube contains",
+          "q": "The arrowed band at ~1.5 g/cm³ holds phage. A fainter band at ~1.3 g/cm³ in the same tube would be",
           "figure": "cscl",
           "options": [
-            "Purified phage particles at their buoyant density",
-            "Lipopolysaccharide",
-            "Host chromosomal DNA",
-            "Ribosomal proteins"
+            "Protein and membrane vesicles",
+            "Host rRNA",
+            "Intact progeny virions",
+            "DNA–protein concatemers"
           ],
           "answer": 0
         },
         {
-          "q": "The MIDDLE virion of this trio (long, flexible, non-contractile tail) is a",
+          "q": "Unlike virion 1, the MIDDLE virion injects its DNA by",
           "figure": "morphotypes",
           "options": [
-            "Siphovirus morphotype",
-            "Myovirus morphotype",
-            "Podovirus morphotype",
-            "Filamentous inovirus"
+            "Contracting its tail more slowly",
+            "Injecting RNA instead of DNA",
+            "Receptor-triggered conformational change without sheath contraction",
+            "Consuming host ATP for contraction"
           ],
-          "answer": 0
+          "answer": 2
         },
         {
           "q": "To penetrate the matrix shown in this biofilm diagram, the most useful phage-encoded enzymes are",
@@ -867,24 +867,24 @@ window.QUIZ = /*QUIZ_JSON_START*/{
           "answer": 3
         },
         {
-          "q": "The assay shown on this plate, used for quick host-range screening, is the",
+          "q": "On this spot-assay plate, a drop giving confluent clearing but no plaques on dilution indicates",
           "figure": "spot_assay",
           "options": [
-            "Coagulase test",
-            "Disk diffusion test",
-            "Spot test (spot assay)",
-            "CAMP test"
+            "A fully permissive host",
+            "Lysogenic conversion",
+            "Lysis from without / killing without productive infection",
+            "Depolymerase secretion"
           ],
           "answer": 2
         },
         {
-          "q": "Plate A shows clear plaques, plate B turbid plaques. Which plate most likely contains a TEMPERATE phage?",
+          "q": "Plate A shows clear plaques, plate B turbid plaques. The turbidity in plate B is caused by",
           "figure": "plaques_turbid",
           "options": [
-            "Both plates",
-            "Plate B",
-            "Neither plate",
-            "Plate A"
+            "Incomplete top-agar setting",
+            "Growth of immune lysogens within the plaque",
+            "Contaminating fungi",
+            "A very small burst size"
           ],
           "answer": 1
         }
@@ -1016,82 +1016,82 @@ window.QUIZ = /*QUIZ_JSON_START*/{
       },
       "questions": [
         {
-          "q": "In phage work, EOP stands for",
+          "q": "In phage anti-CRISPR biology, Aca proteins are",
           "options": [
-            "Endotoxin elimination process",
-            "Efficiency of plating",
-            "Effective optical power",
-            "Enzyme oligomerization protocol"
+            "Acr-associated HTH transcriptional regulators of acr operons",
+            "Accessory capsid antigens",
+            "Acid-stable coat adapters",
+            "attC-associated recombinases"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "In phage genomics, DTRs and ITRs refer to",
+          "options": [
+            "Degenerate tandem recombinases",
+            "Direct and inverted terminal repeats",
+            "Density-transfer ratios",
+            "Double-stranded transcriptional regions"
           ],
           "answer": 1
+        },
+        {
+          "q": "In the name vB_EcoM-VPAE1, the “vB” prefix denotes",
+          "options": [
+            "Virus of Bacteria (followed by host genus and morphotype)",
+            "Verified bacteriophage",
+            "Viral barcode",
+            "Vector backbone"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "MIMAG stands for",
+          "options": [
+            "Metagenome Integration Map",
+            "Minimum Information about Microbial Archaeal Genomes",
+            "Minimum Information about a Metagenome-Assembled Genome",
+            "Microbial Image Magnification"
+          ],
+          "answer": 2
         },
         {
           "q": "In phage genomics, AMGs are",
           "options": [
             "Auxiliary metabolic genes",
-            "Adaptive mutation groups",
             "Amplified mobile genes",
-            "Ancestral marker genes"
+            "Ancestral marker genes",
+            "Adaptive mutation groups"
           ],
           "answer": 0
         },
         {
-          "q": "Acr proteins, encoded by many phages, are",
+          "q": "PHROGs are",
           "options": [
-            "Acidic capsid repeats",
-            "Active replication complexes",
-            "Anti-CRISPR proteins",
-            "Adsorption cofactor receptors"
-          ],
-          "answer": 2
-        },
-        {
-          "q": "In phage biology, RBPs are",
-          "options": [
-            "Receptor-binding proteins",
-            "Repeat-binding polymers",
-            "Restriction barrier proteins",
-            "Ribosome-binding pockets"
-          ],
-          "answer": 0
-        },
-        {
-          "q": "In phage–mucus research, the BAM model stands for",
-          "options": [
-            "Bacteriophage adherence to mucus",
-            "Bacterial adhesion matrix",
-            "Biofilm-associated microcolony",
-            "Buffered agar medium"
-          ],
-          "answer": 0
-        },
-        {
-          "q": "ICTV, the body that ratifies virus taxonomy, stands for",
-          "options": [
-            "International Council for Therapeutic Viruses",
-            "Integrated Catalogue of Tested Viruses",
-            "Institute of Clinical Trials in Virology",
-            "International Committee on Taxonomy of Viruses"
+            "Prophage host-range groups",
+            "Phage restriction operon groups",
+            "Plaque heterogeneity ratings",
+            "Phage orthologous groups for functional annotation"
           ],
           "answer": 3
         },
         {
-          "q": "In phage formulation, LAL assay reagent is derived from",
+          "q": "In phage–mucus research, the BAM model stands for",
           "options": [
-            "Lysed adenovirus libraries",
-            "Limulus (horseshoe crab) amebocyte lysate",
-            "Lactic acid bacteria",
-            "Lipid antigen liposomes"
+            "Bacterial adhesion matrix",
+            "Bacteriophage adherence to mucus",
+            "Biofilm-associated microcolony",
+            "Buffered agar medium"
           ],
           "answer": 1
         },
         {
-          "q": "The phage cytoskeletal protein PhuZ belongs to which protein family?",
+          "q": "The LAL assay reagent used in phage formulation is derived from",
           "options": [
-            "Keratin",
-            "Myosin",
-            "Actin",
-            "Tubulin"
+            "Lactic acid bacteria",
+            "Lysed adenovirus libraries",
+            "Lipid antigen liposomes",
+            "Limulus (horseshoe crab) amebocyte lysate"
           ],
           "answer": 3
         },
@@ -1099,10 +1099,10 @@ window.QUIZ = /*QUIZ_JSON_START*/{
           "q": "In One-Health discussions, AMR stands for",
           "audience": true,
           "options": [
+            "Acquired mobile resistance",
             "Adaptive mutation rate",
-            "Antibiotic modifier region",
             "Antimicrobial resistance",
-            "Acquired mobile resistance"
+            "Antibiotic modifier region"
           ],
           "answer": 2
         },
@@ -1110,10 +1110,10 @@ window.QUIZ = /*QUIZ_JSON_START*/{
           "q": "In the phage morphology lab, TEM stands for",
           "audience": true,
           "options": [
-            "Tunneling electron mapping",
+            "Thermal emission microscopy",
             "Transmission electron microscopy",
             "Total evanescent measurement",
-            "Thermal emission microscopy"
+            "Tunneling electron mapping"
           ],
           "answer": 1
         }
@@ -1485,8 +1485,8 @@ window.QUIZ = /*QUIZ_JSON_START*/{
               "a": "PhuZ"
             },
             {
-              "q": "Protein that builds the shell of the ΦKZ “phage nucleus”",
-              "a": "Chimallin (ChmA)"
+              "q": "Structural term for the elongated (non-spherical) head of T4",
+              "a": "Prolate icosahedral head"
             },
             {
               "q": "Capsid vertex through which DNA enters during assembly",
@@ -1611,6 +1611,137 @@ window.QUIZ = /*QUIZ_JSON_START*/{
     },
     {
       "num": 13,
+      "title": "EMOJI REBUS & PHAGE PERSONALS",
+      "type": "mcq",
+      "badge": "FUN ROUND",
+      "scoring": {
+        "correct": 10,
+        "wrong": 0,
+        "time": 30
+      },
+      "questions": [
+        {
+          "q": "🦠️🧬📖  — decode the rebus",
+          "alt": "[virus][scissors][DNA][book]  — decode the rebus",
+          "options": [
+            "Restriction–modification",
+            "CRISPR-Cas adaptive immunity",
+            "Abortive infection",
+            "Generalized transduction"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "😴☀️⚡🦠  — decode the rebus",
+          "alt": "[sleeping][UV sun][lightning][virus]  — decode the rebus",
+          "options": [
+            "Prophage induction",
+            "Lysogeny establishment",
+            "Superinfection exclusion",
+            "Pseudolysogeny"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "🧨🏙️🦠  — decode the rebus",
+          "alt": "[dynamite][city][virus]  — decode the rebus",
+          "options": [
+            "Endolysin",
+            "Spanin",
+            "Depolymerase",
+            "Integrase"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "📦🎈  — decode the rebus",
+          "alt": "[box][DNA][balloon]  — decode the rebus",
+          "options": [
+            "cos-site packaging",
+            "Protein-primed replication",
+            "Rolling-circle replication",
+            "Headful (pac) packaging"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "🕵️🦀  — decode the rebus",
+          "alt": "[detective][crab][test tube]  — decode the rebus",
+          "options": [
+            "Plaque assay",
+            "LAL endotoxin assay",
+            "PFGE",
+            "ELISA"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "❄️🦠  — decode the rebus",
+          "alt": "[ice][microscope][virus]  — decode the rebus",
+          "options": [
+            "Cryo-EM",
+            "Negative-stain TEM",
+            "Atomic force microscopy",
+            "Phase-contrast light microscopy"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "🎭️🧬  — decode the rebus",
+          "alt": "[theatre masks][hand][DNA]  — decode the rebus",
+          "options": [
+            "Phage typing",
+            "Viromics",
+            "Phage display",
+            "Reassortment"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Phage personal ad: “Seeking F-pilus-positive partner; ssDNA exchange welcome; no lysis required — I prefer a long, chronic togetherness.” Who wrote it?",
+          "alt": "Phage personal ad: “Seeking F-pilus-positive partner; ssDNA exchange welcome; no lysis required — I prefer a long, chronic togetherness.” Who wrote it?",
+          "options": [
+            "Phage T4",
+            "Phage lambda",
+            "Phage Φ6",
+            "Phage M13"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Which emoji set best describes a TEMPERATE phage?",
+          "audience": true,
+          "options": [
+            "🛌🧬🤝",
+            "💥🦠☠️",
+            "🧨🔥💀",
+            "🏃🦠⏱️"
+          ],
+          "alt": "Which set best describes a TEMPERATE phage?",
+          "options_alt": [
+            "[sleeping][DNA][handshake]",
+            "[boom][virus][skull]",
+            "[dynamite][fire][skull]",
+            "[runner][virus][timer]"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Personal ad: “High-pressure type (~50 atm). I contract on first contact and deliver my DNA fast. No commitment issues — strictly lytic.” Identify the advertiser.",
+          "audience": true,
+          "alt": "Personal ad: “High-pressure type (~50 atm). I contract on first contact and deliver my DNA fast. No commitment issues — strictly lytic.” Identify the advertiser.",
+          "options": [
+            "M13",
+            "T4",
+            "ΦX174",
+            "MS2"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "num": 14,
       "title": "LYTIC LAUGHS",
       "type": "laughs",
       "scoring": {
@@ -1869,7 +2000,7 @@ function build(){
     <div class="teams">${Q.teams.map((t,i)=>`<div class="team"><h3 contenteditable data-t="${i}" data-f="name">${t.name}</h3>
       ${t.members.map((m,j)=>`<div contenteditable data-t="${i}" data-f="m" data-j="${j}">${m}</div>`).join("")}</div>`).join("")}</div>`});
   slides.push({label:"Rounds",kind:"info",html:`<h2>Rounds</h2>
-    <div class="rlist">${Q.rounds.map(r=>`<span class="${r.badge?"new":""}"><i>${r.num||"☕"}</i>${r.title}</span>`).join("")}</div>
+    <div class="rlist">${Q.rounds.map(r=>`<span class="${r.badge?"new":""}"><i>${r.num||"☕"}</i>${r.title}${r.badge?`<b class="nbt">${r.badge}</b>`:""}</span>`).join("")}</div>
     <div class="rules"><div class="chip">Each MCQ round: <b>8 team</b> + <b>2 audience</b> questions</div><div class="chip"><b>5 min</b> break mid-way</div></div>`});
   slides.push({label:"Markings",kind:"info",html:`<h2>Markings</h2>
     <div class="rules">
@@ -1877,6 +2008,7 @@ function build(){
       <div class="chip neg">Rounds 6–10 &nbsp;<b>+10</b> / −5</div>
       <div class="chip">Rapid Fire &nbsp;<b>+5</b> / 0 &nbsp;(no passing)</div>
       <div class="chip neg">Tie-Breaker &nbsp;<b>+20</b> / −10 &nbsp;· passed <b>+5</b></div>
+      <div class="chip">Emoji Rebus & Laughs &nbsp;<b>+10</b> / 0</div>
       <div class="chip">⏱ 30 s per question &nbsp;·&nbsp; tie-breaker 60 s</div>
     </div>`});
   for(const r of Q.rounds){

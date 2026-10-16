@@ -7,19 +7,26 @@ round, acronyms, per-team rapid fire, a tie-breaker and a comedy round — plus
 **three new topic rounds** (Phage Therapy & Clinical Frontiers, Phage Ecology &
 One Health, Bacterial Defenses & Phage Counter-Defense).
 
-**148 questions · 13 rounds · 4 teams**
+**158 questions · 14 rounds · 4 teams**
+
+Rounds 1–6 & 8 are written at **PhD-scholar difficulty** (Poisson MOI maths, spanins,
+Weigle reactivation, MIMAG/CheckV/PhageTerm, terminal-redundancy coverage signatures,
+ΦKZ RNAP, portal stoichiometry …), while audience questions stay accessible.
+Round 13 is a **FUN ROUND** (emoji rebus + phage personal ads) before the Lytic Laughs finale.
 
 ## Files
 
 | File | Purpose |
 |---|---|
+| **`phage-quiz.pptx`** | **Standalone PowerPoint deck (336 slides) — runs on any PC with PowerPoint/LibreOffice; answers are in the speaker notes of every question slide** |
 | `index.html` | The interactive presenter deck (loads `quiz-data.js`) |
 | `quiz-data.js` | All questions, options, answers, teams, rounds & scoring (plain JSON inside a JS wrapper) |
-| `phage-quiz-standalone.html` | **Single self-contained file** — copy this to a laptop/USB and present with no other files |
-| `phage-quiz-slides.pdf` | Printable/projectable 315-slide master deck in the original ICBRAR visual style (question slide + answer-highlight slide per question) |
+| `phage-quiz-standalone.html` | Single self-contained browser file — backup presenter copy for a laptop/USB |
+| `phage-quiz-slides.pdf` | Printable/projectable 336-slide master deck in the original ICBRAR visual style (question slide + answer-highlight slide per question) |
 | `answer-key.md` | Printable master copy & answer key for quiz masters |
 | `build.py` | Regenerates `answer-key.md` + `phage-quiz-standalone.html` from `quiz-data.js` |
 | `make_pdf.py` | Regenerates `phage-quiz-slides.pdf` (needs `pymupdf`) |
+| `build_pptx.py` | Regenerates `phage-quiz.pptx` (needs `python-pptx`, `pymupdf`; writes figure PNGs to `figs/`) |
 
 ## Presenting live
 
@@ -44,7 +51,12 @@ markers). Add rounds or questions there, then run:
 ```bash
 python3 build.py        # refresh answer key + standalone html
 python3 make_pdf.py     # refresh the PDF master deck (pip install pymupdf)
+python3 build_pptx.py   # refresh the PowerPoint deck (pip install python-pptx pymupdf)
 ```
+
+The **PPTX is the recommended conference file**: it needs no internet and no server —
+just open and present (click = next slide; each question is followed by its
+answer-highlight slide, and the answer is also in the speaker notes).
 
 Round types: `mcq` (options + answer index + optional `audience: true`),
 `visual` (like mcq plus a `figure` key drawn as inline SVG),

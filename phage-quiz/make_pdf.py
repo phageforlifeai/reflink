@@ -80,12 +80,12 @@ def qslide(p, r, q, show_answer):
         rr = pymupdf.Rect(170, 42, 300, 64)
         p.draw_rect(rr, fill=MID, color=None, radius=0.5)
         ctext(p, r["badge"], (rr.x0 + rr.x1) / 2, 58, 11, WHITE)
-    lines = wrap(q["q"], 22, 720)
+    lines = wrap(q.get("alt", q["q"]), 22, 720)
     y = 150 if len(lines) <= 2 else 132
     for ln in lines:
         ctext(p, ln, W / 2, y, 22)
         y += 29
-    for i, opt in enumerate(q["options"]):
+    for i, opt in enumerate(q.get("options_alt", q["options"])):
         rect = OPTION_RECTS[i]
         win = show_answer and i == q["answer"]
         card(p, rect, grad=win)
@@ -149,7 +149,7 @@ ctext(p, "Markings", W / 2, 90, 34)
 rows = [("Rounds 1-5", "+10 / 0", "30 sec"), ("Rounds 6-10", "+10 / -5", "30 sec"),
         ("Rapid Fire", "+5 / 0, no passing", "60 sec / team"),
         ("Tie-Breaker", "+20 / -10, passed +5", "60 sec"),
-        ("Lytic Laughs", "+10 / 0", "30 sec")]
+        ("Emoji Rebus & Lytic Laughs", "+10 / 0", "30 sec")]
 y = 150
 for a, b, c in rows:
     text(p, a, 220, y, 19, (0.49, 0.83, 0.98))

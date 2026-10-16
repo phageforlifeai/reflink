@@ -5,3 +5,4 @@ build/
 *.log
 *.tmp
 output_test_linked.docx
+phage-quiz/figs/

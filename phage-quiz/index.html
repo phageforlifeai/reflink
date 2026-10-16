@@ -65,8 +65,8 @@
   /* list slides (rounds overview) */
   .rlist{display:grid;grid-template-columns:1fr 1fr;gap:10px 34px;font-size:clamp(15px,1.5vw,19px);font-weight:700}
   .rlist span i{color:var(--accent);font-style:normal;margin-right:10px}
-  .rlist .new::after{content:"NEW";margin-left:10px;background:linear-gradient(90deg,var(--g1),var(--g2));
-      border-radius:10px;padding:2px 8px;font-size:11px;vertical-align:middle}
+  .rlist .nbt{margin-left:10px;background:linear-gradient(90deg,var(--g1),var(--g2));
+      border-radius:10px;padding:2px 8px;font-size:11px;vertical-align:middle;font-style:normal}
   /* timer */
   #timer{position:fixed;top:18px;right:26px;width:74px;height:74px;border-radius:50%;
          border:3px solid #3a4356;display:flex;align-items:center;justify-content:center;
@@ -309,7 +309,7 @@ function build(){
     <div class="teams">${Q.teams.map((t,i)=>`<div class="team"><h3 contenteditable data-t="${i}" data-f="name">${t.name}</h3>
       ${t.members.map((m,j)=>`<div contenteditable data-t="${i}" data-f="m" data-j="${j}">${m}</div>`).join("")}</div>`).join("")}</div>`});
   slides.push({label:"Rounds",kind:"info",html:`<h2>Rounds</h2>
-    <div class="rlist">${Q.rounds.map(r=>`<span class="${r.badge?"new":""}"><i>${r.num||"☕"}</i>${r.title}</span>`).join("")}</div>
+    <div class="rlist">${Q.rounds.map(r=>`<span class="${r.badge?"new":""}"><i>${r.num||"☕"}</i>${r.title}${r.badge?`<b class="nbt">${r.badge}</b>`:""}</span>`).join("")}</div>
     <div class="rules"><div class="chip">Each MCQ round: <b>8 team</b> + <b>2 audience</b> questions</div><div class="chip"><b>5 min</b> break mid-way</div></div>`});
   slides.push({label:"Markings",kind:"info",html:`<h2>Markings</h2>
     <div class="rules">
@@ -317,6 +317,7 @@ function build(){
       <div class="chip neg">Rounds 6–10 &nbsp;<b>+10</b> / −5</div>
       <div class="chip">Rapid Fire &nbsp;<b>+5</b> / 0 &nbsp;(no passing)</div>
       <div class="chip neg">Tie-Breaker &nbsp;<b>+20</b> / −10 &nbsp;· passed <b>+5</b></div>
+      <div class="chip">Emoji Rebus & Laughs &nbsp;<b>+10</b> / 0</div>
       <div class="chip">⏱ 30 s per question &nbsp;·&nbsp; tie-breaker 60 s</div>
     </div>`});
   for(const r of Q.rounds){
