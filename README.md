@@ -2,6 +2,12 @@
 
 > **Re-link plain-text manuscript citations back to live, editable Zotero field codes in Microsoft Word.**
 
+## 🧫 Also in this repository
+
+- [`phage-quiz/`](phage-quiz/) — an interactive conference quiz deck for bacteriophage
+  meetings (ICBRAR format): 148 questions across 13 rounds, presenter web app,
+  printable PDF master deck and answer key. See [`phage-quiz/README.md`](phage-quiz/README.md).
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform: Browser](https://img.shields.io/badge/Platform-Web%20%2F%20Offline-success.svg)](#)
 [![Works With: Zotero](https://img.shields.io/badge/Works%20With-Zotero%206%20%2F%207%20%2F%2010+-red.svg)](#)
