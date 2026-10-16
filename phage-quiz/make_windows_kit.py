@@ -98,3 +98,11 @@ with zipfile.ZipFile(zpath, "w", zipfile.ZIP_DEFLATED) as z:
         if f.is_file():
             z.write(f, f.relative_to(HERE))
 print("kit:", KIT, "| zip:", zpath, zpath.stat().st_size, "bytes")
+
+# convenience bundle of every conference deliverable
+kpath = HERE / "phage-quiz-kit.zip"
+with zipfile.ZipFile(kpath, "w", zipfile.ZIP_DEFLATED) as z:
+    for f in ["phage-quiz.pptx", "phage-quiz-slides.pdf", "answer-key.md",
+              "phage-quiz-standalone.html", "README.md"]:
+        z.write(HERE / f, f"phage-quiz/{f}")
+print("bundle:", kpath, kpath.stat().st_size, "bytes")
