@@ -40,6 +40,12 @@ Round 13 is a **FUN ROUND** (emoji rebus + phage personal ads) before the Lytic 
    - **T** — start/pause the round timer (auto-buzz at 0)
    - **S** — scoreboard overlay (scores persist in the browser)
    - **J** — jump to any round/slide
+   - **C** — **Quiz-Master Console**: a private second window that shows every
+     correct answer *before* the public reveal (plus remote reveal/next/timer/score
+     buttons). Put it on your own screen: Windows **Win+P → Extend**, drag the
+     console to the laptop display while the deck runs fullscreen on the projector.
+   - **A** — peek the answer in the bottom bar (only while the audience isn't looking)
+   - **K** — opens a printable full answer key (quiz-master's paper backup)
    - **H** — help, **F** — fullscreen, **Esc** — close overlays
 4. After revealing, award marks with the per-team **✓ / ✗** buttons in the bottom bar
    (a **p+5** button appears in the tie-breaker for passed questions). Scoring follows

@@ -139,6 +139,8 @@
   <b>Presenter keys</b><br>
   <kbd>Space</kbd>/<kbd>→</kbd> reveal answer, then next slide &nbsp; <kbd>←</kbd> previous slide<br>
   <kbd>T</kbd> start / pause round timer &nbsp; <kbd>S</kbd> scoreboard &nbsp; <kbd>J</kbd> jump to round<br>
+  <kbd>C</kbd> <b>Quiz-Master Console</b> — private 2nd window that shows every answer BEFORE the public reveal (keep it on your own screen: Win+P → Extend)<br>
+  <kbd>A</kbd> peek the answer in the bottom bar (only while the audience isn't looking) &nbsp; <kbd>K</kbd> printable answer key<br>
   <kbd>F</kbd> fullscreen &nbsp; <kbd>H</kbd> this help &nbsp; <kbd>Esc</kbd> close overlays<br>
   After revealing, use the team buttons in the bottom bar to award marks.<br>
   <div class="center" style="margin-top:10px"><button onclick="toggleHelp()">Close</button></div>
@@ -1838,6 +1840,24 @@ window.QUIZ = /*QUIZ_JSON_START*/{
 </script>
 <script>
 "use strict";
+if (!window.QUIZ) {
+  const msg = () => {
+    document.body.innerHTML =
+      '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;' +
+      'background:#05070d;color:#fff;font-family:Arial,Helvetica,sans-serif">' +
+      '<div style="max-width:640px;background:#0c0f16;border:1px solid #3a4356;border-radius:20px;padding:34px 38px;line-height:1.7">' +
+      '<h1 style="font-size:24px;margin:0 0 12px">⚠️ Quiz data not found</h1>' +
+      '<p style="color:#9aa7bd;margin:0 0 10px">This copy of <b>index.html</b> is the two-file version: it needs ' +
+      '<b>quiz-data.js</b> in the same folder.</p>' +
+      '<p style="margin:0 0 6px">For a <b>single file that works alone on any PC</b>, use instead:</p>' +
+      '<ul style="margin:0 0 10px;color:#7dd3fc"><li>phage-quiz-standalone.html (rename it index.html if you like)</li>' +
+      '<li>or the PhageQuiz-Windows folder (double-click PhageQuiz.bat)</li></ul>' +
+      '<p style="color:#9aa7bd;margin:0">Both are on the quiz downloads page / in the repository.</p>' +
+      '</div></div>';
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", msg); else msg();
+  throw new Error("quiz-data.js missing next to index.html");
+}
 /* ============================ SVG FIGURE LIBRARY ============================ */
 const S='stroke="#8fb7ff" stroke-width="3" fill="none" stroke-linecap="round"';
 const W='stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round"';
@@ -1983,6 +2003,7 @@ function optHTML(i,text,win,dim){
 function mcqSlide(r,q,qi,total){
   const fig=q.figure?`<div class="figbox">${FIGS[q.figure]||""}</div>`:"";
   return {label:`R${r.num} · Q${qi+1}/${total}`, round:r.num, roundObj:r, kind:"mcq", time:r.scoring.time,
+    qtext:q.q, options:q.options, answer:q.answer,
     html:`<div class="tag">ROUND ${r.num}</div>${q.audience?'<div class="ribbon">AUDIENCE</div>':""}${r.badge?`<div class="badge">${r.badge}</div>`:""}
       ${fig}<h2>${q.q}</h2>
       <div class="opts">${q.options.map((o,i)=>optHTML(i,o,false,false)).join("")}</div>`,
@@ -2025,6 +2046,7 @@ function build(){
         const tn=()=>Q.teams[tset.team].name;
         tset.questions.forEach((qq,i)=>{
           slides.push({label:`R${r.num} · ${tn()} ${i+1}/${tset.questions.length}`,kind:"rapid",roundObj:r,team:tset.team,time:r.scoring.time,
+            qtext:qq.q, atext:qq.a,
             html:`<div class="tag">ROUND ${r.num} — RAPID FIRE</div>
               <div class="rfmeta">${tn().toUpperCase()} · question ${i+1} of ${tset.questions.length}</div>
               <div class="rfq">${qq.q}</div><div class="rfa">${qq.a}</div>`,
@@ -2111,9 +2133,13 @@ const bar=document.getElementById("bar");
 function drawBar(){
   const s=slides[cur];
   const canScore=s&&(s.kind==="mcq"||s.kind==="rapid");
+  const peekTxt=s.kind==="mcq"?(("ABCD"[s.answer])+". "+(s.options||[])[s.answer]):(s.kind==="rapid"?s.atext:"");
   bar.innerHTML=`<span id="prog">${s.label||""} &nbsp;·&nbsp; slide ${cur+1}/${slides.length}</span>
+    ${peek&&peekTxt?`<span style="background:#3b0764;border:1px solid #bd0dff;border-radius:10px;padding:3px 10px;color:#f0abfc;font-weight:700">👁 PREVIEW: ${peekTxt}</span>`:""}
     <button onclick="go(cur-1)">←</button><button class="pri" onclick="next()">${revealed?"Next →":"Reveal ⏎"}</button>
-    <button onclick="toggleTimer()">⏱ T</button><button onclick="toggleBoard()">🏆 S</button><button onclick="toggleJump()">☰ J</button><button onclick="toggleHelp()">? H</button>
+    <button onclick="toggleTimer()">⏱ T</button><button onclick="toggleBoard()">🏆 S</button><button onclick="toggleJump()">☰ J</button>
+    <button onclick="openConsole()" title="private master console">🎛 C</button><button onclick="printKey()" title="printable answer key">🔑 K</button><button onclick="togglePeek()" title="peek answer on this screen">👁 A</button>
+    <button onclick="toggleHelp()">? H</button>
     <span class="sp"></span>`;
   const ro=s.roundObj||null;
   const cp=ro?(ro.type==="rapid"?5:ro.scoring.correct):0;
@@ -2126,6 +2152,7 @@ function drawBar(){
        ${canPass?`<button class="tbtn p" title="passed to this team, answered correctly" onclick="passAward(${i})">p+${ro.scoring.pass}</button>`:""}`:""}</span>`);
     bar.appendChild(c);
   });
+  syncBroadcast();
 }
 function award(i,dir){
   const ro=slides[cur].roundObj;
@@ -2162,6 +2189,107 @@ function startShow(){
     (el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);}catch(e){}
   go(1);
 }
+/* ============ PRIVATE QUIZ-MASTER CONSOLE (second window) ============
+   Shows the correct answer BEFORE the public reveal, plus remote controls.
+   Keep this window on your own screen (Windows: Win+P -> Extend).       */
+let chan=null; try{chan=new BroadcastChannel("phagequiz-sync")}catch(e){}
+let consoleWin=null, peek=false;
+function syncBroadcast(){
+  const s=slides[cur];
+  const payload={t:"state",label:s.label||"",revealed:revealed,
+    view:s.kind==="mcq"?"mcq":(s.kind==="rapid"?"rapid":"other"),
+    question:s.qtext||"",options:s.options||[],answer:(s.answer==null?-1:s.answer),
+    atext:s.atext||"",teams:Q.teams.map((t,i)=>({n:t.name,s:scores[i]}))};
+  try{if(chan)chan.postMessage(payload)}catch(e){}
+  try{localStorage.setItem("phagequiz_sync",JSON.stringify(payload))}catch(e){}
+}
+function sendCmdLocal(cmd,i,d){
+  if(cmd==="reveal")reveal();
+  else if(cmd==="next")next();
+  else if(cmd==="prev")go(cur-1);
+  else if(cmd==="timer")toggleTimer();
+  else if(cmd==="award")award(i,d);
+}
+function handleCmd(m){if(m&&m.t==="cmd")sendCmdLocal(m.cmd,m.i,m.d)}
+try{if(chan)chan.onmessage=e=>handleCmd(e.data)}catch(e){}
+window.addEventListener("storage",e=>{if(e.key==="phagequiz_cmd"&&e.newValue){try{handleCmd(JSON.parse(e.newValue))}catch(err){}}});
+function togglePeek(){peek=!peek;drawBar()}
+function openConsole(){
+  if(consoleWin&&!consoleWin.closed){consoleWin.focus();syncBroadcast();return}
+  consoleWin=window.open("","phagequiz_console","width=560,height=820");
+  if(!consoleWin){alert("Popup blocked — allow popups for this page to use the Master Console.");return}
+  consoleWin.document.write(CONSOLE_HTML);
+  consoleWin.document.close();
+  syncBroadcast();
+}
+function printKey(){
+  const w=window.open("","phagequiz_key","width=860,height=940");
+  if(!w){alert("Popup blocked — allow popups to print the answer key.");return}
+  w.document.write(keyHTML());
+  w.document.close();
+}
+function keyHTML(){
+  const L=[];
+  L.push('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Phage Quiz — Answer Key</title>');
+  L.push('<style>body{font:13px/1.55 Arial,sans-serif;margin:28px;color:#111}h1{font-size:20px}h2{font-size:15px;margin:18px 0 4px;border-bottom:2px solid #4338ca;padding-bottom:3px}');
+  L.push('ol{margin:6px 0 10px;padding-left:22px}li{margin:5px 0}.ans{color:#047857;font-weight:700}.aud{color:#7c3aed;font-weight:700;font-size:11px}@media print{button{display:none}}</style></head><body>');
+  L.push('<h1>Phage Quiz — Quiz-Master Answer Key</h1><p>Print this (Ctrl+P) or keep it open on your own screen.</p><button onclick="window.print()">🖨 Print</button>');
+  for(const r of Q.rounds){
+    if(r.type==="break"){L.push('<h2>☕ BREAK '+r.minutes+' min</h2>');continue}
+    L.push('<h2>Round '+r.num+' — '+r.title+(r.badge?' ('+r.badge+')':'')+'</h2>');
+    if(r.type==="rapid"){
+      for(const ts of r.teams){
+        L.push('<p><b>'+Q.teams[ts.team].name+'</b></p><ol>');
+        for(const q of ts.questions)L.push('<li>'+q.q+' <span class="ans">→ '+q.a+'</span></li>');
+        L.push('</ol>');
+      }
+      continue;
+    }
+    L.push('<ol>');
+    for(const q of r.questions){
+      L.push('<li>'+q.q+(q.audience?' <span class="aud">AUDIENCE</span>':'')+' <span class="ans">→ '+("ABCD")[q.answer]+'. '+q.options[q.answer]+'</span></li>');
+    }
+    L.push('</ol>');
+  }
+  L.push('</body></html>');
+  return L.join("");
+}
+const CONSOLE_HTML='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Quiz Master Console</title>'+
+'<style>body{background:#0b0e14;color:#e8eef7;font:14px/1.5 Arial,sans-serif;margin:0;padding:14px}'+
+'h1{font-size:15px;margin:0 0 6px;color:#7dd3fc}.lab{color:#9aa7bd;font-size:11px;letter-spacing:1px}'+
+'.q{font-size:16px;font-weight:700;margin:10px 0 6px}ul{list-style:none;margin:0;padding:0}'+
+'li{padding:6px 9px;border:1px solid #263043;border-radius:9px;margin:4px 0}'+
+'li.win{border-color:#22c55e;background:#052e16;color:#bbf7d0;font-weight:700}'+
+'.btns{margin:10px 0;display:flex;gap:6px;flex-wrap:wrap}'+
+'button{background:#141a26;border:1px solid #3a4356;color:#e5ecf7;border-radius:8px;padding:6px 10px;font:700 12px Arial;cursor:pointer}'+
+'button:hover{border-color:#bd0dff}.sc{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}'+
+'.chip{background:#141a26;border:1px solid #3a4356;border-radius:10px;padding:4px 9px;font-size:12px}'+
+'.note{color:#9aa7bd;font-size:11px;margin-top:12px;border-top:1px solid #263043;padding-top:8px}</style></head><body>'+
+'<h1>🎛 QUIZ MASTER CONSOLE</h1><div class="lab">PRIVATE — ANSWERS VISIBLE HERE BEFORE THE PUBLIC REVEAL</div>'+
+'<div class="lab" id="lab" style="margin-top:8px">—</div><div class="q" id="q"></div><ul id="opts"></ul><div id="extra"></div>'+
+'<div class="btns"><button onclick="cmd(\'reveal\')">Reveal (Space)</button><button onclick="cmd(\'next\')">Next →</button>'+
+'<button onclick="cmd(\'prev\')">← Prev</button><button onclick="cmd(\'timer\')">⏱ Timer</button></div>'+
+'<div class="btns" id="awards"></div><div class="sc" id="sc"></div>'+
+'<div class="note">Keep this window on your own screen (Windows: <b>Win+P → Extend</b>, drag it to the laptop display). '+
+'On a mirrored/single screen, use <b>A</b> (peek) only while the audience is not looking, or print the key with <b>K</b> on the main window.</div>'+
+'<script>var chan=null;try{chan=new BroadcastChannel("phagequiz-sync")}catch(e){}'+
+'function cmd(c,i,d){var m={t:"cmd",cmd:c,i:i,d:d};try{if(chan)chan.postMessage(m)}catch(e){}try{localStorage.setItem("phagequiz_cmd",JSON.stringify(m))}catch(e){}}'+
+'function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}'+
+'function render(s){document.getElementById("lab").textContent=s.label||"";'+
+'var q=document.getElementById("q"),o=document.getElementById("opts"),x=document.getElementById("extra");'+
+'o.innerHTML="";x.innerHTML="";'+
+'if(s.view==="mcq"){q.textContent=s.question;'+
+'for(var i=0;i<s.options.length;i++){var li=document.createElement("li");li.innerHTML="<b>"+("ABCD")[i]+".</b> "+esc(s.options[i]);if(i===s.answer)li.className="win";o.appendChild(li);}'+
+'x.innerHTML="<div class=\\"lab\\" style=\\"margin-top:6px\\">CORRECT: "+("ABCD")[s.answer]+(s.revealed?"  ·  already revealed publicly":"  ·  NOT yet revealed")+"</div>";}'+
+'else if(s.view==="rapid"){q.textContent=s.question;x.innerHTML="<ul><li class=\\"win\\">ANSWER: "+esc(s.atext)+"</li></ul>";}'+
+'else{q.textContent="(no answer on this slide)";}'+
+'var aw=document.getElementById("awards");aw.innerHTML="";'+
+'for(var t=0;t<(s.teams||[]).length;t++){aw.innerHTML+="<button onclick=\\"cmd(\'award\'," +t+",1)\\">✓ "+esc(s.teams[t].n)+"</button><button onclick=\\"cmd(\'award\'," +t+",-1)\\">✗ "+esc(s.teams[t].n)+"</button>";}'+
+'var sc=document.getElementById("sc");sc.innerHTML="";'+
+'for(var t2=0;t2<(s.teams||[]).length;t2++){sc.innerHTML+="<span class=\\"chip\\">"+esc(s.teams[t2].n)+": <b>"+s.teams[t2].s+"</b></span>";}}'+
+'if(chan)chan.onmessage=function(e){if(e.data&&e.data.t==="state")render(e.data)};'+
+'window.addEventListener("storage",function(e){if(e.key==="phagequiz_sync"&&e.newValue){try{render(JSON.parse(e.newValue))}catch(err){}}});'+
+'<\/script></body></html>';
 /* ============================ KEYS ============================ */
 document.addEventListener("keydown",e=>{
   if(e.target.isContentEditable)return;
@@ -2172,6 +2300,9 @@ document.addEventListener("keydown",e=>{
   else if(k==="t"||k==="T"){toggleTimer()}
   else if(k==="s"||k==="S"){toggleBoard()}
   else if(k==="j"||k==="J"){toggleJump()}
+  else if(k==="c"||k==="C"){openConsole()}
+  else if(k==="k"||k==="K"){printKey()}
+  else if(k==="a"||k==="A"){togglePeek()}
   else if(k==="h"||k==="H"||k==="?"){toggleHelp()}
   else if(k==="f"||k==="F"){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
   else if(k==="Escape"){closeBoard();jump.classList.remove("on");document.getElementById("help").classList.remove("on")}
