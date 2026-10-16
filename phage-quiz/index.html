@@ -147,6 +147,24 @@
 <script src="quiz-data.js"></script>
 <script>
 "use strict";
+if (!window.QUIZ) {
+  const msg = () => {
+    document.body.innerHTML =
+      '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;' +
+      'background:#05070d;color:#fff;font-family:Arial,Helvetica,sans-serif">' +
+      '<div style="max-width:640px;background:#0c0f16;border:1px solid #3a4356;border-radius:20px;padding:34px 38px;line-height:1.7">' +
+      '<h1 style="font-size:24px;margin:0 0 12px">⚠️ Quiz data not found</h1>' +
+      '<p style="color:#9aa7bd;margin:0 0 10px">This copy of <b>index.html</b> is the two-file version: it needs ' +
+      '<b>quiz-data.js</b> in the same folder.</p>' +
+      '<p style="margin:0 0 6px">For a <b>single file that works alone on any PC</b>, use instead:</p>' +
+      '<ul style="margin:0 0 10px;color:#7dd3fc"><li>phage-quiz-standalone.html (rename it index.html if you like)</li>' +
+      '<li>or the PhageQuiz-Windows folder (double-click PhageQuiz.bat)</li></ul>' +
+      '<p style="color:#9aa7bd;margin:0">Both are on the quiz downloads page / in the repository.</p>' +
+      '</div></div>';
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", msg); else msg();
+  throw new Error("quiz-data.js missing next to index.html");
+}
 /* ============================ SVG FIGURE LIBRARY ============================ */
 const S='stroke="#8fb7ff" stroke-width="3" fill="none" stroke-linecap="round"';
 const W='stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round"';
