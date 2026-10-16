@@ -18,7 +18,8 @@ Round 13 is a **FUN ROUND** (emoji rebus + phage personal ads) before the Lytic 
 
 | File | Purpose |
 |---|---|
-| **`phage-quiz.pptx`** | **Standalone PowerPoint deck (336 slides) — runs on any PC with PowerPoint/LibreOffice; answers are in the speaker notes of every question slide** |
+| **`PhageQuiz-Windows.zip`** | **Offline Windows presenter app** — unzip anywhere, double-click `PhageQuiz.bat`: app-style window with timer, scoring pad & scoreboard (no install, no internet) |
+| **`phage-quiz.pptx`** | Standalone PowerPoint deck (336 slides) — backup format; answers in speaker notes |
 | `index.html` | The interactive presenter deck (loads `quiz-data.js`) |
 | `quiz-data.js` | All questions, options, answers, teams, rounds & scoring (plain JSON inside a JS wrapper) |
 | `phage-quiz-standalone.html` | Single self-contained browser file — backup presenter copy for a laptop/USB |
@@ -27,6 +28,7 @@ Round 13 is a **FUN ROUND** (emoji rebus + phage personal ads) before the Lytic 
 | `build.py` | Regenerates `answer-key.md` + `phage-quiz-standalone.html` from `quiz-data.js` |
 | `make_pdf.py` | Regenerates `phage-quiz-slides.pdf` (needs `pymupdf`) |
 | `build_pptx.py` | Regenerates `phage-quiz.pptx` (needs `python-pptx`, `pymupdf`; writes figure PNGs to `figs/`) |
+| `make_windows_kit.py` | Regenerates the `PhageQuiz-Windows/` app folder + `PhageQuiz-Windows.zip` |
 
 ## Presenting live
 

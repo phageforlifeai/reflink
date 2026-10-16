@@ -1,0 +1,2182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phage Quiz — Conference Edition</title>
+<style>
+  :root{
+    --bg:#05070d; --ink:#ffffff; --mut:#9aa7bd; --accent:#bd0dff;
+    --g1:#0a66ff; --g2:#8a2bf5; --good:#22c55e; --bad:#ef4444;
+    --hex:polygon(4% 0,96% 0,100% 50%,96% 100%,4% 100%,0 50%);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(900px 500px at 100% 0%, #0b1e3a55 0%, transparent 60%),
+      radial-gradient(900px 500px at 0% 100%, #1a0b3a44 0%, transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;
+    overflow:hidden; user-select:none;
+  }
+  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  .slide{width:min(1180px,94vw);display:none;flex-direction:column;gap:22px;animation:in .35s ease}
+  .slide.on{display:flex}
+  @keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .tag{position:fixed;top:26px;left:34px;font-size:15px;letter-spacing:2px;font-weight:700;color:#fff;opacity:.9}
+  .badge{position:fixed;top:26px;left:150px;background:linear-gradient(90deg,var(--g1),var(--g2));
+         padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:1.5px}
+  .ribbon{position:fixed;top:24px;right:150px;background:linear-gradient(90deg,#ff2d95,#bd0dff);
+         padding:5px 16px;border-radius:20px;font-size:13px;font-weight:700;letter-spacing:2px}
+  h1{font-size:clamp(34px,5.4vw,64px);line-height:1.08;font-weight:800}
+  h2{font-size:clamp(24px,3vw,38px);font-weight:800;text-align:center;line-height:1.25}
+  .sub{color:var(--mut);font-size:clamp(14px,1.5vw,19px);text-align:center}
+  .grad{background:linear-gradient(90deg,var(--g1),var(--g2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .center{text-align:center}
+  /* hexagon option cards */
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:26px 34px;margin-top:8px}
+  .opt{position:relative;background:#3a4356;clip-path:var(--hex);padding:1.5px;transition:transform .15s}
+  .opt .oi{background:#0c0f16;clip-path:var(--hex);min-height:86px;padding:18px 62px;
+       display:flex;align-items:center;gap:18px;height:100%;
+       font-size:clamp(15px,1.55vw,20px);font-weight:700;line-height:1.3}
+  .opt .L{color:var(--accent);font-size:clamp(20px,2.1vw,27px);font-weight:800;flex:0 0 auto}
+  .opt.win{background:linear-gradient(90deg,var(--g1),var(--g2));
+           filter:drop-shadow(0 0 22px #6d28ffaa);transform:scale(1.02)}
+  .opt.win .oi{background:linear-gradient(90deg,var(--g1),var(--g2))}
+  .opt.win .L{color:#ff4df0}
+  .opt.dim{opacity:.42}
+  /* divider slides */
+  .bignum{width:104px;height:104px;border-radius:26px;background:linear-gradient(135deg,var(--g1),var(--g2));
+          display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:800;
+          box-shadow:0 0 44px #6d28ff66;margin:0 auto}
+  .rules{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .chip{background:#0c0f16;border:1px solid #3a4356;border-radius:14px;padding:10px 20px;font-size:16px;font-weight:700}
+  .chip b{color:#7dd3fc}
+  .chip.neg b{color:#fca5a5}
+  /* teams */
+  .teams{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .team{background:#0c0f16;border:1px solid #3a4356;border-radius:18px;padding:18px;text-align:center}
+  .team h3{font-size:20px;margin-bottom:10px;color:#7dd3fc}
+  .team div{color:var(--mut);font-size:14.5px;line-height:1.7}
+  [contenteditable]{outline:none;border-bottom:1px dashed transparent}
+  [contenteditable]:hover,[contenteditable]:focus{border-bottom-color:var(--accent);color:#fff}
+  /* list slides (rounds overview) */
+  .rlist{display:grid;grid-template-columns:1fr 1fr;gap:10px 34px;font-size:clamp(15px,1.5vw,19px);font-weight:700}
+  .rlist span i{color:var(--accent);font-style:normal;margin-right:10px}
+  .rlist .nbt{margin-left:10px;background:linear-gradient(90deg,var(--g1),var(--g2));
+      border-radius:10px;padding:2px 8px;font-size:11px;vertical-align:middle;font-style:normal}
+  /* timer */
+  #timer{position:fixed;top:18px;right:26px;width:74px;height:74px;border-radius:50%;
+         border:3px solid #3a4356;display:flex;align-items:center;justify-content:center;
+         font-size:24px;font-weight:800;background:#0c0f16cc;z-index:5}
+  #timer.run{border-color:var(--good)}
+  #timer.low{border-color:var(--bad);color:#fca5a5;animation:pulse .6s infinite}
+  @keyframes pulse{50%{transform:scale(1.08)}}
+  /* control bar */
+  #bar{position:fixed;left:0;right:0;bottom:0;background:#0a0d14ee;border-top:1px solid #263043;
+       padding:9px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;z-index:6;font-size:13.5px}
+  #bar .sp{flex:1}
+  button{font:inherit;font-weight:700;border:1px solid #3a4356;background:#141a26;color:#e5ecf7;
+         border-radius:10px;padding:7px 14px;cursor:pointer}
+  button:hover{border-color:var(--accent)}
+  button.pri{background:linear-gradient(90deg,var(--g1),var(--g2));border:none}
+  button.tbtn{padding:5px 10px;font-size:12.5px}
+  button.tbtn.c{border-color:#14532d;background:#052e16;color:#86efac}
+  button.tbtn.w{border-color:#7f1d1d;background:#450a0a;color:#fca5a5}
+  button.tbtn.p{border-color:#713f12;background:#451a03;color:#fcd34d}
+  #prog{color:var(--mut);font-weight:700;letter-spacing:.5px}
+  .tchip{display:flex;align-items:center;gap:6px;background:#141a26;border:1px solid #3a4356;
+         border-radius:12px;padding:4px 10px;font-weight:700}
+  .tchip .nm{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#7dd3fc}
+  .tchip .sc{min-width:34px;text-align:right;color:#fff}
+  /* scoreboard overlay */
+  #board{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:9}
+  #board.on{display:flex}
+  #board .card{background:#0c0f16;border:1px solid #3a4356;border-radius:22px;padding:34px 44px;min-width:440px}
+  #board h3{font-size:26px;margin-bottom:18px;text-align:center}
+  #board table{width:100%;border-collapse:collapse;font-size:19px;font-weight:700}
+  #board td{padding:9px 8px;border-bottom:1px solid #263043}
+  #board td.r{text-align:right}
+  #board .pos{color:var(--accent)}
+  /* rapid fire */
+  .rfq{font-size:clamp(22px,2.6vw,34px);font-weight:800;text-align:center;line-height:1.35}
+  .rfa{margin-top:26px;text-align:center;font-size:clamp(20px,2.3vw,30px);font-weight:800;
+       background:linear-gradient(90deg,var(--g1),var(--g2));clip-path:var(--hex);
+       padding:18px 70px;visibility:hidden}
+  .rfa.on{visibility:visible}
+  .rfmeta{text-align:center;color:var(--mut);font-weight:700;letter-spacing:1px}
+  /* figure */
+  .figbox{display:flex;justify-content:center}
+  .figbox svg{max-height:34vh;width:auto;max-width:70vw}
+  /* jump menu */
+  #jump{position:fixed;inset:0;background:#000d;display:none;z-index:10;overflow:auto;padding:60px}
+  #jump.on{display:block}
+  #jump a{display:block;color:#dbe6f5;text-decoration:none;font-weight:700;padding:7px 12px;border-radius:8px;font-size:15px}
+  #jump a:hover{background:#1b2436}
+  #jump a.cur{color:var(--accent)}
+  #help{position:fixed;inset:0;background:#000d;display:none;align-items:center;justify-content:center;z-index:11}
+  #help.on{display:flex}
+  #help .card{background:#0c0f16;border:1px solid #3a4356;border-radius:18px;padding:26px 34px;font-size:15px;line-height:2}
+  kbd{background:#1b2436;border:1px solid #3a4356;border-radius:6px;padding:1px 8px;font-family:inherit;font-weight:700}
+  .flash{position:fixed;inset:0;background:#ef444433;pointer-events:none;opacity:0;z-index:8}
+  .flash.on{animation:fl .8s ease}
+  @keyframes fl{0%{opacity:1}100%{opacity:0}}
+  @media print{#bar,#timer{display:none}}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="timer">–</div>
+<div class="flash" id="flash"></div>
+<div id="bar"></div>
+<div id="board"><div class="card"><h3>🏆 SCOREBOARD</h3><table id="btab"></table>
+  <div class="center" style="margin-top:16px"><button onclick="closeBoard()">Close (S)</button>
+  <button onclick="resetScores()">Reset scores</button></div></div></div>
+<div id="jump"></div>
+<div id="help"><div class="card">
+  <b>Presenter keys</b><br>
+  <kbd>Space</kbd>/<kbd>→</kbd> reveal answer, then next slide &nbsp; <kbd>←</kbd> previous slide<br>
+  <kbd>T</kbd> start / pause round timer &nbsp; <kbd>S</kbd> scoreboard &nbsp; <kbd>J</kbd> jump to round<br>
+  <kbd>F</kbd> fullscreen &nbsp; <kbd>H</kbd> this help &nbsp; <kbd>Esc</kbd> close overlays<br>
+  After revealing, use the team buttons in the bottom bar to award marks.<br>
+  <div class="center" style="margin-top:10px"><button onclick="toggleHelp()">Close</button></div>
+</div></div>
+
+<script>
+/* =========================================================================
+   PHAGE QUIZ — QUESTION DATA
+   7th ICBRAR-style conference quiz (new edition)
+   Structure mirrors the ICBRAR 2025 quiz: 4 teams, MCQ rounds with
+   8 team questions + 2 audience questions, visual round, acronyms,
+   rapid fire (8/team), tie-breaker and a comedy round.
+   NEW topic rounds added: Phage Therapy & Clinical Frontiers,
+   Phage Ecology & One Health, Bacterial Defenses & Phage Counter-Defense.
+   ========================================================================= */
+window.QUIZ = /*QUIZ_JSON_START*/{
+  "meta": {
+    "title": "PHAGE QUIZ",
+    "subtitle": "7th International Conference on Bacteriophage Research and Antimicrobial Resistance",
+    "tagline": "Lytic Legends Edition — 13 rounds of plaques, probes and punchlines",
+    "organizers": [
+      "Quiz Committee, PhageForLife"
+    ]
+  },
+  "teams": [
+    {
+      "name": "Lytic Legends",
+      "members": [
+        "Dr. Ruma",
+        "Ms. Priya",
+        "Mr. Karan"
+      ]
+    },
+    {
+      "name": "Biofilm Breakers",
+      "members": [
+        "Dr. Rupali",
+        "Dr. Prachi",
+        "Mr. Prajasattak"
+      ]
+    },
+    {
+      "name": "Phage Pharmers",
+      "members": [
+        "Team member 1",
+        "Team member 2",
+        "Team member 3"
+      ]
+    },
+    {
+      "name": "Virion Architects",
+      "members": [
+        "Team member 1",
+        "Team member 2",
+        "Team member 3"
+      ]
+    }
+  ],
+  "rounds": [
+    {
+      "num": 1,
+      "title": "GENERAL QUESTIONS",
+      "type": "mcq",
+      "scoring": {
+        "correct": 10,
+        "wrong": 0,
+        "time": 30
+      },
+      "questions": [
+        {
+          "q": "Phage genomes are unusually compact, with overlapping genes and non-canonical start codons. The best explanation is",
+          "options": [
+            "Selection for genome compaction under capsid packaging constraints",
+            "A high mutation rate that erases intergenic regions",
+            "Limitation of host ribosomes during infection",
+            "An artifact of automated annotation pipelines"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "The ~50–60 atm internal pressure that drives genome ejection from tailed phage capsids is generated mainly by",
+          "options": [
+            "The host proton-motive force pulling DNA inward",
+            "Dense inverse-spool DNA packing with electrostatic self-repulsion",
+            "ATP hydrolysis by the portal motor during ejection",
+            "Osmotic water influx upon receptor binding"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "At an MOI of exactly 1, the fraction of host cells receiving at least one phage (Poisson distribution) is approximately",
+          "options": [
+            "37%",
+            "50%",
+            "63%",
+            "90%"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "In the lambda lysis cassette (S, R, Rz, Rz1), the spanins Rz/Rz1 act by",
+          "options": [
+            "Degrading peptidoglycan from the periplasm",
+            "Timing holin insertion into the inner membrane",
+            "Recycling murein for the next infection cycle",
+            "Fusing inner and outer membranes after endolysin action"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Optimality models of lysis timing predict that the evolutionarily stable latent period balances",
+          "options": [
+            "Burst size against the number of lysis cycles completed per unit time",
+            "Adsorption rate against the eclipse period",
+            "Genome size against capsid interior volume",
+            "Latent period against the multiplicity of infection"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Botstein's “modular theory” of phage evolution proposes that",
+          "options": [
+            "Phage genes evolve strictly vertically with their hosts",
+            "Functional modules (head, tail, lysis, lysogeny) recombine across phage lineages",
+            "All tailed phages preserve a single ancestral gene order",
+            "Phage genomes change only by point mutation"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Jumbo phages such as ΦKZ protect their replicating DNA inside a compartment whose shell is built from",
+          "options": [
+            "Host-derived lipid bilayer",
+            "Condensed RNA and polyamines",
+            "The protein chimallin (a proteinaceous phage nucleus)",
+            "Crystallized terminase"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "The kinetics of phage adsorption to susceptible hosts are best described as",
+          "options": [
+            "Zero-order until receptors saturate",
+            "First-order in phage only, independent of host density",
+            "Logistic, limited by burst size",
+            "Second-order overall: first-order in both phage and host concentration"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Which is generally SMALLER?",
+          "audience": true,
+          "options": [
+            "A bacteriophage",
+            "A bacterium",
+            "A yeast cell",
+            "A red blood cell"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Phage contamination of starter cultures is a classic industrial problem in which fermentation?",
+          "audience": true,
+          "options": [
+            "Bread baking",
+            "Cheese and yogurt making",
+            "Beer brewing",
+            "Wine making"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "num": 2,
+      "title": "HISTORY OF BACTERIOPHAGES",
+      "type": "mcq",
+      "scoring": {
+        "correct": 10,
+        "wrong": 0,
+        "time": 30
+      },
+      "questions": [
+        {
+          "q": "In the Hershey–Chase experiment, what physically separated “phage ghosts” from infected bacteria?",
+          "options": [
+            "Shearing in a Waring blendor",
+            "Differential centrifugation of isotopes",
+            "Freeze–thaw lysis of the cells",
+            "Ethanol precipitation of free phage"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Benzer's rII recombination mapping was only possible because rII mutants fail to plaque on",
+          "options": [
+            "Escherichia coli B",
+            "Salmonella Typhimurium LT2",
+            "Escherichia coli K12(λ)",
+            "Pseudomonas aeruginosa PAO1"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Crick, Brenner and colleagues (1961) proved the triplet nature of the code using proflavin-induced frameshifts in",
+          "options": [
+            "The T4 rII gene",
+            "Lambda cI",
+            "MS2 coat protein",
+            "T7 gene 10"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Weigle reactivation (1960) showed that UV-damaged lambda is rescued by",
+          "options": [
+            "Recombination with co-infecting intact phage",
+            "SOS-induced host repair functions",
+            "Photoreactivation of phage RNA",
+            "Mitomycin C induction of the prophage"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "“Host-controlled variation” of lambda grown on E. coli K-12 versus B directly led to the discovery of",
+          "options": [
+            "CRISPR-Cas immunity",
+            "Abortive infection systems",
+            "Restriction–modification systems",
+            "Superinfection exclusion"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "The Luria–Delbrück fluctuation test established that phage-resistance mutations",
+          "options": [
+            "Are instructed by phage exposure",
+            "Spread by transduction",
+            "Require SOS induction",
+            "Arise spontaneously before phage exposure"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Frederick Twort's 1915 filterable agent was first observed lysing cultures of",
+          "options": [
+            "Shigella dysenteriae",
+            "Vibrio cholerae",
+            "Bacillus anthracis",
+            "Staphylococcus"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Which 1930s assessment most accelerated the decline of commercial phage therapy in the United States?",
+          "options": [
+            "The Flexner Report",
+            "The Eaton & Bayne-Jones review of phage preparations",
+            "The Nuremberg Code",
+            "A Lister Institute ban"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "The 2017 compassionate-use case that brought phage therapy to global headlines treated a patient with",
+          "audience": true,
+          "options": [
+            "Disseminated Acinetobacter baumannii infection",
+            "MRSA endocarditis",
+            "XDR tuberculosis",
+            "Candida auris sepsis"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "The 1969 Nobel Prize (Delbrück, Hershey, Luria) honoured work on the replication and genetic structure of",
+          "audience": true,
+          "options": [
+            "Influenza virus",
+            "Bacteriophages",
+            "Poliovirus",
+            "Retroviruses"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "num": 3,
+      "title": "PHAGE RELATED PROTOCOLS",
+      "type": "mcq",
+      "scoring": {
+        "correct": 10,
+        "wrong": 0,
+        "time": 30
+      },
+      "questions": [
+        {
+          "q": "Top-agar concentrations above ~0.7% shrink plaque sizes mainly because they",
+          "options": [
+            "Melt at lower temperatures",
+            "Select for resistant mutants",
+            "Chelate Ca2+ and Mg2+",
+            "Restrict phage diffusion through the matrix"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "The particle-to-PFU ratio of a lysate is obtained by combining",
+          "options": [
+            "qPCR with PFGE",
+            "CsCl gradients with SYBR Gold",
+            "Flow cytometry (particle counts) with plaque assay",
+            "LAL with TEM"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "During phage DNA extraction, contaminating free bacterial DNA is removed selectively by",
+          "options": [
+            "DNase I treatment before capsid lysis (capsid DNA is protected)",
+            "Proteinase K before lysis",
+            "Ethanol precipitation alone",
+            "RNase A after lysis"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "In a CsCl isopycnic gradient, phage bands at ~1.5 g/cm³. A lighter band at ~1.3 g/cm³ is most likely",
+          "options": [
+            "Protein and membrane vesicles",
+            "Host chromosomal DNA",
+            "Intact ribosomes",
+            "Free exopolysaccharide"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Chloroform clarification of a lysate must NOT be used for",
+          "options": [
+            "Microviruses",
+            "Enveloped phages such as Φ6",
+            "Filamentous inoviruses",
+            "Tailed dsDNA phages"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "In the Ellis–Delbrück one-step growth experiment, unadsorbed phage is neutralized by",
+          "options": [
+            "Using stationary-phase hosts",
+            "Anti-phage serum (or extreme dilution)",
+            "Chilling to 4 °C",
+            "Adding chloroform at time zero"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "A spot test giving confluent lysis that disappears on dilution, without plaques, indicates",
+          "options": [
+            "Lysis from without at high phage input",
+            "A fully permissive host",
+            "Lysogenic conversion",
+            "Capsular blocking of adsorption"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "For phage stocks kept at 4 °C, which additive limits titer loss by adsorption to tube walls?",
+          "options": [
+            "100 mM EDTA",
+            "50% glycerol",
+            "Sodium azide",
+            "Gelatin (or BSA)"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "In a spot test, a clear zone where phage suspension was dropped on a bacterial lawn indicates",
+          "audience": true,
+          "options": [
+            "Medium contamination",
+            "The strain is sensitive (lysis)",
+            "The strain is resistant",
+            "A mutation arose"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "In a plaque assay, each plaque originates from",
+          "audience": true,
+          "options": [
+            "A free DNA fragment",
+            "An antibiotic disc",
+            "A single infectious phage particle",
+            "A single bacterial cell"
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "num": 4,
+      "title": "PHAGE INFORMATICS",
+      "type": "mcq",
+      "scoring": {
+        "correct": 10,
+        "wrong": 0,
+        "time": 30
+      },
+      "questions": [
+        {
+          "q": "Under MIMAG standards, a high-quality draft viral genome requires",
+          "options": [
+            "≥90% completeness, <5% contamination, plus tRNAs and identified termini",
+            "Any contig >10 kb carrying a capsid gene",
+            "100× coverage regardless of completeness",
+            "Presence of an integrase gene"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "In read-mapping to a phage reference, terminal redundancy of the genome appears as",
+          "options": [
+            "A coverage gap at the cos site",
+            "Elevated coverage across both genome ends",
+            "Uniform coverage with spikes at tRNA genes",
+            "Coverage falling to zero at the ends"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Anti-CRISPR (acr) genes in prophages are typically found next to",
+          "options": [
+            "Host CRISPR arrays",
+            "tRNA clusters",
+            "aca genes encoding HTH-type transcriptional regulators",
+            "Direct terminal repeats"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "“Viral tagging” (fluorescently labelled phage + flow sorting of single cells) is used to",
+          "options": [
+            "Measure buoyant density",
+            "Cluster genomes by tetranucleotide frequency",
+            "Sequence CRISPR spacers",
+            "Link phages to their hosts at single-cell resolution"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "VIRIDIC demarcates viral species and genera using",
+          "options": [
+            "Intergenomic nucleotide similarity",
+            "Shared tRNA counts",
+            "Codon-usage distance",
+            "Capsid morphology vectors"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "CheckV evaluates viral metagenome-assembled genomes for",
+          "options": [
+            "Host range prediction",
+            "Completeness, contamination and provirus boundaries",
+            "Plaque morphology class",
+            "AMR gene content"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "PhageTerm determines",
+          "options": [
+            "Lysis timing from growth curves",
+            "Taxonomic family from marker genes",
+            "Genome termini and the packaging mechanism (cos, pac, headful)",
+            "Optimal cocktail composition"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Comparing phage codon adaptation to candidate hosts helps predict",
+          "options": [
+            "Burst size",
+            "Capsid diameter",
+            "Genome termini type",
+            "The likely host / recent host adaptation"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "The complete collection of viruses in a sample is called the",
+          "audience": true,
+          "options": [
+            "Microbiome",
+            "Virome",
+            "Proteome",
+            "Plasmidome"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "A prophage region whose GC content differs strongly from the rest of the bacterial chromosome suggests",
+          "audience": true,
+          "options": [
+            "Recently acquired foreign DNA",
+            "A better plaque morphology",
+            "A smaller capsid",
+            "An RNA genome"
+          ],
+          "answer": 0
+        }
+      ]
+    },
+    {
+      "num": 5,
+      "title": "PHAGE IDENTIFICATION",
+      "type": "mcq",
+      "scoring": {
+        "correct": 10,
+        "wrong": 0,
+        "time": 30
+      },
+      "questions": [
+        {
+          "q": "Under current ICTV taxonomy, phage T7 (formerly Podoviridae) is placed in the family",
+          "options": [
+            "Autographiviridae",
+            "Ackermannviridae",
+            "Drexlerviridae",
+            "Herelleviridae"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "The lipid envelope of cystovirus Φ6 is",
+          "options": [
+            "Assembled from host-derived membrane lipids",
+            "Acquired from outer-membrane vesicles of other species",
+            "A protein-only pseudo-envelope",
+            "Synthesized de novo with phage-made sterols"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "In levivirus MS2, the single-copy maturation (A) protein",
+          "options": [
+            "Triggers lysis",
+            "Forms the icosahedral capsid",
+            "Binds the F-pilus and escorts the RNA into the cell",
+            "Acts as the replicase subunit"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "The portal vertex of tailed phages is typically a ring of",
+          "options": [
+            "5 subunits",
+            "~12–13 portal subunits",
+            "60 subunits matching T=1 symmetry",
+            "1 subunit"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Transcription of jumbo phage ΦKZ is independent of the host RNA polymerase because the phage",
+          "options": [
+            "Transcribes via a ribozyme",
+            "Hijacks host Pol II",
+            "Uses a phage-encoded sigma factor with host RNAP",
+            "Encodes its own multisubunit RNA polymerase"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Filamentous inoviruses leave the host without lysis by",
+          "options": [
+            "Low-frequency holin–endolysin lysis",
+            "Spanin-mediated membrane fusion",
+            "Budding with a lipid envelope",
+            "Extrusion through the envelope (e.g., via the pIV secretin)"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "T4 whiskers (wac/fib3) function to",
+          "options": [
+            "Anchor the baseplate to the capsid",
+            "Hold long tail fibers folded against the tail before adsorption",
+            "Contract and pierce the outer membrane",
+            "Package DNA into the procapsid"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "The collar of phage T4 forms",
+          "options": [
+            "The portal–terminase bridge",
+            "The head–tail junction",
+            "The sheath–tube interface",
+            "The fiber–baseplate contact"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Under TEM, a tailed phage with a small head and a very SHORT non-contractile tail is a",
+          "audience": true,
+          "options": [
+            "Siphovirus",
+            "Filamentous phage",
+            "Podovirus",
+            "Myovirus"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Turbid (cloudy) plaques usually suggest",
+          "audience": true,
+          "options": [
+            "A temperate phage forming lysogens",
+            "A strictly lytic phage",
+            "An RNA phage",
+            "Medium contamination"
+          ],
+          "answer": 0
+        }
+      ]
+    },
+    {
+      "num": 6,
+      "title": "IDENTIFY THE FIGURE",
+      "type": "visual",
+      "scoring": {
+        "correct": 10,
+        "wrong": -5,
+        "time": 30
+      },
+      "questions": [
+        {
+          "q": "In the arrowed interval of this one-step growth curve, no intracellular infectious virions can be recovered. This portion is the",
+          "figure": "growth_curve",
+          "options": [
+            "Eclipse period",
+            "Rise period",
+            "Burst phase",
+            "Adsorption plateau"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "The clear HALO extending beyond the plaque edge in this plate is most likely due to",
+          "figure": "plaque_halo",
+          "options": [
+            "An antibiotic in the medium",
+            "Extracellular depolymerase degrading the capsule/EPS",
+            "Lysis from without",
+            "Phage-resistant mutants"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "The arrowed long tail fibers bind reversibly. Irreversible adsorption of T4 is then mediated by",
+          "figure": "t4_diagram",
+          "options": [
+            "Short tail fibers engaging the inner LPS core after baseplate triggering",
+            "A second long-fiber receptor",
+            "Teichoic acid bridging",
+            "Pilus retraction"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "The integrated state depicted here is maintained by",
+          "figure": "lysogeny",
+          "options": [
+            "Cro",
+            "The cI repressor",
+            "CII",
+            "N antitermination"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Top agar is cooled to ~45 °C before mixing because this",
+          "figure": "overlay",
+          "options": [
+            "Increases plaque turbidity",
+            "Speeds up lawn growth",
+            "Prevents Ca2+ precipitation",
+            "Keeps agar liquid while sparing phage and host from heat"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "The arrowed band at ~1.5 g/cm³ holds phage. A fainter band at ~1.3 g/cm³ in the same tube would be",
+          "figure": "cscl",
+          "options": [
+            "Protein and membrane vesicles",
+            "Host rRNA",
+            "Intact progeny virions",
+            "DNA–protein concatemers"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Unlike virion 1, the MIDDLE virion injects its DNA by",
+          "figure": "morphotypes",
+          "options": [
+            "Contracting its tail more slowly",
+            "Injecting RNA instead of DNA",
+            "Receptor-triggered conformational change without sheath contraction",
+            "Consuming host ATP for contraction"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "To penetrate the matrix shown in this biofilm diagram, the most useful phage-encoded enzymes are",
+          "figure": "biofilm",
+          "options": [
+            "DNA ligases",
+            "Integrases",
+            "RNA polymerases",
+            "Depolymerases"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "On this spot-assay plate, a drop giving confluent clearing but no plaques on dilution indicates",
+          "figure": "spot_assay",
+          "options": [
+            "A fully permissive host",
+            "Lysogenic conversion",
+            "Lysis from without / killing without productive infection",
+            "Depolymerase secretion"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Plate A shows clear plaques, plate B turbid plaques. The turbidity in plate B is caused by",
+          "figure": "plaques_turbid",
+          "options": [
+            "Incomplete top-agar setting",
+            "Growth of immune lysogens within the plaque",
+            "Contaminating fungi",
+            "A very small burst size"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "num": 7,
+      "title": "PHAGE THERAPY & CLINICAL FRONTIERS",
+      "type": "mcq",
+      "badge": "NEW TOPIC",
+      "scoring": {
+        "correct": 10,
+        "wrong": -5,
+        "time": 30
+      },
+      "questions": [
+        {
+          "q": "The 2019 Nature Medicine report of an engineered three-phage cocktail successfully treated which infection in a cystic fibrosis patient?",
+          "options": [
+            "Staphylococcus aureus osteomyelitis",
+            "Disseminated Mycobacterium abscessus infection",
+            "Pseudomonas aeruginosa pneumonia",
+            "Acinetobacter baumannii sepsis"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Since 2018, Belgium delivers therapeutic phages to patients as",
+          "options": [
+            "Over-the-counter medicines",
+            "Vaccines",
+            "Medical devices",
+            "Active pharmaceutical ingredients within magistral preparations"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "The PhagoBurn trial (Lancet ID, 2018) evaluated phage therapy against which pathogen in burn wounds?",
+          "options": [
+            "Escherichia coli",
+            "Staphylococcus aureus",
+            "Pseudomonas aeruginosa",
+            "Klebsiella pneumoniae"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "LBP-EC01, the first engineered (CRISPR-Cas3-enhanced) phage tested in a randomized placebo-controlled trial, targets",
+          "options": [
+            "Escherichia coli in urinary tract infection",
+            "Clostridioides difficile colitis",
+            "Pseudomonas aeruginosa in CF",
+            "Staphylococcus aureus bacteremia"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "“Phage steering” mitigates AMR by",
+          "options": [
+            "Increasing the MOI until resistance collapses",
+            "Selecting phage-resistant mutants whose fitness cost re-sensitizes them to antibiotics",
+            "Blocking phage receptors with antibodies",
+            "Using phages to inactivate antibiotics"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "A key immunological limitation of repeated intravenous phage dosing is",
+          "options": [
+            "Permanent T-cell exhaustion",
+            "Neutralizing antibodies that accelerate phage clearance",
+            "Phages cannot enter the bloodstream",
+            "Immediate IgE anaphylaxis in every patient"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "In the United States, compassionate-use phage therapy is typically authorized through",
+          "options": [
+            "An FDA emergency/expanded-access IND (eIND)",
+            "EPA registration",
+            "An OTC monograph",
+            "A USDA rule"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Before clinical use, a therapeutic phage genome must be screened to confirm",
+          "options": [
+            "Absence of toxin, AMR and virulence genes",
+            "GC content above 60%",
+            "Uracil instead of thymine",
+            "Presence of an integrase gene"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Commercial phage preparations sprayed on ready-to-eat food to control Listeria are an example of",
+          "audience": true,
+          "options": [
+            "Pasteurization",
+            "Vaccination",
+            "Fermentation",
+            "Biocontrol"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Compared with antibiotics, a distinctive advantage of phages is that they",
+          "audience": true,
+          "options": [
+            "Kill human cells selectively",
+            "Never encounter resistance",
+            "Self-amplify at the site of infection",
+            "Work without any bacteria present"
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "num": 8,
+      "title": "PHAGE ACRONYMS",
+      "type": "mcq",
+      "scoring": {
+        "correct": 10,
+        "wrong": -5,
+        "time": 30
+      },
+      "questions": [
+        {
+          "q": "In phage anti-CRISPR biology, Aca proteins are",
+          "options": [
+            "Acr-associated HTH transcriptional regulators of acr operons",
+            "Accessory capsid antigens",
+            "Acid-stable coat adapters",
+            "attC-associated recombinases"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "In phage genomics, DTRs and ITRs refer to",
+          "options": [
+            "Degenerate tandem recombinases",
+            "Direct and inverted terminal repeats",
+            "Density-transfer ratios",
+            "Double-stranded transcriptional regions"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "In the name vB_EcoM-VPAE1, the “vB” prefix denotes",
+          "options": [
+            "Virus of Bacteria (followed by host genus and morphotype)",
+            "Verified bacteriophage",
+            "Viral barcode",
+            "Vector backbone"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "MIMAG stands for",
+          "options": [
+            "Metagenome Integration Map",
+            "Minimum Information about Microbial Archaeal Genomes",
+            "Minimum Information about a Metagenome-Assembled Genome",
+            "Microbial Image Magnification"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "In phage genomics, AMGs are",
+          "options": [
+            "Auxiliary metabolic genes",
+            "Amplified mobile genes",
+            "Ancestral marker genes",
+            "Adaptive mutation groups"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "PHROGs are",
+          "options": [
+            "Prophage host-range groups",
+            "Phage restriction operon groups",
+            "Plaque heterogeneity ratings",
+            "Phage orthologous groups for functional annotation"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "In phage–mucus research, the BAM model stands for",
+          "options": [
+            "Bacterial adhesion matrix",
+            "Bacteriophage adherence to mucus",
+            "Biofilm-associated microcolony",
+            "Buffered agar medium"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "The LAL assay reagent used in phage formulation is derived from",
+          "options": [
+            "Lactic acid bacteria",
+            "Lysed adenovirus libraries",
+            "Lipid antigen liposomes",
+            "Limulus (horseshoe crab) amebocyte lysate"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "In One-Health discussions, AMR stands for",
+          "audience": true,
+          "options": [
+            "Acquired mobile resistance",
+            "Adaptive mutation rate",
+            "Antimicrobial resistance",
+            "Antibiotic modifier region"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "In the phage morphology lab, TEM stands for",
+          "audience": true,
+          "options": [
+            "Thermal emission microscopy",
+            "Transmission electron microscopy",
+            "Total evanescent measurement",
+            "Tunneling electron mapping"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "num": 9,
+      "title": "PHAGE ECOLOGY & ONE HEALTH",
+      "type": "mcq",
+      "badge": "NEW TOPIC",
+      "scoring": {
+        "correct": 10,
+        "wrong": -5,
+        "time": 30
+      },
+      "questions": [
+        {
+          "q": "The “viral shunt” refers to",
+          "options": [
+            "Phage lysis redirecting microbial biomass into dissolved organic matter",
+            "Aerosolization of virions",
+            "Viral transport in the bloodstream",
+            "Phage migration through soil"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "A millilitre of surface seawater typically contains about",
+          "options": [
+            "10^3 phages",
+            "10^12 phages",
+            "10^7 phages",
+            "10^15 phages"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Cyanophages infecting Prochlorococcus often carry which host-derived gene to sustain photosynthesis during infection?",
+          "options": [
+            "nifH",
+            "psbA (photosystem II D1 protein)",
+            "rpoB",
+            "atpD"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "“Kill-the-winner” dynamics predicts that",
+          "options": [
+            "Rare bacterial species are lysed first",
+            "The most abundant host is preferentially hit by lytic phages",
+            "Phages prefer dormant hosts",
+            "Lysogeny dominates in rich environments"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Which phage is among the most prevalent human-associated viruses on Earth, carried in the gut of a large fraction of adults?",
+          "options": [
+            "Phage Φ6",
+            "Phage lambda",
+            "crAssphage",
+            "Phage T4"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "The cholera toxin genes (ctxAB) are encoded by",
+          "options": [
+            "Phage P1",
+            "Phage lambda",
+            "Phage Mu",
+            "Phage CTXφ"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Diphtheria toxin is encoded by",
+          "options": [
+            "Phage CTXφ",
+            "The β-prophage (corynephage β)",
+            "Phage P22",
+            "Phage ΦKZ"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Shiga toxin genes (stx) carried by lambdoid prophages are central to the virulence of",
+          "options": [
+            "Shiga-toxigenic E. coli (STEC)",
+            "Salmonella Typhi",
+            "Listeria monocytogenes",
+            "Campylobacter jejuni"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Municipal sewage is extremely rich in phages mainly because",
+          "audience": true,
+          "options": [
+            "High bacterial densities support massive phage replication",
+            "Phages resist freezing",
+            "UV light creates virions",
+            "Chlorine selects for viruses"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Phages are part of “One Health” thinking because they",
+          "audience": true,
+          "options": [
+            "Replace all vaccines",
+            "Chemically purify water",
+            "Only infect humans",
+            "Connect human, animal and environmental microbiomes, including AMR dynamics"
+          ],
+          "answer": 3
+        }
+      ]
+    },
+    {
+      "num": 10,
+      "title": "BACTERIAL DEFENSES & PHAGE COUNTER-DEFENSE",
+      "type": "mcq",
+      "badge": "NEW TOPIC",
+      "scoring": {
+        "correct": 10,
+        "wrong": -5,
+        "time": 30
+      },
+      "questions": [
+        {
+          "q": "CRISPR-Cas adaptive immunity stores phage-derived sequences in the bacterial genome as",
+          "options": [
+            "Telomeres",
+            "Spacers",
+            "Operators",
+            "Introns"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Anti-CRISPR (Acr) proteins protect phages by",
+          "options": [
+            "Blocking phage adsorption",
+            "Degrading bacterial DNA",
+            "Inducing host lysis early",
+            "Inhibiting Cas proteins"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Restriction–modification systems defend bacteria by",
+          "options": [
+            "Pumping phages out by efflux",
+            "Methylating phage tail fibers",
+            "Cleaving unmethylated foreign DNA",
+            "Blocking bacterial ribosomes"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Abortive infection (Abi) systems protect a bacterial population by",
+          "options": [
+            "Repairing damaged DNA",
+            "Triggering death or dormancy of the infected cell",
+            "Preventing phage adsorption",
+            "Degrading extracellular phages"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "The arbitrium system lets temperate phages",
+          "options": [
+            "Repair their DNA after UV",
+            "Sense a peptide cue of host density to choose lysis vs lysogeny",
+            "Adsorb faster to pili",
+            "Resist CRISPR targeting"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Phage VP882 eavesdrops on which bacterial signal to time its lysis decision?",
+          "options": [
+            "Teichoic acid",
+            "Lipopolysaccharide",
+            "A quorum-sensing autoinducer",
+            "Host ATP levels"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Phage resistance via loss of a surface receptor often costs the bacterium",
+          "options": [
+            "Reduced fitness or virulence, sometimes restored antibiotic sensitivity",
+            "Prophage induction",
+            "Immediate lysis",
+            "CRISPR array loss"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "A classic phage counter-defense against restriction systems is",
+          "options": [
+            "DNA modification, e.g. glucosylated 5-hydroxymethylcytosine in T4",
+            "Faster adsorption kinetics",
+            "A longer tail",
+            "A larger capsid"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Superinfection exclusion means that",
+          "audience": true,
+          "options": [
+            "A resident prophage blocks secondary infection by related phages",
+            "Two phages co-infect one cell",
+            "Phages exclude antibiotics from the cell",
+            "Bacteria pump phages out by efflux"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "BREX, DISARM, Thoeris and Gabija are examples of",
+          "audience": true,
+          "options": [
+            "Plasmid incompatibility groups",
+            "Staining methods",
+            "Phage families",
+            "Bacterial anti-phage defense systems"
+          ],
+          "answer": 3
+        }
+      ]
+    },
+    {
+      "num": 0,
+      "title": "BREAK TIME",
+      "type": "break",
+      "minutes": 5
+    },
+    {
+      "num": 11,
+      "title": "RAPID FIRE",
+      "type": "rapid",
+      "scoring": {
+        "correct": 5,
+        "wrong": 0,
+        "time": 60
+      },
+      "note": "8 questions per team, one answer each, no passing. 60 seconds per team set.",
+      "teams": [
+        {
+          "team": 0,
+          "questions": [
+            {
+              "q": "Enzyme that degrades the peptidoglycan at the end of the lytic cycle",
+              "a": "Endolysin (lysozyme)"
+            },
+            {
+              "q": "Term for a phage genome integrated in the host chromosome",
+              "a": "Prophage"
+            },
+            {
+              "q": "UV light or mitomycin C triggers this event in a lysogen",
+              "a": "Prophage induction"
+            },
+            {
+              "q": "The protein shell that encloses the phage genome",
+              "a": "Capsid"
+            },
+            {
+              "q": "The myovirus structure that contracts during infection",
+              "a": "Tail sheath"
+            },
+            {
+              "q": "Number of progeny released per infected cell",
+              "a": "Burst size"
+            },
+            {
+              "q": "Filamentous phage widely used for phage display",
+              "a": "M13 (f1/fd)"
+            },
+            {
+              "q": "Ions added to media because many phages need them for adsorption",
+              "a": "Divalent cations (Ca2+ / Mg2+)"
+            }
+          ]
+        },
+        {
+          "team": 1,
+          "questions": [
+            {
+              "q": "Matrix component degraded by phage depolymerases in a biofilm",
+              "a": "Exopolysaccharide (EPS / capsule)"
+            },
+            {
+              "q": "Phage-mediated transfer of bacterial DNA between cells",
+              "a": "Transduction"
+            },
+            {
+              "q": "Microscopy that images phages in a near-native frozen-hydrated state",
+              "a": "Cryo-EM (cryo-TEM)"
+            },
+            {
+              "q": "The phage life cycle that ends in host lysis",
+              "a": "Lytic cycle"
+            },
+            {
+              "q": "Extrachromosomal bacterial element that often carries AMR genes",
+              "a": "Plasmid"
+            },
+            {
+              "q": "A phage particle that lacks its genome",
+              "a": "Empty capsid (ghost)"
+            },
+            {
+              "q": "The workbench host bacterium of the T-phages",
+              "a": "Escherichia coli"
+            },
+            {
+              "q": "Ecological model: phages lyse the most abundant host (3 words, “kill the …”)",
+              "a": "Kill-the-winner"
+            }
+          ]
+        },
+        {
+          "team": 2,
+          "questions": [
+            {
+              "q": "US regulatory route for compassionate phage use (3 letters + IND)",
+              "a": "eIND (emergency/expanded-access IND)"
+            },
+            {
+              "q": "Full name of PEG, used with NaCl to precipitate phages",
+              "a": "Polyethylene glycol"
+            },
+            {
+              "q": "Instrument that separates phages by buoyant density",
+              "a": "(Ultra)centrifuge"
+            },
+            {
+              "q": "Enzymes that cut DNA at specific sites, first studied in phage biology",
+              "a": "Restriction endonucleases"
+            },
+            {
+              "q": "Coat proteins used to display peptides on M13 (two names)",
+              "a": "pIII / pVIII"
+            },
+            {
+              "q": "Route used to deliver phages to CF lungs in the 2025 first-in-human randomized trial",
+              "a": "Nebulized / inhaled"
+            },
+            {
+              "q": "Chelator of divalent cations that can block phage adsorption",
+              "a": "EDTA"
+            },
+            {
+              "q": "Phages that kill the host and never lysogenize are called",
+              "a": "Virulent (strictly lytic) phages"
+            }
+          ]
+        },
+        {
+          "team": 3,
+          "questions": [
+            {
+              "q": "Tubulin-like phage protein that forms the spindle of jumbo phages",
+              "a": "PhuZ"
+            },
+            {
+              "q": "Structural term for the elongated (non-spherical) head of T4",
+              "a": "Prolate icosahedral head"
+            },
+            {
+              "q": "Capsid vertex through which DNA enters during assembly",
+              "a": "Portal vertex (portal protein)"
+            },
+            {
+              "q": "ATP-driven enzyme that packs DNA into the procapsid",
+              "a": "Terminase (large subunit)"
+            },
+            {
+              "q": "Morphotype with a long, non-contractile tail",
+              "a": "Siphovirus"
+            },
+            {
+              "q": "Geometric term for a capsid with 20 triangular faces",
+              "a": "Icosahedral"
+            },
+            {
+              "q": "Hollow tube through which the genome crosses the envelope in tailed phages",
+              "a": "Tail tube"
+            },
+            {
+              "q": "The extra lipid layer present in Φ6 but absent in T4",
+              "a": "Envelope (membrane)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": 12,
+      "title": "TIE-BREAKER ROUND",
+      "type": "mcq",
+      "scoring": {
+        "correct": 20,
+        "wrong": -10,
+        "time": 60,
+        "pass": 5
+      },
+      "questions": [
+        {
+          "q": "The T4 genome is circularly permuted and terminally redundant. Which packaging strategy generates this architecture?",
+          "options": [
+            "Headful packaging from concatemers",
+            "cos-site cleavage of concatemers",
+            "Protein-primed replication",
+            "Rolling-circle of monomers"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "DNA replication of phage Φ29 is primed by",
+          "options": [
+            "Host DnaA",
+            "A primase (DnaG)",
+            "A terminal protein",
+            "A ribozyme"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "In the lambda decision circuit, high MOI together with a poor physiological host state favours",
+          "options": [
+            "Pseudolysogeny",
+            "Lysis",
+            "Superinfection",
+            "Lysogeny (stabilized cII)"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "T4 glucosylates its 5-hydroxymethylcytosine DNA mainly to",
+          "options": [
+            "Protect the genome from host restriction endonucleases",
+            "Aid adsorption",
+            "Assist capsid assembly",
+            "Speed up replication"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Which anti-phage system signals through a cyclic oligonucleotide (cGAMP) to activate a nuclease effector?",
+          "options": [
+            "Retrons",
+            "Septu",
+            "Gabija",
+            "CBASS"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "The lambda Red recombineering toolkit consists of the proteins",
+          "options": [
+            "EcoRI, EcoRV, ligase",
+            "RecA, RecB, RecC",
+            "Exo, Beta, Gam",
+            "Int, Xis, Gam"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "In the 2025 first-in-human randomized trial (BX004-A), the phage cocktail reached the CF lung by",
+          "options": [
+            "Intravenous infusion",
+            "Nebulization",
+            "Topical gel",
+            "Oral capsules"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "After a strong phage-driven selective sweep in a bacterial community, which metric is expected to DECREASE?",
+          "options": [
+            "Phage titer",
+            "Shannon diversity index",
+            "Burst size",
+            "MOI"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "num": 13,
+      "title": "EMOJI REBUS & PHAGE PERSONALS",
+      "type": "mcq",
+      "badge": "FUN ROUND",
+      "scoring": {
+        "correct": 10,
+        "wrong": 0,
+        "time": 30
+      },
+      "questions": [
+        {
+          "q": "🦠️🧬📖  — decode the rebus",
+          "alt": "[virus][scissors][DNA][book]  — decode the rebus",
+          "options": [
+            "Restriction–modification",
+            "CRISPR-Cas adaptive immunity",
+            "Abortive infection",
+            "Generalized transduction"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "😴☀️⚡🦠  — decode the rebus",
+          "alt": "[sleeping][UV sun][lightning][virus]  — decode the rebus",
+          "options": [
+            "Prophage induction",
+            "Lysogeny establishment",
+            "Superinfection exclusion",
+            "Pseudolysogeny"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "🧨🏙️🦠  — decode the rebus",
+          "alt": "[dynamite][city][virus]  — decode the rebus",
+          "options": [
+            "Endolysin",
+            "Spanin",
+            "Depolymerase",
+            "Integrase"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "📦🎈  — decode the rebus",
+          "alt": "[box][DNA][balloon]  — decode the rebus",
+          "options": [
+            "cos-site packaging",
+            "Protein-primed replication",
+            "Rolling-circle replication",
+            "Headful (pac) packaging"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "🕵️🦀  — decode the rebus",
+          "alt": "[detective][crab][test tube]  — decode the rebus",
+          "options": [
+            "Plaque assay",
+            "LAL endotoxin assay",
+            "PFGE",
+            "ELISA"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "❄️🦠  — decode the rebus",
+          "alt": "[ice][microscope][virus]  — decode the rebus",
+          "options": [
+            "Cryo-EM",
+            "Negative-stain TEM",
+            "Atomic force microscopy",
+            "Phase-contrast light microscopy"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "🎭️🧬  — decode the rebus",
+          "alt": "[theatre masks][hand][DNA]  — decode the rebus",
+          "options": [
+            "Phage typing",
+            "Viromics",
+            "Phage display",
+            "Reassortment"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Phage personal ad: “Seeking F-pilus-positive partner; ssDNA exchange welcome; no lysis required — I prefer a long, chronic togetherness.” Who wrote it?",
+          "alt": "Phage personal ad: “Seeking F-pilus-positive partner; ssDNA exchange welcome; no lysis required — I prefer a long, chronic togetherness.” Who wrote it?",
+          "options": [
+            "Phage T4",
+            "Phage lambda",
+            "Phage Φ6",
+            "Phage M13"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Which emoji set best describes a TEMPERATE phage?",
+          "audience": true,
+          "options": [
+            "🛌🧬🤝",
+            "💥🦠☠️",
+            "🧨🔥💀",
+            "🏃🦠⏱️"
+          ],
+          "alt": "Which set best describes a TEMPERATE phage?",
+          "options_alt": [
+            "[sleeping][DNA][handshake]",
+            "[boom][virus][skull]",
+            "[dynamite][fire][skull]",
+            "[runner][virus][timer]"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Personal ad: “High-pressure type (~50 atm). I contract on first contact and deliver my DNA fast. No commitment issues — strictly lytic.” Identify the advertiser.",
+          "audience": true,
+          "alt": "Personal ad: “High-pressure type (~50 atm). I contract on first contact and deliver my DNA fast. No commitment issues — strictly lytic.” Identify the advertiser.",
+          "options": [
+            "M13",
+            "T4",
+            "ΦX174",
+            "MS2"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "num": 14,
+      "title": "LYTIC LAUGHS",
+      "type": "laughs",
+      "scoring": {
+        "correct": 10,
+        "wrong": 0,
+        "time": 30
+      },
+      "questions": [
+        {
+          "q": "Why did the phage break up with the pilus?",
+          "options": [
+            "“No chemistry in the periplasm.”",
+            "“It was too contractile.”",
+            "“Long-distance lysis never works.”",
+            "“The relationship was only surface-level attachment.”"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "What is a bacteriophage's favourite genre of music?",
+          "options": [
+            "Ambient — like the eclipse period",
+            "Smooth jazz for slow adsorption",
+            "Opera, because it's always dramatic lysis",
+            "Lytic metal — full of breakdowns"
+          ],
+          "answer": 3
+        },
+        {
+          "q": "Why don't phages use dating apps?",
+          "options": [
+            "No signal inside the gut",
+            "They only ever swipe right on one specific host",
+            "Too many matches cause lysis from without",
+            "Their profiles are only ~50 kb"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Where does a phage see itself in 30 minutes?",
+          "options": [
+            "“In a preprint.”",
+            "“At a plaquelytics retreat.”",
+            "“As ~200 copies of myself inside one very surprised bacterium.”",
+            "“Integrated, settled and dormant.”"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "Why was the temperate phage terrible at commitment?",
+          "options": [
+            "It kept integrating into relationships and going dormant",
+            "It lysed every relationship too fast",
+            "It had no receptors for feelings",
+            "It was too virulent to care"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "What did the depolymerase say arriving at the biofilm party?",
+          "options": [
+            "“I brought capsules for the road.”",
+            "“Relax — I'll break down the matrix and free everyone.”",
+            "“More EPS for everyone!”",
+            "“Who invited the antibiotics?”"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Why do phages make bad stand-up comedians?",
+          "options": [
+            "Their delivery is always lytic — they kill the room",
+            "They are too small for the microphone",
+            "They only infect the hecklers",
+            "They have no tail for timing"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "What is a jumbo phage's excuse at the gym?",
+          "options": [
+            "“I skip tail day.”",
+            "“My sheath is already too tight.”",
+            "“I carry a 500-kb genome — that's enough baggage.”",
+            "“No capsid space left.”"
+          ],
+          "answer": 2
+        }
+      ]
+    }
+  ]
+}/*QUIZ_JSON_END*/;
+
+</script>
+<script>
+"use strict";
+/* ============================ SVG FIGURE LIBRARY ============================ */
+const S='stroke="#8fb7ff" stroke-width="3" fill="none" stroke-linecap="round"';
+const W='stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round"';
+const A='stroke="#bd0dff" stroke-width="4" fill="none" stroke-linecap="round"';
+function txt(x,y,str,size,fill,anchor){return `<text x="${x}" y="${y}" fill="${fill||'#cfe0ff'}" font-family="Arial" font-weight="bold" font-size="${size||15}" text-anchor="${anchor||'middle'}">${str}</text>`}
+const FIGS={
+growth_curve:`<svg viewBox="0 0 460 280">
+ <path d="M50 30 V230 H430" ${W}/>
+ ${txt(240,268,'Time (min)',15)} ${txt(30,140,'Titer',15,'#cfe0ff')}
+ <path d="M50 195 H150 C180 195 185 193 210 190 L212 190 C240 186 250 120 268 80 C276 62 290 58 320 58 H400" ${S}/>
+ <path d="M150 195 V230" stroke="#3a4356" stroke-width="2" stroke-dasharray="5 5"/>
+ <path d="M212 190 V230" stroke="#3a4356" stroke-width="2" stroke-dasharray="5 5"/>
+ <path d="M120 150 L145 182" ${A} marker-end="url(#ar)"/>
+ <defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L8 4.5 L0 9 z" fill="#bd0dff"/></marker></defs>
+ ${txt(105,140,'?',26,'#bd0dff')}
+ ${txt(95,250,'adsorption',13,'#7c8ba1')} ${txt(180,250,'flat phase',13,'#7c8ba1')} ${txt(330,250,'rise → plateau',13,'#7c8ba1')}
+</svg>`,
+plaque_halo:`<svg viewBox="0 0 380 300">
+ <circle cx="190" cy="150" r="130" fill="#10141c" stroke="#8fb7ff" stroke-width="4"/>
+ <circle cx="190" cy="150" r="118" fill="#d9c9a3"/>
+ <circle cx="190" cy="150" r="52" fill="#efe6cf"/>
+ <circle cx="190" cy="150" r="26" fill="#f8f3e6"/>
+ <path d="M300 60 L245 112" ${A} marker-end="url(#ar2)"/>
+ <defs><marker id="ar2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L8 4.5 L0 9 z" fill="#bd0dff"/></marker></defs>
+ ${txt(312,52,'?',26,'#bd0dff')}
+ ${txt(190,292,'bacterial lawn with plaque + outer clearing',14,'#7c8ba1')}
+</svg>`,
+t4_diagram:`<svg viewBox="0 0 300 330">
+ <polygon points="150,12 205,42 205,102 150,132 95,102 95,42" ${W} stroke-width="4"/>
+ <rect x="136" y="132" width="28" height="86" ${W} stroke-width="4"/>
+ <path d="M136 146 h28 M136 160 h28 M136 174 h28 M136 188 h28 M136 202 h28" ${W} stroke-width="2.5"/>
+ <polygon points="150,218 178,232 150,246 122,232" ${W} stroke-width="4"/>
+ <path d="M128 240 C90 262 70 268 48 300" ${W} stroke-width="3.5"/>
+ <path d="M172 240 C210 262 230 268 252 300" ${W} stroke-width="3.5"/>
+ <path d="M136 236 C120 268 116 284 112 306" ${W} stroke-width="3.5"/>
+ <path d="M164 236 C180 268 184 284 188 306" ${W} stroke-width="3.5"/>
+ <path d="M272 250 L232 276" stroke="#bd0dff" stroke-width="4" marker-end="url(#ar3)"/>
+ <defs><marker id="ar3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L8 4.5 L0 9 z" fill="#bd0dff"/></marker></defs>
+ ${txt(284,244,'?',26,'#bd0dff')}
+</svg>`,
+lysogeny:`<svg viewBox="0 0 430 240">
+ <ellipse cx="150" cy="120" rx="120" ry="80" ${W} stroke-width="4"/>
+ <path d="M105 108 h50" stroke="#bd0dff" stroke-width="10" stroke-linecap="round"/>
+ <path d="M60 200 L110 165 M240 200 L195 165" stroke="#3a4356" stroke-width="2.5" stroke-dasharray="5 5"/>
+ <ellipse cx="330" cy="170" rx="70" ry="46" ${S}/>
+ <path d="M305 162 h26" stroke="#bd0dff" stroke-width="7" stroke-linecap="round"/>
+ <path d="M130 96 L130 60 L250 60" stroke="#bd0dff" stroke-width="3" marker-end="url(#ar4)"/>
+ <defs><marker id="ar4" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L8 4.5 L0 9 z" fill="#bd0dff"/></marker></defs>
+ ${txt(300,55,'?',26,'#bd0dff')}
+ ${txt(215,225,'host chromosome (loop) with inserted segment, copied to daughters',13,'#7c8ba1')}
+</svg>`,
+overlay:`<svg viewBox="0 0 460 250">
+ <rect x="40" y="40" width="46" height="150" rx="10" ${W} stroke-width="4"/>
+ <path d="M40 130 h46" ${S}/>
+ ${txt(63,215,'sample + host',13)}
+ <path d="M100 110 C150 90 160 90 200 105" stroke="#bd0dff" stroke-width="3.5" marker-end="url(#ar5)"/>
+ <defs><marker id="ar5" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L8 4.5 L0 9 z" fill="#bd0dff"/></marker></defs>
+ ${txt(150,78,'molten soft agar',13)}
+ <ellipse cx="320" cy="140" rx="110" ry="72" fill="#10141c" stroke="#8fb7ff" stroke-width="4"/>
+ <ellipse cx="320" cy="140" rx="98" ry="60" fill="#d9c9a3"/>
+ <g fill="#f8f3e6"><circle cx="290" cy="120" r="7"/><circle cx="330" cy="105" r="6"/><circle cx="355" cy="140" r="8"/><circle cx="300" cy="160" r="6"/><circle cx="340" cy="168" r="5"/><circle cx="270" cy="145" r="5"/></g>
+ ${txt(320,238,'even lawn + countable plaques',13,'#7c8ba1')}
+</svg>`,
+cscl:`<svg viewBox="0 0 200 300">
+ <rect x="70" y="20" width="60" height="240" rx="26" ${W} stroke-width="4"/>
+ <rect x="74" y="26" width="52" height="230" rx="22" fill="url(#gg)"/>
+ <defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1">
+   <stop offset="0" stop-color="#e8eefc" stop-opacity=".25"/><stop offset="1" stop-color="#e8eefc" stop-opacity=".75"/></linearGradient></defs>
+ <rect x="74" y="130" width="52" height="12" fill="#7dd3fc"/>
+ <path d="M150 136 L132 136" stroke="#bd0dff" stroke-width="4" marker-end="url(#ar6)"/>
+ <defs><marker id="ar6" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L8 4.5 L0 9 z" fill="#bd0dff"/></marker></defs>
+ ${txt(166,142,'?',26,'#bd0dff')}
+ ${txt(100,285,'density gradient',13,'#7c8ba1')}
+</svg>`,
+morphotypes:`<svg viewBox="0 0 560 240">
+ <g transform="translate(90,20)">
+  <polygon points="0,-8 40,10 40,50 0,68 -40,50 -40,10" ${W} stroke-width="3.5"/>
+  <rect x="-11" y="68" width="22" height="60" ${W} stroke-width="3.5"/>
+  <path d="M-16 128 L-34 158 M16 128 L34 158 M-8 130 L-12 160 M8 130 L12 160" ${W} stroke-width="3"/>
+  ${txt(0,200,'1',20,'#7dd3fc')}
+ </g>
+ <g transform="translate(280,20)">
+  <polygon points="0,-8 36,8 36,44 0,60 -36,44 -36,8" ${W} stroke-width="3.5"/>
+  <path d="M0 60 C-14 90 14 110 0 140 C-10 160 6 168 0 178" ${W} stroke-width="3.5"/>
+  <path d="M0 178 L-14 196 M0 178 L14 196" ${W} stroke-width="3"/>
+  <path d="M40 120 L14 128" stroke="#bd0dff" stroke-width="4" marker-end="url(#ar7)"/>
+  ${txt(58,126,'?',26,'#bd0dff')}
+  ${txt(0,222,'2',20,'#7dd3fc')}
+ </g>
+ <g transform="translate(470,20)">
+  <polygon points="0,-8 34,8 34,44 0,60 -34,44 -34,8" ${W} stroke-width="3.5"/>
+  <rect x="-9" y="60" width="18" height="22" ${W} stroke-width="3.5"/>
+  <path d="M-10 82 L-20 100 M10 82 L20 100 M0 82 L0 102" ${W} stroke-width="3"/>
+  ${txt(0,200,'3',20,'#7dd3fc')}
+ </g>
+ <defs><marker id="ar7" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L8 4.5 L0 9 z" fill="#bd0dff"/></marker></defs>
+</svg>`,
+biofilm:`<svg viewBox="0 0 460 250">
+ <path d="M30 220 H430" ${W} stroke-width="5"/>
+ <path d="M40 220 C60 150 90 150 110 220 M120 220 C140 120 190 120 210 220 M220 220 C245 140 290 140 310 220 M320 220 C340 160 380 160 400 220" ${S} stroke-width="3"/>
+ <g fill="#7dd3fc"><circle cx="75" cy="196" r="9"/><circle cx="92" cy="182" r="8"/><circle cx="165" cy="170" r="9"/><circle cx="185" cy="188" r="8"/><circle cx="265" cy="180" r="9"/><circle cx="283" cy="196" r="8"/><circle cx="360" cy="192" r="9"/></g>
+ <path d="M40 120 H420 M60 90 H400 M90 60 H370" stroke="#3a4356" stroke-width="2" stroke-dasharray="4 6"/>
+ <path d="M430 70 L350 96" stroke="#bd0dff" stroke-width="4" marker-end="url(#ar8)"/>
+ <defs><marker id="ar8" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L8 4.5 L0 9 z" fill="#bd0dff"/></marker></defs>
+ ${txt(442,62,'?',26,'#bd0dff')}
+ ${txt(230,244,'cells embedded in a secreted matrix on a surface',13,'#7c8ba1')}
+</svg>`,
+spot_assay:`<svg viewBox="0 0 380 280">
+ <circle cx="190" cy="130" r="120" fill="#10141c" stroke="#8fb7ff" stroke-width="4"/>
+ <circle cx="190" cy="130" r="108" fill="#d9c9a3"/>
+ <g fill="#f8f3e6"><circle cx="140" cy="90" r="16"/><circle cx="200" cy="80" r="15"/><circle cx="250" cy="110" r="14"/><circle cx="150" cy="160" r="15"/><circle cx="215" cy="170" r="13"/></g>
+ <g fill="#d9c9a3"><circle cx="255" cy="165" r="13"/></g>
+ <path d="M300 236 L262 186" stroke="#bd0dff" stroke-width="4" marker-end="url(#ar9)"/>
+ <defs><marker id="ar9" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L8 4.5 L0 9 z" fill="#bd0dff"/></marker></defs>
+ ${txt(316,252,'?',26,'#bd0dff')}
+ ${txt(190,272,'drops of phage stocks on a lawn',13,'#7c8ba1')}
+</svg>`,
+plaques_turbid:`<svg viewBox="0 0 460 240">
+ <circle cx="120" cy="110" r="92" fill="#10141c" stroke="#8fb7ff" stroke-width="4"/>
+ <circle cx="120" cy="110" r="82" fill="#d9c9a3"/>
+ <g fill="#f8f3e6"><circle cx="95" cy="85" r="10"/><circle cx="140" cy="75" r="9"/><circle cx="155" cy="120" r="10"/><circle cx="100" cy="135" r="9"/><circle cx="130" cy="150" r="8"/></g>
+ ${txt(120,225,'Plate A',17,'#7dd3fc')}
+ <circle cx="340" cy="110" r="92" fill="#10141c" stroke="#8fb7ff" stroke-width="4"/>
+ <circle cx="340" cy="110" r="82" fill="#d9c9a3"/>
+ <g fill="#efe6cf"><circle cx="315" cy="85" r="10"/><circle cx="360" cy="75" r="9"/><circle cx="375" cy="120" r="10"/><circle cx="320" cy="135" r="9"/><circle cx="350" cy="150" r="8"/></g>
+ <g fill="#cbb98f"><circle cx="315" cy="85" r="4"/><circle cx="360" cy="75" r="3.5"/><circle cx="375" cy="120" r="4"/><circle cx="320" cy="135" r="3.5"/><circle cx="350" cy="150" r="3"/></g>
+ ${txt(340,225,'Plate B',17,'#7dd3fc')}
+</svg>`
+};
+
+/* ============================ STATE ============================ */
+const Q=window.QUIZ;
+let scores=Q.teams.map(()=>0);
+try{const s=localStorage.getItem("phagequiz_scores"); if(s){const v=JSON.parse(s); if(Array.isArray(v)&&v.length===scores.length) scores=v;}}catch(e){}
+try{const t=localStorage.getItem("phagequiz_teams"); if(t){const v=JSON.parse(t); if(Array.isArray(v)&&v.length===Q.teams.length) Q.teams=Q.teams.map((tm,i)=>({name:v[i].name||tm.name,members:v[i].members||tm.members}));}}catch(e){}
+let slides=[], cur=0, revealed=false, tSec=0, tInt=null, tTotal=30;
+
+/* ============================ BUILD SLIDES ============================ */
+function el(html){const d=document.createElement("div");d.innerHTML=html.trim();return d.firstChild}
+function optHTML(i,text,win,dim){
+  return `<div class="opt${win?" win":""}${dim?" dim":""}"><div class="oi"><span class="L">${"ABCD"[i]}</span><span>${text}</span></div></div>`;
+}
+function mcqSlide(r,q,qi,total){
+  const fig=q.figure?`<div class="figbox">${FIGS[q.figure]||""}</div>`:"";
+  return {label:`R${r.num} · Q${qi+1}/${total}`, round:r.num, roundObj:r, kind:"mcq", time:r.scoring.time,
+    html:`<div class="tag">ROUND ${r.num}</div>${q.audience?'<div class="ribbon">AUDIENCE</div>':""}${r.badge?`<div class="badge">${r.badge}</div>`:""}
+      ${fig}<h2>${q.q}</h2>
+      <div class="opts">${q.options.map((o,i)=>optHTML(i,o,false,false)).join("")}</div>`,
+    reveal(dom){const os=dom.querySelectorAll(".opt");os.forEach((o,i)=>{if(i===q.answer)o.classList.add("win");else o.classList.add("dim")})}};
+}
+function build(){
+  slides=[];
+  slides.push({label:"Start",kind:"title",html:`
+    <div class="center"><h1><span class="grad">START</span></h1>
+    <h1 style="margin-top:14px">${Q.meta.subtitle}</h1>
+    <div class="sub" style="margin-top:16px">${Q.meta.tagline}</div>
+    <div class="rules" style="margin-top:26px"><button class="pri" style="font-size:17px;padding:12px 30px" onclick="startShow()">▶ START PRESENTATION (fullscreen)</button></div>
+    <div class="rules" style="margin-top:14px"><div class="chip">or press <b>Space</b></div><div class="chip"><b>H</b> for help</div></div></div>`});
+  slides.push({label:"Teams",kind:"teams",html:`
+    <h2>Teams <span class="sub">(click any name to edit)</span></h2>
+    <div class="teams">${Q.teams.map((t,i)=>`<div class="team"><h3 contenteditable data-t="${i}" data-f="name">${t.name}</h3>
+      ${t.members.map((m,j)=>`<div contenteditable data-t="${i}" data-f="m" data-j="${j}">${m}</div>`).join("")}</div>`).join("")}</div>`});
+  slides.push({label:"Rounds",kind:"info",html:`<h2>Rounds</h2>
+    <div class="rlist">${Q.rounds.map(r=>`<span class="${r.badge?"new":""}"><i>${r.num||"☕"}</i>${r.title}${r.badge?`<b class="nbt">${r.badge}</b>`:""}</span>`).join("")}</div>
+    <div class="rules"><div class="chip">Each MCQ round: <b>8 team</b> + <b>2 audience</b> questions</div><div class="chip"><b>5 min</b> break mid-way</div></div>`});
+  slides.push({label:"Markings",kind:"info",html:`<h2>Markings</h2>
+    <div class="rules">
+      <div class="chip">Rounds 1–5 &nbsp;<b>+10</b> / 0</div>
+      <div class="chip neg">Rounds 6–10 &nbsp;<b>+10</b> / −5</div>
+      <div class="chip">Rapid Fire &nbsp;<b>+5</b> / 0 &nbsp;(no passing)</div>
+      <div class="chip neg">Tie-Breaker &nbsp;<b>+20</b> / −10 &nbsp;· passed <b>+5</b></div>
+      <div class="chip">Emoji Rebus & Laughs &nbsp;<b>+10</b> / 0</div>
+      <div class="chip">⏱ 30 s per question &nbsp;·&nbsp; tie-breaker 60 s</div>
+    </div>`});
+  for(const r of Q.rounds){
+    if(r.type==="break"){slides.push({label:"Break",kind:"break",html:`
+      <div class="center"><div class="bignum">☕</div><h1 style="margin-top:22px">Break Time!</h1>
+      <div class="sub" style="font-size:30px;margin-top:8px"><b class="grad">${r.minutes} MIN</b></div></div>`});continue}
+    if(r.type==="rapid"){
+      slides.push({label:`R${r.num} divider`,kind:"div",time:r.scoring.time,html:`
+        <div class="center"><div class="bignum">${r.num}</div><h1 style="margin-top:22px">${r.title}</h1>
+        <div class="rules" style="margin-top:22px"><div class="chip">Correct <b>+${r.scoring.correct}</b></div><div class="chip">Wrong <b>${r.scoring.wrong}</b></div><div class="chip">No passing</div><div class="chip">⏱ ${r.scoring.time} s per team</div></div>
+        <div class="sub" style="margin-top:14px">${r.note||""}</div></div>`});
+      for(const tset of r.teams){
+        const tn=()=>Q.teams[tset.team].name;
+        tset.questions.forEach((qq,i)=>{
+          slides.push({label:`R${r.num} · ${tn()} ${i+1}/${tset.questions.length}`,kind:"rapid",roundObj:r,team:tset.team,time:r.scoring.time,
+            html:`<div class="tag">ROUND ${r.num} — RAPID FIRE</div>
+              <div class="rfmeta">${tn().toUpperCase()} · question ${i+1} of ${tset.questions.length}</div>
+              <div class="rfq">${qq.q}</div><div class="rfa">${qq.a}</div>`,
+            reveal(dom){dom.querySelector(".rfa").classList.add("on")}});
+        });
+      }
+      continue;
+    }
+    const qs=r.questions;
+    slides.push({label:`R${r.num} divider`,kind:"div",time:r.scoring?r.scoring.time:30,html:`
+      <div class="center"><div class="bignum">${r.num}</div><h1 style="margin-top:22px">${r.title}</h1>
+      ${r.badge?`<div class="sub" style="margin-top:10px"><span class="grad">✦ ${r.badge} ✦</span></div>`:""}
+      <div class="rules" style="margin-top:22px"><div class="chip">Correct <b>+${r.scoring.correct}</b></div><div class="chip neg">Wrong <b>${r.scoring.wrong}</b></div><div class="chip">⏱ ${r.scoring.time} s</div>${r.scoring.pass?`<div class="chip">passed <b>+${r.scoring.pass}</b></div>`:""}</div></div>`});
+    qs.forEach((q,i)=>slides.push(mcqSlide(r,q,i,qs.length)));
+  }
+  slides.push({label:"Finish",kind:"end",html:`<div class="center"><h1>Thank you for your answers! 🧫</h1>
+    <div class="sub" style="margin-top:14px">Final standings on the scoreboard — press <b>S</b></div></div>`});
+}
+build();
+
+/* ============================ RENDER / NAV ============================ */
+const stage=document.getElementById("stage");
+function render(){
+  const s=slides[cur];
+  stage.innerHTML="";
+  const d=el(`<div class="slide on">${s.html}</div>`);
+  stage.appendChild(d);
+  revealed=false;
+  if(s.kind==="teams"){
+    d.querySelectorAll("[contenteditable]").forEach(n=>n.addEventListener("blur",saveTeams));
+  }
+  startTimer(s.time||0,false);
+  drawBar();
+}
+function saveTeams(){
+  document.querySelectorAll("[contenteditable]").forEach(n=>{
+    const i=+n.dataset.t;
+    if(n.dataset.f==="name")Q.teams[i].name=n.textContent.trim();
+    else Q.teams[i].members[+n.dataset.j]=n.textContent.trim();
+  });
+  localStorage.setItem("phagequiz_teams",JSON.stringify(Q.teams));
+  build(); drawBar();
+}
+function go(n){
+  cur=Math.max(0,Math.min(slides.length-1,n));
+  render();
+}
+function reveal(){
+  const s=slides[cur];
+  if(revealed||!s.reveal)return;
+  s.reveal(stage.querySelector(".slide"));
+  revealed=true;
+  drawBar();
+}
+function next(){
+  const s=slides[cur];
+  if((s.kind==="mcq"||s.kind==="rapid")&&!revealed){reveal();return}
+  go(cur+1);
+}
+/* ============================ TIMER ============================ */
+const timerEl=document.getElementById("timer");
+function startTimer(sec,run){
+  stopTimer();
+  tTotal=sec||0; tSec=sec||0;
+  if(!tTotal){timerEl.textContent="–";timerEl.className="";return}
+  paintTimer();
+  if(run)runTimer();
+}
+function runTimer(){stopTimer();tInt=setInterval(()=>{tSec--;paintTimer();
+  if(tSec<=0){stopTimer();beep();const f=document.getElementById("flash");f.classList.remove("on");void f.offsetWidth;f.classList.add("on");}},1000)}
+function stopTimer(){if(tInt){clearInterval(tInt);tInt=null}}
+function paintTimer(){
+  timerEl.textContent=tSec;
+  timerEl.className=tInt?(tSec<=5?"run low":"run"):"";
+}
+function toggleTimer(){if(!tTotal)return; tInt?stopTimer():runTimer(); paintTimer()}
+let AC=null;
+function beep(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+  const o=AC.createOscillator(),g=AC.createGain();o.type="square";o.frequency.value=220;
+  g.gain.setValueAtTime(.25,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+.7);
+  o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+.75)}catch(e){}}
+/* ============================ BAR / SCORES ============================ */
+const bar=document.getElementById("bar");
+function drawBar(){
+  const s=slides[cur];
+  const canScore=s&&(s.kind==="mcq"||s.kind==="rapid");
+  bar.innerHTML=`<span id="prog">${s.label||""} &nbsp;·&nbsp; slide ${cur+1}/${slides.length}</span>
+    <button onclick="go(cur-1)">←</button><button class="pri" onclick="next()">${revealed?"Next →":"Reveal ⏎"}</button>
+    <button onclick="toggleTimer()">⏱ T</button><button onclick="toggleBoard()">🏆 S</button><button onclick="toggleJump()">☰ J</button><button onclick="toggleHelp()">? H</button>
+    <span class="sp"></span>`;
+  const ro=s.roundObj||null;
+  const cp=ro?(ro.type==="rapid"?5:ro.scoring.correct):0;
+  const wp=ro?(ro.type==="rapid"?0:Math.abs(ro.scoring.wrong)):0;
+  const canPass=ro&&ro.scoring&&ro.scoring.pass;
+  Q.teams.forEach((t,i)=>{
+    const c=el(`<span class="tchip"><span class="nm">${t.name}</span><span class="sc">${scores[i]}</span>${canScore?
+      `<button class="tbtn c" title="correct answer" onclick="award(${i},1)">✓+${cp}</button>
+       <button class="tbtn w" title="wrong answer" onclick="award(${i},-1)">✗${wp?("−"+wp):"0"}</button>
+       ${canPass?`<button class="tbtn p" title="passed to this team, answered correctly" onclick="passAward(${i})">p+${ro.scoring.pass}</button>`:""}`:""}</span>`);
+    bar.appendChild(c);
+  });
+}
+function award(i,dir){
+  const ro=slides[cur].roundObj;
+  if(!ro)return;
+  const v=dir>0?(ro.type==="rapid"?5:ro.scoring.correct):(ro.type==="rapid"?0:ro.scoring.wrong);
+  scores[i]+=v; persist(); drawBar();
+}
+function passAward(i){
+  const ro=slides[cur].roundObj;
+  if(!ro||!ro.scoring.pass)return;
+  scores[i]+=ro.scoring.pass; persist(); drawBar();
+}
+function persist(){localStorage.setItem("phagequiz_scores",JSON.stringify(scores))}
+function resetScores(){scores=Q.teams.map(()=>0);persist();drawBar();renderBoard()}
+/* ============================ OVERLAYS ============================ */
+const board=document.getElementById("board");
+function renderBoard(){
+  const rows=Q.teams.map((t,i)=>({i,n:t.name,s:scores[i]})).sort((a,b)=>b.s-a.s);
+  document.getElementById("btab").innerHTML=rows.map((r,k)=>
+    `<tr><td class="pos">${k+1}.</td><td>${r.n}</td><td class="r">${r.s}</td></tr>`).join("");
+}
+function toggleBoard(){renderBoard();board.classList.toggle("on")}
+function closeBoard(){board.classList.remove("on")}
+const jump=document.getElementById("jump");
+function toggleJump(){
+  if(jump.classList.contains("on")){jump.classList.remove("on");return}
+  jump.innerHTML="<h2 style='margin-bottom:18px'>Jump to slide</h2>"+
+    slides.map((s,i)=>`<a href="#" class="${i===cur?"cur":""}" onclick="go(${i});toggleJump();return false">${i+1}. ${s.label||s.kind}</a>`).join("");
+  jump.classList.add("on");
+}
+function toggleHelp(){document.getElementById("help").classList.toggle("on")}
+function startShow(){
+  try{const el=document.documentElement;
+    (el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);}catch(e){}
+  go(1);
+}
+/* ============================ KEYS ============================ */
+document.addEventListener("keydown",e=>{
+  if(e.target.isContentEditable)return;
+  const k=e.key;
+  if(k===" "||k==="Enter"||k==="ArrowRight"){e.preventDefault();next()}
+  else if(k==="ArrowLeft"){go(cur-1)}
+  else if(k==="r"||k==="R"){reveal()}
+  else if(k==="t"||k==="T"){toggleTimer()}
+  else if(k==="s"||k==="S"){toggleBoard()}
+  else if(k==="j"||k==="J"){toggleJump()}
+  else if(k==="h"||k==="H"||k==="?"){toggleHelp()}
+  else if(k==="f"||k==="F"){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+  else if(k==="Escape"){closeBoard();jump.classList.remove("on");document.getElementById("help").classList.remove("on")}
+});
+render();
+</script>
+</body>
+</html>

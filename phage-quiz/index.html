@@ -303,7 +303,8 @@ function build(){
     <div class="center"><h1><span class="grad">START</span></h1>
     <h1 style="margin-top:14px">${Q.meta.subtitle}</h1>
     <div class="sub" style="margin-top:16px">${Q.meta.tagline}</div>
-    <div class="rules" style="margin-top:26px"><div class="chip">Press <b>Space</b> to begin</div><div class="chip"><b>H</b> for help</div></div></div>`});
+    <div class="rules" style="margin-top:26px"><button class="pri" style="font-size:17px;padding:12px 30px" onclick="startShow()">▶ START PRESENTATION (fullscreen)</button></div>
+    <div class="rules" style="margin-top:14px"><div class="chip">or press <b>Space</b></div><div class="chip"><b>H</b> for help</div></div></div>`});
   slides.push({label:"Teams",kind:"teams",html:`
     <h2>Teams <span class="sub">(click any name to edit)</span></h2>
     <div class="teams">${Q.teams.map((t,i)=>`<div class="team"><h3 contenteditable data-t="${i}" data-f="name">${t.name}</h3>
@@ -465,6 +466,11 @@ function toggleJump(){
   jump.classList.add("on");
 }
 function toggleHelp(){document.getElementById("help").classList.toggle("on")}
+function startShow(){
+  try{const el=document.documentElement;
+    (el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);}catch(e){}
+  go(1);
+}
 /* ============================ KEYS ============================ */
 document.addEventListener("keydown",e=>{
   if(e.target.isContentEditable)return;

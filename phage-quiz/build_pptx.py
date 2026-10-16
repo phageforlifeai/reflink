@@ -313,13 +313,15 @@ def q_slides(r, q):
             w_in = h_in * pm.width / pm.height
             s.shapes.add_picture(str(FIGDIR / f"{q['figure']}.png"),
                                  Inches((13.333 - w_in) / 2), Inches(0.85), Inches(w_in), Inches(h_in))
-            qy, qsize = 3.25, 18
-        tb(s, 1.2, qy, 10.93, 1.1, [[(q["q"], qsize, WHITE, True)]], align=PP_ALIGN.CENTER)
+            qy, qsize = 3.3, (18 if len(q["q"]) <= 70 else 16)
+        else:
+            qsize = 24 if len(q["q"]) <= 70 else (20 if len(q["q"]) <= 110 else 18)
+        tb(s, 1.2, qy, 10.93, 1.25, [[(q["q"], qsize, WHITE, True)]], align=PP_ALIGN.CENTER)
         for i, opt in enumerate(q["options"]):
             x0, y0, x1, y1 = OPT_RECTS[i]
             win = show and i == q["answer"]
-            hexcard(s, x0 * PT, y0 * PT, (x1 - x0) * PT, (y1 - y0) * PT, "ABCD"[i], opt, win=win,
-                    size=14 if len(opt) > 42 else 16)
+            osize = 16 if len(opt) <= 40 else (14 if len(opt) <= 64 else 12)
+            hexcard(s, x0 * PT, y0 * PT, (x1 - x0) * PT, (y1 - y0) * PT, "ABCD"[i], opt, win=win, size=osize)
         if not show:
             notes(s, f"ANSWER: {'ABCD'[q['answer']]} — {q['options'][q['answer']]}")
     return
@@ -401,9 +403,9 @@ for r in data["rounds"]:
                     s = slide()
                     tb(s, 0.9, 0.5, 6, 0.4, [[(f"ROUND {r['num']} — RAPID FIRE", 14, WHITE, True)]])
                     tb(s, 1, 1.3, 11.33, 0.4, [[(f"{tname}  ·  question {qi + 1} of {len(tset['questions'])}", 15, MUT, True)]], align=PP_ALIGN.CENTER)
-                    tb(s, 1.2, 2.4, 10.93, 1.2, [[(qq["q"], 26, WHITE, True)]], align=PP_ALIGN.CENTER)
+                    tb(s, 1.2, 2.4, 10.93, 1.2, [[(qq["q"], 26 if len(qq["q"]) <= 70 else 22, WHITE, True)]], align=PP_ALIGN.CENTER)
                     if show:
-                        hexcard(s, 3.0, 4.4, 7.33, 0.95, "", qq["a"], win=True, size=20)
+                        hexcard(s, 3.0, 4.4, 7.33, 0.95, "", qq["a"], win=True, size=20 if len(qq["a"]) <= 40 else 16)
                     else:
                         hexcard(s, 3.0, 4.4, 7.33, 0.95, "", "?", win=False, size=20)
                         notes(s, f"ANSWER: {qq['a']}")
