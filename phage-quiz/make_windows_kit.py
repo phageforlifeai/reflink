@@ -142,6 +142,13 @@ TWO-SCREEN SETUP
 Win+P -> Extend. Deck fullscreen on the projector; press C and drag the
 Master Console to your laptop screen.
 
+BEFORE THE EVENT - TEAM & MEMBER NAMES
+Open the Teams slide (press J, pick "Teams"): click any team name or the
+Dr./Ms./Mr. lines to type the real names, "+" adds a member slot, "x"
+removes one, and the reset button restores the deck defaults.
+Everything is saved in the browser on that PC and is used across the
+score chips, rapid-fire slides, scoreboard and Master Console.
+
 Scores are saved in the browser on that PC (reset via S > Reset scores).
 """
 (FKIT / "README.txt").write_bytes(FREADME.replace("\n", "\r\n").encode("ascii"))

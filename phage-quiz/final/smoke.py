@@ -105,6 +105,7 @@ def main():
         ("console html", "openConsole(); return window.CONSOLE_HTML_FINAL.length>1000?'ok':'short'"),
         ("keys nav", "var c0=cur; __fireKey('ArrowRight'); var c1=cur; __fireKey('ArrowLeft'); return JSON.stringify({c0:c0,c1:c1,c2:cur})"),
         ("all slides draw", "var bad=[]; for(var i=0;i<N;i++){ try{ go(i); }catch(e){ bad.push(i+':'+e.message) } } return bad.length?('BAD '+bad.join('|')):'all '+N+' slides drew'"),
+        ("teams editable", "go(1); var h=document.getElementById('stage').innerHTML; setTeamName(0,'Asha Legends'); setMember(0,1,'Dr. Priya'); addMember(0); var m4=members[0].length; delMember(0,3); var i=Q.slides.findIndex(function(s){return s.type==='rapid'&&s.team===Q.teamsOriginal[0]}); go(i); var okChip=document.getElementById('stage').innerHTML.includes('ASHA LEGENDS'); resetTeams(); return JSON.stringify({ce:h.includes('contenteditable'), name:Q.teams[0], mem:members[0][1], m4:m4, back:members[0].length, chip:okChip, reset:Q.teams[0]==='Lytic Legends', persisted:(localStorage.getItem('pqf_members')||'').length>10})"),
         ("guard fields", "return JSON.stringify({read:S.readSeconds, ans:S.answerSeconds, rapid:S.rapidAnswerSeconds, teams:Q.teams.length})"),
     ]
     for name, st, val in run([standalone], tests):

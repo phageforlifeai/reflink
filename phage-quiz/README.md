@@ -16,6 +16,9 @@ The **real event deck** — your own final questions, parsed slide-by-slide from
 - **Quiz-master tools carried over** — 🎛 Master Console `C` (private popup showing the
   answer *before* reveal + remote controls, for a second screen via Win+P → Extend),
   👁 peek `A`, 🔑 printable answer key `K`, scoreboard `S`, jump `J`, per-team ✓/✗ scoring.
+- **✏️ Editable teams** — on the Teams slide, click any team or member name (Dr./Ms./Mr. slots)
+  to type the real names, ＋ add / ✕ remove slots, ↺ reset; saved on that PC and used
+  everywhere (score chips, rapid-fire, scoreboard, console).
 
 Files: `final/PhageQuiz-Final.html` (**THE single file** — runs alone on any PC),
 `final/index.html` + `final/quiz-data.js` (split dev pair), `final/answer-key.md`,

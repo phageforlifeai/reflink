@@ -27,6 +27,28 @@ window.QUIZ = {
     "Biofilm Breakers",
     "Phage Pharmers",
     "Virion Architects"
+   ],
+   "members": [
+    [
+     "Dr. ",
+     "Ms. ",
+     "Mr. "
+    ],
+    [
+     "Dr. ",
+     "Dr. ",
+     "Mr. "
+    ],
+    [
+     "Dr. ",
+     "Dr. ",
+     "Mr. "
+    ],
+    [
+     "Dr. ",
+     "Dr. ",
+     "Mr. "
+    ]
    ]
   },
   {

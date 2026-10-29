@@ -80,6 +80,17 @@ canvas#fx{position:fixed; inset:0; z-index:60; pointer-events:none}
   background:linear-gradient(160deg,var(--c1,#2f6bff),var(--c2,#a855ff)); font-size:34px; filter:drop-shadow(0 6px 18px rgba(80,80,255,.4))}
 .teamcard h3{font-size:23px; letter-spacing:.04em}
 .teamcard .members{margin-top:10px; color:var(--dim); font-size:13.5px; line-height:1.9}
+.edithint{font-size:13px; color:var(--am); letter-spacing:.04em; vertical-align:middle; margin-left:14px; font-weight:600}
+.teamcard h3[contenteditable],.mslot span[contenteditable]{outline:none; cursor:text; border-radius:8px; padding:2px 8px; transition:background .2s,box-shadow .2s}
+.teamcard h3[contenteditable]:hover,.mslot span[contenteditable]:hover{background:rgba(53,224,255,.08)}
+.teamcard h3[contenteditable]:focus,.mslot span[contenteditable]:focus{background:rgba(53,224,255,.14); box-shadow:0 0 0 2px rgba(53,224,255,.5)}
+.mslot span[contenteditable]:empty:before{content:"name…"; color:#5d6f96}
+.mslot{display:flex; align-items:center; gap:4px; justify-content:center}
+.mdel{background:none; border:none; color:#44537a; cursor:pointer; font-size:12px; padding:2px 5px; border-radius:6px; visibility:hidden}
+.mslot:hover .mdel{visibility:visible}
+.mdel:hover{color:var(--rd); background:rgba(255,77,94,.12)}
+.madd{margin-top:10px; background:none; border:1px dashed rgba(120,160,255,.35); color:var(--dim); border-radius:9px; padding:5px 14px; cursor:pointer; font-size:12.5px}
+.madd:hover{color:var(--cy); border-color:var(--cy)}
 @keyframes flyin{from{opacity:0; transform:translateY(46px) rotate(-2deg) scale(.9)}to{opacity:1; transform:none}}
 /* rounds / markings */
 .h2{font-size:clamp(30px,4.4vw,52px); font-weight:800; letter-spacing:.02em; margin-bottom:26px;
@@ -297,6 +308,8 @@ canvas#fx{position:fixed; inset:0; z-index:60; pointer-events:none}
   <div class="helpnote">⏱ Every question auto-starts a <b>45 s timer</b>: <b>15 s reading</b> (options blurred &amp; locked)
   then <b>30 s answering</b> (options unlock with a chime). Ring turns green in the answer phase, pulses red and ticks in the last 5 s,
   and a buzzer + TIME UP stamp fires at zero. Rapid-fire questions get a straight 30 s.
+  <br>✏️ <b>Team &amp; member names</b>: go to the Teams slide (press <b>J</b> → “Teams”), click any name to type the real one,
+  <b>＋ add</b> / <b>✕ remove</b> member slots. Everything is saved on that PC and used across score chips, rapid-fire, scoreboard and console.
   <br>🖥 Two-screen setup: press <b>Win+P → Extend</b>, open the <b>Master Console (C)</b>, drag it to your laptop screen and keep the
   deck fullscreen on the projector. The console shows the correct answer before it is revealed and can drive the show remotely.
   <br>✓/✗ buttons in the bottom bar score the current question per team (audience questions are excluded). Scores persist across reloads.</div>
@@ -332,6 +345,28 @@ window.QUIZ = {
     "Biofilm Breakers",
     "Phage Pharmers",
     "Virion Architects"
+   ],
+   "members": [
+    [
+     "Dr. ",
+     "Ms. ",
+     "Mr. "
+    ],
+    [
+     "Dr. ",
+     "Dr. ",
+     "Mr. "
+    ],
+    [
+     "Dr. ",
+     "Dr. ",
+     "Mr. "
+    ],
+    [
+     "Dr. ",
+     "Dr. ",
+     "Mr. "
+    ]
    ]
   },
   {
@@ -2332,6 +2367,30 @@ let scores=[]; try{scores=JSON.parse(localStorage.getItem("pqf_scores")||"null")
 if(!Array.isArray(scores)||scores.length!==Q.teams.length)scores=Q.teams.map(()=>0);
 function persist(){try{localStorage.setItem("pqf_scores",JSON.stringify(scores))}catch(e){}}
 
+/* team names + member names — editable on the Teams slide, saved on this PC */
+Q.teamsOriginal=Q.teams.slice();
+try{const tn=JSON.parse(localStorage.getItem("pqf_teamnames")||"null");
+  if(Array.isArray(tn)&&tn.length===Q.teams.length&&tn.every(x=>typeof x==="string"&&x.trim()))Q.teams=tn.slice()}catch(e){}
+const _tslide=Q.slides.find(s=>s.type==="teams");
+const MEM_DEFAULT=(_tslide&&Array.isArray(_tslide.members)&&_tslide.members)||Q.teams.map(()=>["Dr. ","Dr. ","Mr. "]);
+let members;
+try{members=JSON.parse(localStorage.getItem("pqf_members")||"null")}catch(e){members=null}
+if(!Array.isArray(members)||members.length!==Q.teams.length)members=MEM_DEFAULT.map(m=>m.slice());
+members=members.map(m=>Array.isArray(m)?m.slice(0,8):[]);
+function persistTeams(){
+  try{localStorage.setItem("pqf_teamnames",JSON.stringify(Q.teams)); localStorage.setItem("pqf_members",JSON.stringify(members))}catch(e){}
+  drawBar(); syncBroadcast();
+}
+function resolveTeam(orig){const i=Q.teamsOriginal.indexOf(orig); return i>=0?Q.teams[i]:orig}
+function editKey(e){e.stopPropagation(); if(e.key==="Enter"){e.preventDefault(); e.target.blur()}}
+function cleanName(v){return (v||"").replace(/[\n\r]+/g," ").trim()}
+function setTeamName(i,v){Q.teams[i]=cleanName(v)||Q.teamsOriginal[i]; persistTeams()}
+function setMember(i,j,v){members[i][j]=cleanName(v); persistTeams()}
+function addMember(i){if(members[i].length<8){members[i].push(""); persistTeams(); draw()}}
+function delMember(i,j){members[i].splice(j,1); persistTeams(); draw()}
+function resetTeams(){if(!confirm("Reset all team names and members to the deck defaults?"))return;
+  Q.teams=Q.teamsOriginal.slice(); members=MEM_DEFAULT.map(m=>m.slice()); persistTeams(); draw()}
+
 function ensureTimer(sl){
   if(sl._t!==undefined)return sl._t;
   if(sl.type==="q")sl._t={total:S.readSeconds+S.answerSeconds,remain:S.readSeconds+S.answerSeconds,ansAt:S.answerSeconds,phase:"read",paused:false,done:false,lastBeep:99};
@@ -2445,10 +2504,13 @@ function beginShow(){
 }
 function teamsHTML(sl){
   const emj=["🦠","🧫","💊","🔬"];
-  return `<div class="h2" style="text-align:center">The Teams</div><div class="teamgrid">`+
-    sl.teams.map((t,i)=>`<div class="teamcard" style="animation-delay:${i*0.12}s; --c1:${TEAMC[i][0]}; --c2:${TEAMC[i][1]}">
-      <div class="hex">${emj[i%4]}</div><h3>${esc(t)}</h3>
-      <div class="members">Dr. ______<br>Dr. ______<br>Mr./Ms. ______</div></div>`).join("")+`</div>`;
+  return `<div class="h2" style="text-align:center">The Teams<span class="edithint">✏️ click a name to edit — saved on this PC</span></div><div class="teamgrid">`+
+    Q.teams.map((t,i)=>`<div class="teamcard" style="animation-delay:${i*0.12}s; --c1:${TEAMC[i][0]}; --c2:${TEAMC[i][1]}">
+      <div class="hex">${emj[i%4]}</div>
+      <h3 contenteditable="true" spellcheck="false" onkeydown="editKey(event)" onblur="setTeamName(${i},this.textContent)">${esc(t)}</h3>
+      <div class="members">${members[i].map((m,j)=>`<div class="mslot"><span contenteditable="true" spellcheck="false" onkeydown="editKey(event)" onblur="setMember(${i},${j},this.textContent)">${esc(m)}</span><button class="mdel" onclick="delMember(${i},${j})" title="remove member">✕</button></div>`).join("")}
+      <button class="madd" onclick="addMember(${i})">＋ add member</button></div></div>`).join("")+`</div>
+    <div style="text-align:center;margin-top:24px"><button class="bigbtn" onclick="resetTeams()">↺ Reset teams to deck defaults</button></div>`;
 }
 function roundsHTML(sl){
   return `<div class="h2">${esc(sl.title)}</div><ul class="roundlist">`+
@@ -2500,11 +2562,11 @@ function qHTML(sl){
      <div class="revealbar" id="revbar"><span class="bl">✅</span><span id="revtxt"></span></div>`;
 }
 function rapidHTML(sl){
-  const ti=Math.max(0,Q.teams.indexOf(sl.team));
+  const ti=Math.max(0,Q.teamsOriginal.indexOf(sl.team));
   const t=ensureTimer(sl);
   return `<div class="rapidwrap">
     <div class="qhead"><span class="qtag">ROUND ${sl.round} · RAPID FIRE</span><span class="qtag">+${sl.correct} / ${sl.wrong}</span></div>
-    <div class="teamchip" style="--c1:${TEAMC[ti][0]};--c2:${TEAMC[ti][1]}">⚡ TEAM ${esc(sl.team.toUpperCase())}</div>
+    <div class="teamchip" style="--c1:${TEAMC[ti][0]};--c2:${TEAMC[ti][1]}">⚡ TEAM ${esc(resolveTeam(sl.team).toUpperCase())}</div>
     ${t&&!sl._rev?`<div class="phasechip answer">⚡ ANSWER TIME</div>`:""}
     <div class="rapidq">${esc(sl.qtext)}</div>
     ${sl._rev?`<div class="anscard show"><span class="lbl">ANSWER</span>${esc(sl.atext)}</div>`:`<div class="qmark">?</div>`}
@@ -2599,7 +2661,8 @@ function showJump(){
   Q.slides.forEach((s,i)=>{
     if(s.type==="divider")html+=`<div class="jrow hd" onclick="go(${i});hideM('mjmp')">ROUND ${s.round} · ${esc(s.title.toUpperCase())}</div>`;
     else if(s.type==="q")html+=`<div class="jrow" onclick="go(${i});hideM('mjmp')"><span class="ji">#${i+1}</span><span class="jt">${esc((s.qtext||"(image question)").slice(0,80))}</span>${s.audience?'<span class="tagq">AUD</span>':""}${s.img?'<span class="tagq">IMG</span>':""}</div>`;
-    else if(s.type==="rapid")html+=`<div class="jrow" onclick="go(${i});hideM('mjmp')"><span class="ji">#${i+1}</span><span class="jt">⚡ ${esc(s.team)} — ${esc(s.qtext.slice(0,70))}</span></div>`;
+    else if(s.type==="rapid")html+=`<div class="jrow" onclick="go(${i});hideM('mjmp')"><span class="ji">#${i+1}</span><span class="jt">⚡ ${esc(resolveTeam(s.team))} — ${esc(s.qtext.slice(0,70))}</span></div>`;
+    else if(s.type==="teams")html+=`<div class="jrow" onclick="go(${i});hideM('mjmp')"><span class="ji">#${i+1}</span><span class="jt">👥 Teams — ✏️ edit names here</span></div>`;
     else if(s.type==="title")html+=`<div class="jrow" onclick="go(${i});hideM('mjmp')"><span class="ji">#${i+1}</span><span class="jt">🎬 Opening / START</span></div>`;
     else if(s.type==="break")html+=`<div class="jrow" onclick="go(${i});hideM('mjmp')"><span class="ji">#${i+1}</span><span class="jt">☕ Break</span></div>`;
     else if(s.type==="end")html+=`<div class="jrow" onclick="go(${i});hideM('mjmp')"><span class="ji">#${i+1}</span><span class="jt">🏁 Thank you / end</span></div>`;
@@ -2615,6 +2678,8 @@ function toggleFS(){try{if(!document.fullscreenElement)document.documentElement.
 /* ================= keyboard ================= */
 addEventListener("keydown",e=>{
   if(e.metaKey||e.ctrlKey||e.altKey)return;
+  const ae=document.activeElement;
+  if(ae&&(ae.isContentEditable||ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"))return;
   const k=e.key;
   if(k==="ArrowRight"||k===" "||k==="Enter"){e.preventDefault(); go(cur+1)}
   else if(k==="ArrowLeft"){e.preventDefault(); go(cur-1)}
