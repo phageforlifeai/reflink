@@ -99,10 +99,66 @@ with zipfile.ZipFile(zpath, "w", zipfile.ZIP_DEFLATED) as z:
             z.write(f, f.relative_to(HERE))
 print("kit:", KIT, "| zip:", zpath, zpath.stat().st_size, "bytes")
 
+# ---------------- FINAL (ICBRAR 2026 AK) immersive app kit ------------------
+FKIT = HERE / "PhageQuiz-Final-Windows"
+FAPP = FKIT / "app"
+FAPP.mkdir(parents=True, exist_ok=True)
+shutil.copyfile(HERE / "final" / "PhageQuiz-Final.html", FAPP / "index.html")
+(FKIT / "PhageQuiz-Final.bat").write_bytes(
+    BAT.replace("Phage Quiz launcher", "ICBRAR 2026 FINAL quiz launcher")
+       .replace("\n", "\r\n").encode("ascii"))
+
+FREADME = """ICBRAR 2026 - FINAL QUIZ (IMMERSIVE PRESENTER APP, WINDOWS)
+============================================================
+
+WHAT IS THIS?
+Your FINAL quiz (from "ICBRAR Quiz - AK.pdf"): 11 rounds, 63 MCQs
+(including the photo + emoji rounds exactly as in your deck) and
+32 rapid-fire questions - as a cinematic offline presenter app.
+
+TIMER (automatic!)
+Every question auto-starts a 45-second timer the moment it appears:
+  15 s READING  - options are blurred and locked
+  30 s ANSWER   - options unlock with a chime; ring turns green,
+                  pulses red + ticks in the last 5 s, buzzes at zero.
+Rapid-fire questions get a straight 30 s.
+T = pause/resume, U = unlock options immediately.
+
+RUN IT
+1. DOUBLE-CLICK  PhageQuiz-Final.bat   (app-style window, recommended)
+2. Or double-click  app\\index.html
+Copy the whole folder to any Windows PC - no internet, no install.
+Keep the folder name free of spaces.
+
+QUIZ-MASTER KEYS
+  ->/Space   next      <-        previous     R    reveal (confetti!)
+  T          pause     U         unlock now   M    mute sound FX
+  C          MASTER CONSOLE popup (private 2nd screen: shows the
+             correct answer BEFORE reveal + remote controls)
+  A          peek answer on this screen       K    printable answer key
+  S          scoreboard  J  jump to slide     F    fullscreen  H help
+
+TWO-SCREEN SETUP
+Win+P -> Extend. Deck fullscreen on the projector; press C and drag the
+Master Console to your laptop screen.
+
+Scores are saved in the browser on that PC (reset via S > Reset scores).
+"""
+(FKIT / "README.txt").write_bytes(FREADME.replace("\n", "\r\n").encode("ascii"))
+fzpath = HERE / "PhageQuiz-Final-Windows.zip"
+with zipfile.ZipFile(fzpath, "w", zipfile.ZIP_DEFLATED) as z:
+    for f in sorted(FKIT.rglob("*")):
+        if f.is_file():
+            z.write(f, f.relative_to(HERE))
+print("final kit:", FKIT, "| zip:", fzpath, fzpath.stat().st_size, "bytes")
+
 # convenience bundle of every conference deliverable
 kpath = HERE / "phage-quiz-kit.zip"
 with zipfile.ZipFile(kpath, "w", zipfile.ZIP_DEFLATED) as z:
     for f in ["phage-quiz.pptx", "phage-quiz-slides.pdf", "answer-key.md",
               "phage-quiz-standalone.html", "README.md"]:
         z.write(HERE / f, f"phage-quiz/{f}")
+    for f in ["PhageQuiz-Final.html", "answer-key.md"]:
+        z.write(HERE / "final" / f, f"phage-quiz/final/{f}")
 print("bundle:", kpath, kpath.stat().st_size, "bytes")
+

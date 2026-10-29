@@ -1,5 +1,32 @@
 # 🧫 Phage Quiz — Conference Edition
 
+## ⭐ FINAL quiz app (`final/`) — ICBRAR 2026, built from `ICBRAR Quiz - AK.pdf`
+
+The **real event deck** — your own final questions, parsed slide-by-slide from the AK PDF
+(11 rounds · 63 MCQs incl. the photo & emoji rounds rendered exactly as in your deck ·
+32 rapid-fire · tie-breaker · Lytic Laughs), rebuilt as a cinematic presenter app:
+
+- **Auto 45 s timer per question** — starts the instant the question appears:
+  **15 s READING** (options blurred & locked 🔒) → chime + unlock → **30 s ANSWER**.
+  Ring turns green for answering, pulses red and ticks in the last 5 s, buzzes at zero
+  with a TIME UP stamp. `T` pause/resume · `U` unlock now. Rapid fire gets a straight 30 s.
+- **Immersive show** — animated drifting-virion background, WebAudio sound FX (`M` mute),
+  confetti bursts on reveal, cinematic shimmer opening with a pulsing **START** button
+  and a 3‑2‑1‑GO countdown into the teams slide.
+- **Quiz-master tools carried over** — 🎛 Master Console `C` (private popup showing the
+  answer *before* reveal + remote controls, for a second screen via Win+P → Extend),
+  👁 peek `A`, 🔑 printable answer key `K`, scoreboard `S`, jump `J`, per-team ✓/✗ scoring.
+
+Files: `final/PhageQuiz-Final.html` (**THE single file** — runs alone on any PC),
+`final/index.html` + `final/quiz-data.js` (split dev pair), `final/answer-key.md`,
+`final/build_data.py` / `build_standalone.py` / `make_key.py` / `smoke.py` (rebuild + 23-check smoke test).
+Windows folder-kit: run `python make_windows_kit.py` → `PhageQuiz-Final-Windows.zip`
+(double-click `PhageQuiz-Final.bat`).
+
+Everything below documents the earlier **legacy practice deck** (158 generated questions).
+
+---
+
 An interactive quiz deck for bacteriophage conferences, built in the format of the
 **ICBRAR 2025 quiz** (6th International Conference on Bacteriophage Research and
 Antimicrobial Resistance): team-based MCQ rounds with audience questions, a visual
