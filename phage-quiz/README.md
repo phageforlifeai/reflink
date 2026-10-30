@@ -17,8 +17,10 @@ The **real event deck** — your own final questions, parsed slide-by-slide from
   confetti bursts on reveal, cinematic shimmer opening with a pulsing **START** button
   and a 3‑2‑1‑GO countdown into the teams slide.
 - **Quiz-master tools carried over** — 🎛 Master Console `C` (private popup showing the
-  answer *before* reveal + remote controls, for a second screen via Win+P → Extend),
-  👁 peek `A`, 🔑 printable answer key `K`, scoreboard `S`, jump `J`, per-team ✓/✗ scoring.
+  answer *before* reveal + remote controls; opens on the primary/laptop screen),
+  👁 peek `A`, 🔑 printable answer key `K`, scoreboard `S`, jump `J`, per-team ✓/✗ scoring,
+  ⇄ **Pass mode** `G` (✓ = +5, ✗ = 0 for passed questions). The projected control bar
+  **auto-hides** after 4 s (`P` pins it) so the audience only sees the show.
 - **✏️ Editable teams** — on the Teams slide, click any team or member name (Dr./Ms./Mr. slots)
   to type the real names, ＋ add / ✕ remove slots, ↺ reset; saved on that PC and used
   everywhere (score chips, rapid-fire, scoreboard, console).

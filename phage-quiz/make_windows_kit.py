@@ -137,14 +137,21 @@ Keep the folder name free of spaces.
 QUIZ-MASTER KEYS
   ->/Space   next      <-        previous     R    reveal (confetti!)
   T          pause     U         unlock now   M    mute sound FX
+  G          PASS MODE: while on, check = +5 and cross = 0
+             (use it when a question was passed to the next team)
+  P          pin / auto-hide the bottom control bar (the bar hides
+             itself after 4 s so the projected screen stays clean;
+             move the mouse to bring it back)
   C          MASTER CONSOLE popup (private 2nd screen: shows the
              correct answer BEFORE reveal + remote controls)
   A          peek answer on this screen       K    printable answer key
   S          scoreboard  J  jump to slide     F    fullscreen  H help
 
 TWO-SCREEN SETUP
-Win+P -> Extend. Deck fullscreen on the projector; press C and drag the
-Master Console to your laptop screen.
+Win+P -> Extend. Deck fullscreen on the projector; press C - the console
+tries to open on your primary (laptop) screen; drag it there if needed.
+The projected control bar auto-hides, so the audience only ever sees
+questions, timers and answers.
 
 BEFORE THE EVENT - TEAM & MEMBER NAMES
 Open the Teams slide (press J, pick "Teams"): click any team name or the

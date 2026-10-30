@@ -216,7 +216,10 @@ canvas#fx{position:fixed; inset:0; z-index:60; pointer-events:none}
 /* ---------- control bar ---------- */
 #bar{position:fixed; left:0; right:0; bottom:0; z-index:55; display:flex; align-items:center; gap:10px;
   padding:10px 16px; background:linear-gradient(0deg,rgba(5,8,18,.94),rgba(5,8,18,.72) 70%,transparent);
-  backdrop-filter:blur(10px); flex-wrap:wrap; justify-content:center}
+  backdrop-filter:blur(10px); flex-wrap:wrap; justify-content:center; transition:opacity .35s, transform .35s}
+#bar.hide{opacity:0; transform:translateY(115%); pointer-events:none}
+#btnPass.on{background:linear-gradient(90deg,rgba(255,176,32,.35),rgba(255,47,214,.3)); border-color:var(--am); color:#ffd98a;
+  box-shadow:0 0 14px rgba(255,176,32,.4)}
 #bar button{cursor:pointer; border:1px solid var(--line); background:var(--panel); color:var(--tx);
   border-radius:12px; padding:9px 15px; font:600 14px "Segoe UI",sans-serif; transition:all .18s}
 #bar button:hover{border-color:rgba(53,224,255,.6); box-shadow:0 0 14px rgba(53,224,255,.25)}
@@ -280,6 +283,7 @@ canvas#fx{position:fixed; inset:0; z-index:60; pointer-events:none}
   <button class="pri" id="btnRev" onclick="reveal()" title="reveal answer (R)">✨ Reveal</button>
   <button id="btnTimer" onclick="togglePause()" title="pause / resume timer (T)">⏸ Timer</button>
   <button id="btnUnlock" onclick="unlockNow()" title="skip reading phase (U)">🔓 Unlock</button>
+  <button id="btnPass" onclick="togglePass()" title="pass-question scoring: ✓ = +5, ✗ = 0 (G)">⇄ Pass +5/0</button>
   <button onclick="go(cur+1)" title="next (→ / Space)">Next ▶</button>
   <span id="teamchips" style="display:flex; gap:8px; flex-wrap:wrap"></span>
   <span style="flex:1"></span>
@@ -302,6 +306,7 @@ canvas#fx{position:fixed; inset:0; z-index:60; pointer-events:none}
     <div><kbd>U</kbd> Unlock options now (skip reading)</div><div><kbd>A</kbd> Peek answer privately on this screen</div>
     <div><kbd>C</kbd> Master Console popup (2nd screen)</div><div><kbd>K</kbd> Printable answer key popup</div>
     <div><kbd>S</kbd> Scoreboard</div><div><kbd>J</kbd> Jump to any slide</div>
+    <div><kbd>G</kbd> Pass mode: ✓ = +5, ✗ = 0 (passed questions)</div><div><kbd>P</kbd> Pin / auto-hide the control bar</div>
     <div><kbd>M</kbd> Mute / unmute sound FX</div><div><kbd>F</kbd> Fullscreen</div>
     <div><kbd>H</kbd> This help</div><div><kbd>Esc</kbd> Close popups</div>
   </div>
@@ -312,8 +317,10 @@ canvas#fx{position:fixed; inset:0; z-index:60; pointer-events:none}
   (reset the clocks from the Rapid Fire divider slide).
   <br>✏️ <b>Team &amp; member names</b>: go to the Teams slide (press <b>J</b> → “Teams”), click any name to type the real one,
   <b>＋ add</b> / <b>✕ remove</b> member slots. Everything is saved on that PC and used across score chips, rapid-fire, scoreboard and console.
-  <br>🖥 Two-screen setup: press <b>Win+P → Extend</b>, open the <b>Master Console (C)</b>, drag it to your laptop screen and keep the
-  deck fullscreen on the projector. The console shows the correct answer before it is revealed and can drive the show remotely.
+  <br>🖥 Two-screen setup: press <b>Win+P → Extend</b>, open the <b>Master Console (C)</b> — it tries to open on your
+  primary (laptop) screen; drag it there if needed — and keep the deck fullscreen on the projector.
+  The projected <b>control bar auto-hides</b> after 4 s (move the mouse to bring it back, <b>P</b> pins it), so the
+  audience never sees the controls. For a <b>passed question</b>, press <b>G</b> (Pass mode) — ✓ then awards +5 and ✗ awards 0.
   <br>✓/✗ buttons in the bottom bar score the current question per team (audience questions are excluded). Scores persist across reloads.</div>
 </div></div>
 
@@ -578,6 +585,7 @@ function beginShow(){
   AUD.init();
   try{if(document.documentElement.requestFullscreen&&(!document.fullscreenElement))document.documentElement.requestFullscreen()}catch(e){}
   started=true;
+  barShow();
   const cd=$("countdown"), n=cd.querySelector(".cd");
   cd.style.display="flex";
   AUD.riser(2.7,0.28);
@@ -729,13 +737,29 @@ function reveal(){
 }
 
 /* ================= control bar & scoring ================= */
+/* pass-question scoring mode: ✓ awards +5 and ✗ awards 0 (deck rule for passed questions) */
+let passMode=false;
+function togglePass(){passMode=!passMode; AUD.click();
+  const b=$("btnPass"); if(b){b.classList.toggle("on",passMode); b.textContent=passMode?"⇄ Pass ON (+5/0)":"⇄ Pass +5/0"}
+  drawBar();}
+
+/* control bar auto-hides so the projected screen stays clean; move the mouse to
+   bring it back, or pin it with P. Full control remains via keys + Master Console. */
+let barPinned=false, barTO=0;
+function barShow(){const b=$("bar"); if(!b)return; b.classList.remove("hide"); clearTimeout(barTO);
+  if(!barPinned)barTO=setTimeout(()=>b.classList.add("hide"),4000)}
+function togglePin(){barPinned=!barPinned; AUD.click();
+  if(barPinned){clearTimeout(barTO); $("bar").classList.remove("hide")}else barShow()}
+addEventListener("mousemove",barShow);
+
 function drawBar(){
   const sl=slide();
   const canScore=(sl.type==="q"||sl.type==="rapid")&&sl._rev&&!sl.audience;
+  const cv=passMode?5:sl.correct, wv=passMode?0:sl.wrong;
   $("teamchips").innerHTML=Q.teams.map((t,i)=>
     `<span class="tchip"><span class="nm">${esc(t)}</span><span class="sc">${scores[i]}</span>`+
-    (canScore?`<button class="ok" onclick="score(${i},${sl.correct})" title="correct +${sl.correct}">✓</button>`+
-               `<button class="no" onclick="score(${i},${sl.wrong})" title="wrong ${sl.wrong}">✗</button>`:"")+
+    (canScore?`<button class="ok" onclick="score(${i},${cv})" title="correct +${cv}">✓</button>`+
+               `<button class="no" onclick="score(${i},${wv})" title="wrong ${wv}">✗</button>`:"")+
     `</span>`).join("");
   syncBroadcast();
 }
@@ -779,12 +803,15 @@ addEventListener("keydown",e=>{
   if(e.metaKey||e.ctrlKey||e.altKey)return;
   const ae=document.activeElement;
   if(ae&&(ae.isContentEditable||ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"))return;
+  barShow();
   const k=e.key;
   if(k==="ArrowRight"||k===" "||k==="Enter"){e.preventDefault(); go(cur+1)}
   else if(k==="ArrowLeft"){e.preventDefault(); go(cur-1)}
   else if(k==="r"||k==="R")reveal();
   else if(k==="t"||k==="T")togglePause();
   else if(k==="u"||k==="U")unlockNow();
+  else if(k==="g"||k==="G")togglePass();
+  else if(k==="p"||k==="P")togglePin();
   else if(k==="s"||k==="S")showSB();
   else if(k==="j"||k==="J")showJump();
   else if(k==="c"||k==="C")openConsole();
@@ -824,18 +851,28 @@ function sendCmdLocal(cmd,i,d){
   else if(cmd==="score"&&d)scores[d.i]=(scores[d.i]||0)+d.v,persist(),drawBar(),syncBroadcast();
 }
 function sendCmd(cmd,i,d){
-  const m={t:"cmd",cmd,i,d};
+  const m={t:"cmd",cmd,i,d,id:Date.now()+"_"+Math.random().toString(36).slice(2)};
   try{if(chan)chan.postMessage(m)}catch(e){}
   try{localStorage.setItem("pqf_cmd",JSON.stringify({...m,_ts:Date.now()}))}catch(e){}
   sendCmdLocal(cmd,i,d);
 }
-function handleCmd(m){if(m&&m.t==="cmd")sendCmdLocal(m.cmd,m.i,m.d)}
+/* dedupe: the same command can arrive via BOTH BroadcastChannel and the
+   localStorage fallback — execute each unique id only once (fixes +5 scoring +10) */
+const seenCmds=new Set(); const seenOrder=[];
+function handleCmd(m){
+  if(!m||m.t!=="cmd")return;
+  const id=m.id||(m._ts+":"+m.cmd+":"+JSON.stringify(m.d||null)+":"+m.i);
+  if(seenCmds.has(id))return;
+  seenCmds.add(id); seenOrder.push(id);
+  if(seenOrder.length>80)seenCmds.delete(seenOrder.shift());
+  sendCmdLocal(m.cmd,m.i,m.d);
+}
 try{if(chan)chan.onmessage=e=>handleCmd(e.data)}catch(e){}
 addEventListener("storage",e=>{if(e.key==="pqf_cmd"&&e.newValue){try{handleCmd(JSON.parse(e.newValue))}catch(err){}}});
 let consoleWin=null;
 function openConsole(){
   if(consoleWin&&!consoleWin.closed){consoleWin.focus(); syncBroadcast(); return}
-  consoleWin=window.open("","pqfConsole","width=560,height=780");
+  consoleWin=window.open("","pqfConsole","width=580,height=800,left=60,top=60");
   if(!consoleWin){alert("Popup blocked — allow popups for the Master Console (or use 👁 peek)."); return}
   consoleWin.document.write(window.CONSOLE_HTML_FINAL); consoleWin.document.close();
   syncBroadcast();
@@ -856,6 +893,7 @@ const CONSOLE_HTML_FULL='<!DOCTYPE html><html><head><meta charset="utf-8"><title
 'button:hover{background:#1f3060}button.sc{border-color:#27d98a}button.no{border-color:#ff4d5e}'+
 '.st{font-size:12px;color:#8fa3cf;letter-spacing:.08em}</style></head><body>'+
 '<h1>🎛 QUIZ-MASTER CONSOLE <span class="st" id="st">· connecting…</span></h1>'+
+'<div class="st" style="margin:-6px 0 10px">Private window — if it opened on the projector, drag it to your laptop screen.</div>'+
 '<div class="card"><div class="st" id="loc"></div><div class="q" id="q"></div><div class="opts" id="opts"></div><div id="ansbox"></div>'+
 '<div class="tm" id="tm"></div></div>'+
 '<div class="card"><div class="st">REMOTE CONTROL</div><div class="row">'+
@@ -865,7 +903,7 @@ const CONSOLE_HTML_FULL='<!DOCTYPE html><html><head><meta charset="utf-8"><title
 '<div class="card"><div class="st">JUMP</div><div class="row"><input id="jn" type="number" min="1" style="width:90px;background:#0c1530;border:1px solid #35e0ff;color:#fff;border-radius:8px;padding:7px">'+
 '<button onclick="snd(\'goto\',(+document.getElementById(\'jn\').value||1)-1)">Go</button></div></div>'+
 '<script>var chan=null;try{chan=new BroadcastChannel("phagequiz-final-sync")}catch(e){}var st=null;'+
-'function snd(c,i,d){var m={t:"cmd",cmd:c,i:i,d:d};try{if(chan)chan.postMessage(m)}catch(e){}'+
+'function snd(c,i,d){var m={t:"cmd",cmd:c,i:i,d:d,id:Date.now()+"_"+Math.random().toString(36).slice(2)};try{if(chan)chan.postMessage(m)}catch(e){}'+
 'try{localStorage.setItem("pqf_cmd",JSON.stringify(Object.assign({_ts:Date.now()},m)))}catch(e){}}'+
 'function render(){if(!st)return;document.getElementById("st").textContent="· live";'+
 'document.getElementById("loc").textContent="Slide "+(st.i+1)+"/"+st.n+(st.round?"  ·  ROUND "+st.round+" "+st.roundTitle:"");'+
@@ -878,7 +916,7 @@ const CONSOLE_HTML_FULL='<!DOCTYPE html><html><head><meta charset="utf-8"><title
 'a.innerHTML=st.revealed?"<div class=\\"ans shown\\">✅ ANSWER SHOWN: "+st.atext+"</div>":"<div class=\\"ans hide\\">🔐 ANSWER: "+st.atext+"</div>";'+
 'tm.innerHTML=st.phase?"⏱ TEAM CLOCK <b>"+(st.paused?"PAUSED":st.remain+"s")+"</b> left"+(st.done?" · <b>TIME UP</b>":""):"";}'+
 'else{q.textContent="("+st.kind+" slide)";o.innerHTML="";a.innerHTML="";tm.innerHTML="";}'+
-'document.getElementById("teams").innerHTML=st.teams.map(function(t,i){return "<div class=\\"tm\\"><b>"+t.n+"</b> "+t.s+" <button class=\\"sc\\" data-i=\\""+i+"\\" data-v=\\"10\\">+10</button> <button class=\\"sc\\" data-i=\\""+i+"\\" data-v=\\"5\\">+5</button> <button class=\\"no\\" data-i=\\""+i+"\\" data-v=\\"-5\\">−5</button></div>"}).join("");}'+
+'document.getElementById("teams").innerHTML=st.teams.map(function(t,i){return "<div class=\\"tm\\"><b>"+t.n+"</b> "+t.s+" <button class=\\"sc\\" data-i=\\""+i+"\\" data-v=\\"20\\">+20</button> <button class=\\"sc\\" data-i=\\""+i+"\\" data-v=\\"10\\">+10</button> <button class=\\"sc\\" data-i=\\""+i+"\\" data-v=\\"5\\">+5</button> <button class=\\"no\\" data-i=\\""+i+"\\" data-v=\\"-5\\">−5</button> <button class=\\"no\\" data-i=\\""+i+"\\" data-v=\\"-10\\">−10</button></div>"}).join("");}'+
 'document.addEventListener("click",function(e){var b=e.target&&e.target.closest?e.target.closest("button[data-v]"):null;if(b)snd("score",null,{i:+b.getAttribute("data-i"),v:+b.getAttribute("data-v")});});'+
 'if(chan)chan.onmessage=function(e){if(e.data&&e.data.t==="state"){st=e.data;render()}};'+
 'window.addEventListener("storage",function(e){if(e.key==="pqf_sync"&&e.newValue){try{st=JSON.parse(e.newValue);render()}catch(x){}}});'+
@@ -927,6 +965,7 @@ function printKey(){
 
 /* ================= boot ================= */
 draw();
+barShow();
 </script>
 </body>
 </html>
