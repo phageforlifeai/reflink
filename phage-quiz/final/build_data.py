@@ -39,7 +39,10 @@ def nice_title(t):
 slides = []
 
 slides.append({"type": "title"})
-slides.append({"type": "teams", "teams": ["Lytic Legends", "Biofilm Breakers", "Phage Pharmers", "Virion Architects"]})
+# member slots as printed on the deck's Teams slide (slide 2): Lytic Legends Dr./Ms./Mr.,
+# Biofilm Breakers Dr./Dr./Mr.; the other two panels had no slots printed, so they get the same pattern.
+slides.append({"type": "teams", "teams": ["Lytic Legends", "Biofilm Breakers", "Phage Pharmers", "Virion Architects"],
+               "members": [["Dr. ", "Ms. ", "Mr. "], ["Dr. ", "Dr. ", "Mr. "], ["Dr. ", "Dr. ", "Mr. "], ["Dr. ", "Dr. ", "Mr. "]]})
 slides.append({"type": "rounds", "title": "Rounds", "items": [
     "Round 1: General Questions", "Round 2: History of Bacteriophages", "Round 3: Phage Related Protocols",
     "Round 4: Phage Informatics", "Round 5: Phage Research 2026", "5 min Break",

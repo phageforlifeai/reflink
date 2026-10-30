@@ -177,9 +177,9 @@ window.QUIZ = {
    "roundTitle": "General Questions",
    "qtext": "Which regulatory protein is primarily responsible for maintaining the lysogenic state of bacteriophage lambda by repressing the transcription of lytic genes?",
    "options": [
-    "The N antiterminator  protein",
+    "The N antiterminator protein",
     "The Cro Repressor Protein",
-    "The Q antiterminator  protein",
+    "The Q antiterminator protein",
     "The cI Repressor Protein"
    ],
    "answer": "D",
@@ -194,7 +194,7 @@ window.QUIZ = {
    "qtext": "Phage contamination of starter cultures is a classic industrial problem in which fermentation?",
    "options": [
     "Bread baking",
-    "Cheese and yogurt  making",
+    "Cheese and yogurt making",
     "Beer brewing",
     "Wine making"
    ],
@@ -210,9 +210,9 @@ window.QUIZ = {
    "qtext": "Which observation is generally associated with a virulent bacteriophage?",
    "options": [
     "Stable lysogen formation",
-    "Obligatory lytic  replication",
-    "Long-term genome  integration",
-    "Persistent plasmid  replication only"
+    "Obligatory lytic replication",
+    "Long-term genome integration",
+    "Persistent plasmid replication only"
    ],
    "answer": "B",
    "audience": false,
@@ -225,10 +225,10 @@ window.QUIZ = {
    "roundTitle": "General Questions",
    "qtext": "The “Piggyback-the-Winner” model describes",
    "options": [
-    "Increased lysogeny in high- host-density environments",
-    "Phage dependence on  nutrient limitation",
-    "Predominance of lytic  cycles during starvation",
-    "Reduction of viral load in  oligotrophic conditions"
+    "Increased lysogeny in high-host-density environments",
+    "Phage dependence on nutrient limitation",
+    "Predominance of lytic cycles during starvation",
+    "Reduction of viral load in oligotrophic conditions"
    ],
    "answer": "A",
    "audience": true,
@@ -241,10 +241,10 @@ window.QUIZ = {
    "roundTitle": "General Questions",
    "qtext": "What is lysogenic conversion?",
    "options": [
-    "Conversion of RNA into  DNA",
-    "phenotype caused by ",
-    "Formation of bacterial  spores",
-    "bacterial chromosome "
+    "Conversion of RNA into DNA",
+    "A change in bacterial phenotype caused by prophage gene",
+    "Formation of bacterial spores",
+    "Destruction of the bacterial chromosome by heat"
    ],
    "answer": "B",
    "audience": true,
@@ -343,7 +343,7 @@ window.QUIZ = {
    "type": "q",
    "round": 2,
    "roundTitle": "History of Bacteriophages",
-   "qtext": "Which major pharmaceutical company commercially produced a bacteriophage preparation called 'Bacté-coli- phage' in France during the 1920s?",
+   "qtext": "Which major pharmaceutical company commercially produced a bacteriophage preparation called 'Bacté-coli-phage' in France during the 1920s?",
    "options": [
     "Bayer",
     "Novartis",
@@ -369,10 +369,10 @@ window.QUIZ = {
    "roundTitle": "Phage Related Protocols",
    "qtext": "A spot test giving confluent lysis that disappears on dilution, without plaques, indicates",
    "options": [
-    "Lysis from without at  high phage input",
+    "Lysis from without at high phage input",
     "A fully permissive host",
     "Lysogenic conversion",
-    "Capsular blocking of  adsorption"
+    "Capsular blocking of adsorption"
    ],
    "answer": "A",
    "audience": false,
@@ -386,9 +386,9 @@ window.QUIZ = {
    "qtext": "What is the primary purpose of the soft-agar overlay in a double-layer plaque assay?",
    "options": [
     "Extract phage DNA",
-    "Immobilize bacteria for  plaque formation",
-    "Remove bacterial  endotoxins",
-    "Concentrate phage  particles"
+    "Immobilize bacteria for plaque formation",
+    "Remove bacterial endotoxins",
+    "Concentrate phage particles"
    ],
    "answer": "B",
    "audience": false,
@@ -399,7 +399,7 @@ window.QUIZ = {
    "type": "q",
    "round": 3,
    "roundTitle": "Phage Related Protocols",
-   "qtext": "A one-step growth experiment yields 10 8 PFU of progeny from 10 6 infected bacterial cells. What is the estimated burst size?",
+   "qtext": "A one-step growth experiment yields 10⁸ PFU of progeny from 10⁶ infected bacterial cells. What is the estimated burst size?",
    "options": [
     "10 PFU/cell",
     "50 PFU/cell",
@@ -417,10 +417,10 @@ window.QUIZ = {
    "roundTitle": "Phage Related Protocols",
    "qtext": "Which approach provides the most informative quantitative comparison of phage susceptibility across different bacterial strains?",
    "options": [
-    "Compare spot-test  clearance",
-    "Determine EOP using  plaque assays",
-    "Growth inhibition with  phages",
-    "Burst size on different  strains"
+    "Compare spot-test clearance",
+    "Determine EOP using plaque assays",
+    "Growth inhibition with phages",
+    "Burst size on different strains"
    ],
    "answer": "B",
    "audience": false,
@@ -433,10 +433,10 @@ window.QUIZ = {
    "roundTitle": "Phage Related Protocols",
    "qtext": "Why is endotoxin removal particularly important when preparing phages propagated on Gram-negative bacteria for therapeutic use?",
    "options": [
-    "Endotoxins increase the  phage burst size",
-    "harmful inflammatory ",
-    "phages from all ",
-    "Endotoxins are required  for phage adsorption"
+    "Endotoxins increase the phage burst size",
+    "Endotoxins can trigger harmful inflammatory responses",
+    "Endotoxins protect phages from all antibodies",
+    "Endotoxins are required for phage adsorption"
    ],
    "answer": "B",
    "audience": true,
@@ -449,10 +449,10 @@ window.QUIZ = {
    "roundTitle": "Phage Related Protocols",
    "qtext": "Why is OD600 alone insufficient to establish bacterial killing in a phage time-kill assay?",
    "options": [
-    "OD600 measures phage  genomes directly",
-    "Turbidity does not directly  quantify viable cells",
-    "OD600 measures  increase in phage titer",
-    "OD600 always decreases  before cell death"
+    "OD600 measures phage genomes directly",
+    "Turbidity does not directly quantify viable cells",
+    "OD600 measures increase in phage titer",
+    "OD600 always decreases before cell death"
    ],
    "answer": "B",
    "audience": true,
@@ -507,8 +507,8 @@ window.QUIZ = {
    "options": [
     "Median gene length",
     "GC content",
-    "Contiguity of assembled  sequences",
-    "Percentage of coding  bases"
+    "Contiguity of assembled sequences",
+    "Percentage of coding bases"
    ],
    "answer": "C",
    "audience": false,
@@ -521,10 +521,10 @@ window.QUIZ = {
    "roundTitle": "Phage Informatics",
    "qtext": "What is the primary purpose of the PHROGs database?",
    "options": [
-    "Predict bacterial  growth",
-    "into homologous ",
-    "Assemble raw  sequencing reads",
-    "Estimate phage  concentration"
+    "Predict bacterial growth",
+    "Classify phage proteins into homologous groups",
+    "Assemble raw sequencing reads",
+    "Estimate phage concentration"
    ],
    "answer": "B",
    "audience": false,
@@ -553,7 +553,7 @@ window.QUIZ = {
    "roundTitle": "Phage Informatics",
    "qtext": "A prophage region whose GC content differs strongly from the rest of the bacterial chromosome suggests",
    "options": [
-    "DNA Recently acquired foreign ",
+    "Recently acquired foreign DNA",
     "A better plaque morphology",
     "A smaller capsid",
     "An RNA genome"
@@ -578,7 +578,7 @@ window.QUIZ = {
    "qtext": "Which approach enabled the design of complete bacteriophage genomes reported in Science in August 2026?",
    "options": [
     "CRISPR screening",
-    "Genome language  models",
+    "Genome language models",
     "Protein crystallography",
     "Random mutagenesis"
    ],
@@ -593,10 +593,10 @@ window.QUIZ = {
    "roundTitle": "Phage Research 2026",
    "qtext": "What was the main focus of the consensus-based phage therapy guideline published in September 2026?",
    "options": [
-    "bacteriophage release ",
-    "Personalized  bacteriophage therapy",
+    "Safety on bacteriophage release in environment",
+    "Personalized bacteriophage therapy",
     "Agricultural phage use",
-    "Bacterial genome  annotation"
+    "Bacterial genome annotation"
    ],
    "answer": "B",
    "audience": false,
@@ -625,10 +625,10 @@ window.QUIZ = {
    "roundTitle": "Phage Research 2026",
    "qtext": "Which combination of methods underpins phage Tn-seq, reported in Nature Microbiology in September 2026?",
    "options": [
-    "CRISPR editing and  microscopy",
-    "CRISPR selection and ",
-    "Proteomics and flow  cytometry",
-    "PCR and restriction  digestion alone"
+    "CRISPR editing and microscopy",
+    "Tn5 mutagenesis, anti-CRISPR selection and sequencing",
+    "Proteomics and flow cytometry",
+    "PCR and restriction digestion alone"
    ],
    "answer": "B",
    "audience": false,
@@ -639,12 +639,12 @@ window.QUIZ = {
    "type": "q",
    "round": 5,
    "roundTitle": "Phage Research 2026",
-   "qtext": "A 2026 Nature Communications study developed a high- throughput platform for selecting therapeutic phage cocktails. Which combination of technologies was central to the platform?",
+   "qtext": "A 2026 Nature Communications study developed a high-throughput platform for selecting therapeutic phage cocktails. Which combination of technologies was central to the platform?",
    "options": [
-    "Liquid-handling robotics  and computer vision",
-    "Electron microscopy  and manual counting",
-    "Genome assembly and  protein crystallography",
-    "Flow cytometry and mass  spectrometry alone"
+    "Liquid-handling robotics and computer vision",
+    "Electron microscopy and manual counting",
+    "Genome assembly and protein crystallography",
+    "Flow cytometry and mass spectrometry alone"
    ],
    "answer": "A",
    "audience": true,
@@ -657,10 +657,10 @@ window.QUIZ = {
    "roundTitle": "Phage Research 2026",
    "qtext": "What is the central innovation of PALACE, reported in Nature Biotechnology in July, 2026?",
    "options": [
-    "Automated phage  propagation",
-    "Conjugate-graph-based  phage genome assembly",
-    "AI prediction of plaque  diameter",
-    "CRISPR-mediated host  editing"
+    "Automated phage propagation",
+    "Conjugate-graph-based phage genome assembly",
+    "AI prediction of plaque diameter",
+    "CRISPR-mediated host editing"
    ],
    "answer": "B",
    "audience": true,
@@ -730,7 +730,7 @@ window.QUIZ = {
    "qtext": "In a circular phage genome map, what do arrows commonly indicate?",
    "options": [
     "Phage genome size",
-    "Predicted genes and their  orientation",
+    "Predicted genes and their orientation",
     "Length of gene",
     "Phage lifestyle"
    ],
@@ -818,7 +818,7 @@ window.QUIZ = {
     "Biofilm resistance",
     "Biofilm thickness",
     "Persister cells in Biofilm",
-    "Antibiotic resistance  genotype"
+    "Antibiotic resistance genotype"
    ],
    "answer": "B",
    "audience": false,
@@ -858,10 +858,10 @@ window.QUIZ = {
    "roundTitle": "Identify The Photos",
    "qtext": "TEM micrograph shows numerous particles inside a bacterial cell. Which interpretation is most plausible?",
    "options": [
-    "Possible intracellular phage  assembly",
-    "Onset of phage lysis inside  cell",
+    "Possible intracellular phage assembly",
+    "Onset of phage lysis inside cell",
     "Proof of broad host range",
-    "Evidence of antibiotic  susceptibility"
+    "Evidence of antibiotic susceptibility"
    ],
    "answer": "A",
    "audience": true,
@@ -953,9 +953,9 @@ window.QUIZ = {
    "qtext": "What is the full form of TFF in phage concentration protocols?",
    "options": [
     "Thermal Filtration Flow",
-    "Filtration Tangential Flow ",
-    "Fractionation Total Filtrate ",
-    "Fractionation Targeted Flow "
+    "Tangential Flow Filtration",
+    "Total Filtrate Fractionation",
+    "Targeted Flow Fractionation"
    ],
    "answer": "B",
    "audience": false,
@@ -968,10 +968,10 @@ window.QUIZ = {
    "roundTitle": "Phage Acronyms",
    "qtext": "What does CBASS stand for?",
    "options": [
-    "Cellular Bacterial Antiviral  Signal System",
-    "Based Antiphage Signaling ",
-    "Antigen Sensing System Conserved Bacterial ",
-    "Antimicrobial Stress System Cyclic Biosynthetic "
+    "Cellular Bacterial Antiviral Signal System",
+    "Cyclic Oligonucleotide-Based Antiphage Signaling System",
+    "Conserved Bacterial Antigen Sensing System",
+    "Cyclic Biosynthetic Antimicrobial Stress System"
    ],
    "answer": "B",
    "audience": false,
@@ -984,10 +984,10 @@ window.QUIZ = {
    "roundTitle": "Phage Acronyms",
    "qtext": "What does PICI stand for?",
    "options": [
-    "Coding Island Phage-Integrated ",
-    "Capsid Integration Prophage-Induced ",
-    "Chromosomal Island Phage-Inducible ",
-    "Controlled Integron Prokaryotic Insertion-"
+    "Phage-Integrated Coding Island",
+    "Prophage-Induced Capsid Integration",
+    "Phage-Inducible Chromosomal Island",
+    "Prokaryotic Insertion-Controlled Integron"
    ],
    "answer": "C",
    "audience": false,
@@ -1000,10 +1000,10 @@ window.QUIZ = {
    "roundTitle": "Phage Acronyms",
    "qtext": "What does TMP stand for in the structural biology of many long-tailed bacteriophages?",
    "options": [
-    "Peptide Terminal Maturation ",
+    "Terminal Maturation Peptide",
     "Tail Membrane Protein",
     "Tape Measure Protein",
-    "Protein Transcriptional Modulation "
+    "Transcriptional Modulation Protein"
    ],
    "answer": "C",
    "audience": false,
@@ -1014,7 +1014,7 @@ window.QUIZ = {
    "type": "q",
    "round": 7,
    "roundTitle": "Phage Acronyms",
-   "qtext": "What does Acr stand for in the context of phage- encoded inhibitors of CRISPR immunity?",
+   "qtext": "What does Acr stand for in the context of phage-encoded inhibitors of CRISPR immunity?",
    "options": [
     "Anti-CRISPR",
     "Adaptive Cas Repressor",
@@ -1032,10 +1032,10 @@ window.QUIZ = {
    "roundTitle": "Phage Acronyms",
    "qtext": "What does SAM stand for when discussing DNA methylation in bacterial defence systems?",
    "options": [
-    "Marker Sequence Assembly ",
+    "Sequence Assembly Marker",
     "S-Adenosylmethionine",
-    "Motif Single-Attachment ",
-    "Module Structural Antiphage "
+    "Single-Attachment Motif",
+    "Structural Antiphage Module"
    ],
    "answer": "B",
    "audience": true,
@@ -1155,7 +1155,7 @@ window.QUIZ = {
    "round": 8,
    "roundTitle": "Rapid Fire",
    "team": "Biofilm Breakers",
-   "qtext": "Microscopy that images phages in a near-native frozen- hydrated state",
+   "qtext": "Microscopy that images phages in a near-native frozen-hydrated state",
    "atext": "Cryo-EM (cryo-TEM)",
    "correct": 5,
    "wrong": 0
@@ -1265,7 +1265,7 @@ window.QUIZ = {
    "round": 8,
    "roundTitle": "Rapid Fire",
    "team": "Phage Pharmers",
-   "qtext": "Route used to deliver phages to CF lungs in the 2025 first-in- human randomized trial",
+   "qtext": "Route used to deliver phages to CF lungs in the 2025 first-in-human randomized trial",
    "atext": "Nebulized / inhaled",
    "correct": 5,
    "wrong": 0
@@ -1384,10 +1384,10 @@ window.QUIZ = {
    "roundTitle": "Tie-Breaker Round",
    "qtext": "During infection by a T4-like myovirus, the DNA is injected under high internal capsid pressure (~50 atm). What ensures that this force dissipates after genome ejection?",
    "options": [
-    "DNA–protein crosslinking  during translocation",
-    "Proton motive force– driven retraction",
-    "neutralization by ",
-    "Pressure equalization  through cell lysis genes"
+    "DNA–protein crosslinking during translocation",
+    "Proton motive force–driven retraction",
+    "Relaxation via ionic neutralization by cytoplasmic cations",
+    "Pressure equalization through cell lysis genes"
    ],
    "answer": "C",
    "audience": false,
@@ -1400,8 +1400,8 @@ window.QUIZ = {
    "roundTitle": "Tie-Breaker Round",
    "qtext": "A phage predicted to encode multiple auxiliary metabolic genes (AMGs) in nucleotide biosynthesis likely infects",
    "options": [
-    "Slow-growing  oligotrophs",
-    "Rapidly dividing  copiotrophs",
+    "Slow-growing oligotrophs",
+    "Rapidly dividing copiotrophs",
     "Extremophilic archaea",
     "Obligate anaerobes"
    ],
@@ -1416,10 +1416,10 @@ window.QUIZ = {
    "roundTitle": "Tie-Breaker Round",
    "qtext": "The “Phage steering” concept in AMR mitigation primarily exploits",
    "options": [
-    "of error-prone DNA repair to ",
-    "reduces antibiotic  where resistance to phage ",
-    "Phage encoding of repressors  of β-lactamase genes",
-    "to restoration of antibiotic "
+    "Phage-mediated induction of error-prone DNA repair to promote resistance loss",
+    "Evolutionary trade-offs where resistance to phage reduces antibiotic resistance",
+    "Phage encoding of repressors of β-lactamase genes",
+    "Prophage excision leading to restoration of antibiotic sensitivity"
    ],
    "answer": "B",
    "audience": false,
@@ -1432,10 +1432,10 @@ window.QUIZ = {
    "roundTitle": "Tie-Breaker Round",
    "qtext": "Which of the following best describes the Arbitrium system in temperate phages and its potential relevance to AMR control",
    "options": [
-    "decisions through a peptide ",
-    "repressors of antibiotic ",
-    "conversion enhancing β-",
-    "response increasing AMR "
+    "It regulates lysogeny-lysis decisions through a peptide communication system",
+    "It encodes phage-encoded repressors of antibiotic resistance operons",
+    "It promotes lysogenic conversion enhancing β-lactamase activity",
+    "It induces mutagenic SOS response increasing AMR gene dissemination"
    ],
    "answer": "A",
    "audience": false,
@@ -1446,12 +1446,12 @@ window.QUIZ = {
    "type": "q",
    "round": 9,
    "roundTitle": "Tie-Breaker Round",
-   "qtext": "In rational phage cocktail design against Klebsiella pneumoniae , which combination ensures maximum evolutionary stability",
+   "qtext": "In rational phage cocktail design against Klebsiella pneumoniae, which combination ensures maximum evolutionary stability",
    "options": [
-    "capsule receptor",
-    "O-antigen, and LPS core Phages targeting capsule, ",
-    "Phages with overlapping  depolymerases",
-    "Sequentially administered  single phages"
+    "Phages sharing the same capsule receptor",
+    "Phages targeting capsule, O-antigen, and LPS core",
+    "Phages with overlapping depolymerases",
+    "Sequentially administered single phages"
    ],
    "answer": "B",
    "audience": true,
@@ -1472,10 +1472,10 @@ window.QUIZ = {
    "roundTitle": "Emoji Rebus",
    "qtext": "— decode the rebus",
    "options": [
-    "Restriction–",
-    "CRISPR-Cas ",
+    "Restriction–modification",
+    "CRISPR-Cas adaptive immunity",
     "Abortive infection",
-    "Generalized "
+    "Generalized transduction"
    ],
    "answer": "B",
    "audience": false,
@@ -1516,8 +1516,8 @@ window.QUIZ = {
    "qtext": "— decode the rebus",
    "options": [
     "Prophage induction",
-    "Lysogeny ",
-    "Superinfection  D   ",
+    "Lysogeny establishment",
+    "Superinfection exclusion",
     "Pseudolysogeny"
    ],
    "answer": "A",
@@ -1602,9 +1602,9 @@ window.QUIZ = {
    "qtext": "— decode the rebus",
    "options": [
     "cos-site packaging",
-    "Protein-primed ",
-    "Rolling-circle ",
-    "Headful (pac) "
+    "Protein-primed replication",
+    "Rolling-circle replication",
+    "Headful (pac) packaging"
    ],
    "answer": "D",
    "audience": false,
@@ -1644,8 +1644,8 @@ window.QUIZ = {
    "roundTitle": "Emoji Rebus",
    "qtext": "— decode the rebus",
    "options": [
-    "Plaque assay B   ",
-    "LAL endotoxin ",
+    "Plaque assay",
+    "LAL endotoxin assay",
     "PFGE",
     "ELISA"
    ],
@@ -1687,10 +1687,10 @@ window.QUIZ = {
    "roundTitle": "Emoji Rebus",
    "qtext": "— decode the rebus",
    "options": [
-    "Cryo-EM B   ",
+    "Cryo-EM",
     "Negative-stain TEM",
-    "Atomic force  D   ",
-    "Phase-contrast light "
+    "Atomic force microscopy",
+    "Phase-contrast light microscopy"
    ],
    "answer": "A",
    "audience": false,
@@ -1824,10 +1824,10 @@ window.QUIZ = {
    "roundTitle": "Lytic Laughs",
    "qtext": "Why did the phage break up with the pilus?",
    "options": [
-    "“No chemistry in the ",
-    "“It was too ",
-    "“The relationship was ",
-    "“Long-distance lysis "
+    "“No chemistry in the periplasm.”",
+    "“It was too contractile.”",
+    "“Long-distance lysis never works.”",
+    "“The relationship was only surface-level attachment.”"
    ],
    "answer": "D",
    "audience": false,
@@ -1840,10 +1840,10 @@ window.QUIZ = {
    "roundTitle": "Lytic Laughs",
    "qtext": "What is a bacteriophage's favourite genre of music?",
    "options": [
-    "Ambient — like the ",
-    "Smooth jazz for ",
-    "Opera, because it's ",
-    "Lytic metal — full of "
+    "Ambient — like the eclipse period",
+    "Smooth jazz for slow adsorption",
+    "Opera, because it's always dramatic lysis",
+    "Lytic metal — full of breakdowns"
    ],
    "answer": "D",
    "audience": false,
@@ -1856,10 +1856,10 @@ window.QUIZ = {
    "roundTitle": "Lytic Laughs",
    "qtext": "Why don't phages use dating apps?",
    "options": [
-    "No signal inside the ",
-    "They only ever swipe ",
-    "Too many matches ",
-    "Their profiles are "
+    "No signal inside the gut",
+    "They only ever swipe right on one specific host",
+    "Too many matches cause lysis from without",
+    "Their profiles are only ~50 kb"
    ],
    "answer": "B",
    "audience": false,
@@ -1872,10 +1872,10 @@ window.QUIZ = {
    "roundTitle": "Lytic Laughs",
    "qtext": "Where does a phage see itself in 30 minutes?",
    "options": [
-    "“In a preprint.” B   ",
-    "“At a plaquelytics ",
-    "“As ~200 copies of  D   ",
-    "“Integrated, settled "
+    "“In a preprint.”",
+    "“At a plaquelytics retreat.”",
+    "“As ~200 copies of myself inside one very surprised bacterium.”",
+    "“Integrated, settled and dormant.”"
    ],
    "answer": "C",
    "audience": false,
@@ -1888,10 +1888,10 @@ window.QUIZ = {
    "roundTitle": "Lytic Laughs",
    "qtext": "Why was the temperate phage terrible at commitment?",
    "options": [
-    "It kept integrating into ",
-    "It lysed every ",
-    "It had no receptors  D   ",
-    "It was too virulent to "
+    "It kept integrating into relationships and going dormant",
+    "It lysed every relationship too fast",
+    "It had no receptors for feelings",
+    "It was too virulent to care"
    ],
    "answer": "A",
    "audience": false,
@@ -1904,10 +1904,10 @@ window.QUIZ = {
    "roundTitle": "Lytic Laughs",
    "qtext": "What did the depolymerase say arriving at the biofilm party?",
    "options": [
-    "“I brought capsules ",
-    "“Relax — I'll break ",
-    "“More EPS for  D   ",
-    "“Who invited the "
+    "“I brought capsules for the road.”",
+    "“Relax — I'll break down the matrix and free everyone.”",
+    "“More EPS for everyone!”",
+    "“Who invited the antibiotics?”"
    ],
    "answer": "B",
    "audience": false,
@@ -1920,10 +1920,10 @@ window.QUIZ = {
    "roundTitle": "Lytic Laughs",
    "qtext": "Why do phages make bad stand-up comedians?",
    "options": [
-    "Their delivery is always ",
-    "They are too small ",
-    "They only infect the ",
-    "They have no tail for "
+    "Their delivery is always lytic — they kill the room",
+    "They are too small for the microphone",
+    "They only infect the hecklers",
+    "They have no tail for timing"
    ],
    "answer": "A",
    "audience": false,
@@ -1937,9 +1937,9 @@ window.QUIZ = {
    "qtext": "What is a jumbo phage's excuse at the gym?",
    "options": [
     "“I skip tail day.”",
-    "“My sheath is ",
-    "“I carry a 500-kb  D   ",
-    "“No capsid space "
+    "“My sheath is already too tight.”",
+    "“I carry a 500-kb genome — that's enough baggage.”",
+    "“No capsid space left.”"
    ],
    "answer": "C",
    "audience": false,
