@@ -10,9 +10,9 @@ L = []
 L.append(f"# 🔑 {quiz['meta']['short']} — Quiz-Master Answer Key (PRIVATE)\n")
 L.append(f"*{quiz['meta']['conference']}*\n")
 S = quiz["settings"]
-L.append(f"Timer: every question auto-starts **{S['readSeconds']+S['answerSeconds']} s** = "
+L.append(f"Timer: every MCQ auto-starts **{S['readSeconds']+S['answerSeconds']} s** = "
          f"{S['readSeconds']} s reading (options locked) + {S['answerSeconds']} s answering. "
-         f"Rapid fire: {S['rapidAnswerSeconds']} s.\n")
+         f"Rapid fire: one continuous **{S.get('rapidTeamSeconds',60)} s clock per team** across all its questions.\n")
 qn = 0
 rn = 0
 for s in quiz["slides"]:

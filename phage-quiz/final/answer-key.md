@@ -2,7 +2,7 @@
 
 *7th International Conference on Bacteriophage Research and Antimicrobial Resistance*
 
-Timer: every question auto-starts **45 s** = 15 s reading (options locked) + 30 s answering. Rapid fire: 30 s.
+Timer: every MCQ auto-starts **45 s** = 15 s reading (options locked) + 30 s answering. Rapid fire: one continuous **60 s clock per team** across all its questions.
 
 
 ## Round 1 — General Questions  (+10 / 0)

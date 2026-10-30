@@ -117,12 +117,16 @@ Your FINAL quiz (from "ICBRAR Quiz - AK.pdf"): 11 rounds, 63 MCQs
 32 rapid-fire questions - as a cinematic offline presenter app.
 
 TIMER (automatic!)
-Every question auto-starts a 45-second timer the moment it appears:
+Every MCQ auto-starts a 45-second timer the moment it appears:
   15 s READING  - options are blurred and locked
   30 s ANSWER   - options unlock with a chime; ring turns green,
                   pulses red + ticks in the last 5 s, buzzes at zero.
-Rapid-fire questions get a straight 30 s.
 T = pause/resume, U = unlock options immediately.
+RAPID FIRE: one continuous 60-SECOND CLOCK PER TEAM - it starts at the
+team's first question and keeps counting down across all 8 questions
+(it does NOT reset per question and keeps running while you reveal
+answers). It buzzes once at zero. Reset clocks any time from the
+Rapid Fire divider slide ("Reset team clocks" button).
 
 RUN IT
 1. DOUBLE-CLICK  PhageQuiz-Final.bat   (app-style window, recommended)

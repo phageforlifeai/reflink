@@ -88,7 +88,7 @@ quiz = {
         "short": "ICBRAR 2026 · Quiz Finals",
         "tagline": "Lytic Legends · Biofilm Breakers · Phage Pharmers · Virion Architects",
     },
-    "settings": {"readSeconds": 15, "answerSeconds": 30, "rapidAnswerSeconds": 30},
+    "settings": {"readSeconds": 15, "answerSeconds": 30, "rapidTeamSeconds": 60},
     "teams": ["Lytic Legends", "Biofilm Breakers", "Phage Pharmers", "Virion Architects"],
     "slides": slides,
 }

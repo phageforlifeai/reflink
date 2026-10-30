@@ -307,7 +307,9 @@ canvas#fx{position:fixed; inset:0; z-index:60; pointer-events:none}
   </div>
   <div class="helpnote">⏱ Every question auto-starts a <b>45 s timer</b>: <b>15 s reading</b> (options blurred &amp; locked)
   then <b>30 s answering</b> (options unlock with a chime). Ring turns green in the answer phase, pulses red and ticks in the last 5 s,
-  and a buzzer + TIME UP stamp fires at zero. Rapid-fire questions get a straight 30 s.
+  and a buzzer + TIME UP stamp fires at zero. Rapid fire uses <b>one continuous 60 s clock per team</b> — it starts at the
+  team's first question, keeps counting across question changes and reveals, and stops at zero
+  (reset the clocks from the Rapid Fire divider slide).
   <br>✏️ <b>Team &amp; member names</b>: go to the Teams slide (press <b>J</b> → “Teams”), click any name to type the real one,
   <b>＋ add</b> / <b>✕ remove</b> member slots. Everything is saved on that PC and used across score chips, rapid-fire, scoreboard and console.
   <br>🖥 Two-screen setup: press <b>Win+P → Extend</b>, open the <b>Master Console (C)</b>, drag it to your laptop screen and keep the
@@ -326,7 +328,7 @@ window.QUIZ = {
  "settings": {
   "readSeconds": 15,
   "answerSeconds": 30,
-  "rapidAnswerSeconds": 30
+  "rapidTeamSeconds": 60
  },
  "teams": [
   "Lytic Legends",
@@ -2405,10 +2407,30 @@ function delMember(i,j){members[i].splice(j,1); persistTeams(); draw()}
 function resetTeams(){if(!confirm("Reset all team names and members to the deck defaults?"))return;
   Q.teams=Q.teamsOriginal.slice(); members=MEM_DEFAULT.map(m=>m.slice()); persistTeams(); draw()}
 
+/* rapid fire: ONE continuous 60 s clock per team — starts at the team's first
+   question, keeps running across question changes and reveals, stops at zero. */
+let rapidClocks={};
+try{rapidClocks=JSON.parse(localStorage.getItem("pqf_rapid")||"{}")||{}}catch(e){rapidClocks={}}
+function persistClocks(){try{localStorage.setItem("pqf_rapid",JSON.stringify(rapidClocks))}catch(e){}}
+function teamClock(team){
+  const T=S.rapidTeamSeconds||60;
+  let c=rapidClocks[team];
+  if(!c||typeof c.remain!=="number"){
+    c={total:T,remain:T,ansAt:T,phase:"answer",paused:false,done:false,lastBeep:99};
+    rapidClocks[team]=c; persistClocks();
+  }
+  return c;
+}
+function resetRapidClocks(){
+  if(!confirm("Reset all 60-second rapid-fire team clocks?"))return;
+  rapidClocks={}; persistClocks();
+  Q.slides.forEach(s=>{if(s.type==="rapid")delete s._t});
+  AUD.click(); draw();
+}
 function ensureTimer(sl){
   if(sl._t!==undefined)return sl._t;
   if(sl.type==="q")sl._t={total:S.readSeconds+S.answerSeconds,remain:S.readSeconds+S.answerSeconds,ansAt:S.answerSeconds,phase:"read",paused:false,done:false,lastBeep:99};
-  else if(sl.type==="rapid")sl._t={total:S.rapidAnswerSeconds,remain:S.rapidAnswerSeconds,ansAt:S.rapidAnswerSeconds,phase:"answer",paused:false,done:false,lastBeep:99};
+  else if(sl.type==="rapid")sl._t=teamClock(sl.team);
   else sl._t=null;
   return sl._t;
 }
@@ -2416,12 +2438,14 @@ function ensureTimer(sl){
 /* ================= timer loop ================= */
 setInterval(()=>{
   const sl=Q.slides[cur]; if(!sl)return;
-  const t=ensureTimer(sl); if(!t||t.paused||t.done||sl._rev)return;
+  const t=ensureTimer(sl); if(!t||t.paused||t.done)return;
+  if(sl.type==="q"&&sl._rev)return;               // q timers stop at reveal; team clocks never do
   t.remain=Math.max(0,t.remain-0.1);
   if(t.phase==="read"&&t.remain<=t.ansAt){t.phase="answer"; onUnlock()}
   const sec=Math.ceil(t.remain);
   if(t.phase==="answer"&&sec<=5&&sec>0&&sec!==t.lastBeep){t.lastBeep=sec; AUD.tick()}
-  if(t.remain<=0){t.done=true; AUD.buzz(); timeUp(); syncBroadcast()}
+  if(t.remain<=0){t.done=true; AUD.buzz(); timeUp(); persistClocks(); syncBroadcast()}
+  if(sl.type==="rapid"&&sec!==t._lp){t._lp=sec; persistClocks()}
   renderRing(t); syncThrottled();
 },100);
 let tuTO=0;
@@ -2429,13 +2453,18 @@ function timeUp(){const e=$("timeup"); e.style.display="flex"; clearTimeout(tuTO
 function renderRing(t){
   const w=$("ringwrap"); w.style.display="block";
   const C=263.9, frac=t.remain/t.total;
+  const isRapid=slide().type==="rapid";
   $("ringfg").setAttribute("stroke-dashoffset",(C*(1-frac)).toFixed(1));
   $("ringnum").querySelector(".n").textContent=Math.ceil(t.remain);
-  $("ringnum").querySelector(".p").textContent=t.paused?"PAUSED":(t.phase==="read"?"READ":"ANSWER");
+  $("ringnum").querySelector(".p").textContent=t.paused?"PAUSED":(isRapid?"TEAM":(t.phase==="read"?"READ":"ANSWER"));
   w.className=t.done?"done":t.paused?"paused":(t.phase==="answer"&&Math.ceil(t.remain)<=5?"hot":t.phase);
   const pc=document.querySelector(".phasechip");
-  if(pc&&!Q.slides[cur]._rev){
+  if(pc&&(isRapid||!slide()._rev)){
     if(t.paused){pc.className="phasechip paused"; pc.innerHTML="⏸ TIMER PAUSED — press T"}
+    else if(isRapid){
+      if(t.done){pc.className="phasechip hot"; pc.innerHTML="⌛ TIME UP — this team's 60 s are over"}
+      else{pc.className="phasechip"+(Math.ceil(t.remain)<=5?" hot":" answer"); pc.innerHTML=`⚡ TEAM CLOCK — <b>${Math.ceil(t.remain)}</b> s of ${t.total} s left`}
+    }
     else if(t.done){pc.className="phasechip hot"; pc.innerHTML="⌛ TIME UP — reveal when ready (R)"}
     else if(t.phase==="read"){pc.className="phasechip"; pc.innerHTML=`📖 READING TIME — options unlock in <b>${Math.ceil(t.remain-t.ansAt)}</b> s`}
     else{pc.className="phasechip"+(Math.ceil(t.remain)<=5?" hot":" answer"); pc.innerHTML=`⚡ ANSWER TIME — <b>${Math.ceil(t.remain)}</b> s left`}
@@ -2545,14 +2574,21 @@ function markingsHTML(sl){
     `</div>`).join("")+`</div><div class="note">⚠ ${esc(sl.note)} &nbsp;·&nbsp; ⏱ In this app every question auto-starts: ${S.readSeconds}s reading (options locked) → ${S.answerSeconds}s answering.</div>`;
 }
 function dividerHTML(sl){
+  const isRapid=/rapid/i.test(sl.title);
+  const order=[]; Q.slides.forEach(s=>{if(s.type==="rapid"&&s.round===sl.round&&order.indexOf(s.team)<0)order.push(s.team)});
   return `<div class="divwrap"><div class="divghost">${sl.round}</div>
     <div class="divround">Round ${sl.round}</div>
     <div class="divtitle">${esc(sl.title)}</div>
     <div class="scoringrow">
       <span class="scbadge">Correct <b class="pos">+${sl.correct}</b></span>
       <span class="scbadge">Wrong <b class="${sl.wrong<0?"neg":""}">${sl.wrong>0?"+":""}${sl.wrong}</b></span>
-      <span class="scbadge">⏱ Timer <b class="t">${S.readSeconds}s read + ${S.answerSeconds}s answer</b></span>
-    </div></div>`;
+      ${isRapid
+        ?`<span class="scbadge">⏱ <b class="t">${S.rapidTeamSeconds||60} s per team — one continuous clock across all 8 questions</b></span>`
+        :`<span class="scbadge">⏱ Timer <b class="t">${S.readSeconds}s read + ${S.answerSeconds}s answer</b></span>`}
+    </div>
+    ${isRapid?`<div class="note" style="margin-top:20px">Order: ${order.map((t,i)=>`${i+1}. <b style="color:${TEAMC[Math.max(0,Q.teamsOriginal.indexOf(t))][0]}">${esc(resolveTeam(t))}</b>`).join(" &nbsp;→&nbsp; ")}</div>
+    <div style="margin-top:18px"><button class="bigbtn" onclick="resetRapidClocks()">↺ Reset team clocks</button></div>`:""}
+  </div>`;
 }
 function qHTML(sl){
   const t=ensureTimer(sl);
@@ -2585,7 +2621,7 @@ function rapidHTML(sl){
   return `<div class="rapidwrap">
     <div class="qhead"><span class="qtag">ROUND ${sl.round} · RAPID FIRE</span><span class="qtag">+${sl.correct} / ${sl.wrong}</span></div>
     <div class="teamchip" style="--c1:${TEAMC[ti][0]};--c2:${TEAMC[ti][1]}">⚡ TEAM ${esc(resolveTeam(sl.team).toUpperCase())}</div>
-    ${t&&!sl._rev?`<div class="phasechip answer">⚡ ANSWER TIME</div>`:""}
+    ${t?`<div class="phasechip answer">⚡ TEAM CLOCK</div>`:""}
     <div class="rapidq">${esc(sl.qtext)}</div>
     ${sl._rev?`<div class="anscard show"><span class="lbl">ANSWER</span>${esc(sl.atext)}</div>`:`<div class="qmark">?</div>`}
   </div>`;
@@ -2632,7 +2668,7 @@ function reveal(){
   if(sl.type!=="q"&&sl.type!=="rapid")return;
   if(sl._rev)return;
   sl._rev=true;
-  const t=ensureTimer(sl); if(t){t.done=true; t.paused=false}
+  if(sl.type==="q"){const t=ensureTimer(sl); if(t){t.done=true; t.paused=false}}
   $("timeup").style.display="none";
   AUD.whoosh(); setTimeout(()=>{ sl.round===11?AUD.rimshot():AUD.chime() },220);
   burst(innerWidth/2,innerHeight*0.42,110);
@@ -2722,6 +2758,7 @@ function stateMsg(){
   const sl=slide(), t=ensureTimer(sl);
   return {t:"state",i:cur,n:N,kind:sl.type,round:sl.round||0,roundTitle:sl.roundTitle||"",
     qtext:sl.qtext||"",options:(sl.options||[]).filter(Boolean),answer:sl.answer||"",atext:sl.atext||"",
+    team:sl.type==="rapid"?resolveTeam(sl.team||""):"",
     img:!!sl.img,audience:!!sl.audience,revealed:!!sl._rev,
     phase:t?t.phase:"",remain:t?Math.ceil(t.remain):0,paused:t?!!t.paused:false,done:t?!!t.done:false,
     teams:Q.teams.map((nm,i)=>({n:nm,s:scores[i]}))};
@@ -2792,9 +2829,9 @@ const CONSOLE_HTML_FULL='<!DOCTYPE html><html><head><meta charset="utf-8"><title
 'o.innerHTML=st.options.map(function(x,i){var L="ABCD"[i];return "<div class=\\""+(L===st.answer?"w":"")+"\\"><b>"+L+"</b> · "+x+"</div>"}).join("");'+
 'a.innerHTML=st.revealed?"<div class=\\"ans shown\\">✅ REVEALED — "+st.answer+"</div>":"<div class=\\"ans hide\\">🔐 ANSWER: "+st.answer+" — NOT yet revealed</div>";'+
 'tm.innerHTML=st.phase?"⏱ <b>"+(st.paused?"PAUSED":st.phase.toUpperCase())+"</b> · "+st.remain+"s left"+(st.done?" · <b>TIME UP</b>":""):"";}'+
-'else if(st.kind==="rapid"){q.textContent="⚡ RAPID — "+st.qtext;o.innerHTML="";'+
+'else if(st.kind==="rapid"){q.textContent="⚡ RAPID"+(st.team?" — "+st.team:"")+" — "+st.qtext;o.innerHTML="";'+
 'a.innerHTML=st.revealed?"<div class=\\"ans shown\\">✅ ANSWER SHOWN: "+st.atext+"</div>":"<div class=\\"ans hide\\">🔐 ANSWER: "+st.atext+"</div>";'+
-'tm.innerHTML=st.phase?"⏱ <b>"+st.remain+"s</b> left":"";}'+
+'tm.innerHTML=st.phase?"⏱ TEAM CLOCK <b>"+(st.paused?"PAUSED":st.remain+"s")+"</b> left"+(st.done?" · <b>TIME UP</b>":""):"";}'+
 'else{q.textContent="("+st.kind+" slide)";o.innerHTML="";a.innerHTML="";tm.innerHTML="";}'+
 'document.getElementById("teams").innerHTML=st.teams.map(function(t,i){return "<div class=\\"tm\\"><b>"+t.n+"</b> "+t.s+" <button class=\\"sc\\" data-i=\\""+i+"\\" data-v=\\"10\\">+10</button> <button class=\\"sc\\" data-i=\\""+i+"\\" data-v=\\"5\\">+5</button> <button class=\\"no\\" data-i=\\""+i+"\\" data-v=\\"-5\\">−5</button></div>"}).join("");}'+
 'document.addEventListener("click",function(e){var b=e.target&&e.target.closest?e.target.closest("button[data-v]"):null;if(b)snd("score",null,{i:+b.getAttribute("data-i"),v:+b.getAttribute("data-v")});});'+

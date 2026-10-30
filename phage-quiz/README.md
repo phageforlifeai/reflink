@@ -9,7 +9,10 @@ The **real event deck** — your own final questions, parsed slide-by-slide from
 - **Auto 45 s timer per question** — starts the instant the question appears:
   **15 s READING** (options blurred & locked 🔒) → chime + unlock → **30 s ANSWER**.
   Ring turns green for answering, pulses red and ticks in the last 5 s, buzzes at zero
-  with a TIME UP stamp. `T` pause/resume · `U` unlock now. Rapid fire gets a straight 30 s.
+  with a TIME UP stamp. `T` pause/resume · `U` unlock now. **Rapid fire uses one continuous
+  60 s clock per team** — it starts at the team's first question, keeps counting across question
+  changes and reveals (never resets per question), buzzes once at zero; reset from the Rapid
+  Fire divider slide.
 - **Immersive show** — animated drifting-virion background, WebAudio sound FX (`M` mute),
   confetti bursts on reveal, cinematic shimmer opening with a pulsing **START** button
   and a 3‑2‑1‑GO countdown into the teams slide.

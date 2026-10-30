@@ -8,7 +8,7 @@ window.QUIZ = {
  "settings": {
   "readSeconds": 15,
   "answerSeconds": 30,
-  "rapidAnswerSeconds": 30
+  "rapidTeamSeconds": 60
  },
  "teams": [
   "Lytic Legends",
